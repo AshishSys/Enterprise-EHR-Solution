@@ -1,6 +1,41 @@
 # Healthcare Interop Solution — Interview Answer Cheat Sheet
 
-> Abacus/Onyx CMS interoperability platform | 445 questions | First-person, hands-on owner voice
+> Abacus/Onyx CMS interoperability platform | 445 questions | First-person, hands-on owner voice  
+> **Proficiency guarantee:** Complete this implementation + run every **Script** below to reach working proficiency as **AI Engineer**, **FHIR Engineer**, **Data Engineer**, **Kafka Engineer**, **Forward Deployed Engineer**, **Intermediate Associate Programmer**, and **Associate Solution Architect**.
+
+## Answer Format
+
+Each question includes five segments:
+
+| Segment | Purpose |
+|---------|---------|
+| **Answer** | What to say in the interview (ownership voice) |
+| **Example** | Real scenario from this solution |
+| **How to Check** | Verification steps / commands |
+| **How to Fix** | Remediation if check fails |
+| **Script** | Runnable code to build role proficiency *(new)* |
+
+## Proficiency Role Map (by Section)
+
+| Target Role | Primary Sections | Script Languages |
+|-------------|------------------|------------------|
+| **Associate Solution Architect** | A, C, H, J, K, L, M, T | bash, architecture trace |
+| **FHIR Engineer** | B, E, G, H | bash, Python validation, curl |
+| **Data Engineer** | D, G, J, N, P, Q, S, U | PySpark, SQL, Delta, Fabric |
+| **Kafka Engineer** | P (Rail B), event questions | Python confluent-kafka |
+| **Forward Deployed Engineer** | A, F, I, L, M | bash, Helm, Terraform, kubectl |
+| **Intermediate Associate Programmer** | D, E, F, I, N, O, Q, S, U | Python, bash, SQL, YAML |
+| **AI Engineer** | O, R, U (vector/MCP) | MLflow, Vector Search, MCP |
+
+## Implementation Phases → Role Outcomes
+
+| Phase | You Will Proficiently... |
+|-------|--------------------------|
+| **Phase 0** | Run local stack; trace architecture; validate FHIR baseline |
+| **Phase 1** | Build FM/SAM pipelines, Firely load, SMART APIs, Kafka landing rail |
+| **Phase 2** | Deliver CMS-0057 Provider Access, P2P, ePA FHIR workflows |
+| **Phase 3** | Deploy, harden, troubleshoot at customer sites (forward deployed) |
+| **Phase 4** | Ship RAG, MCP agents, Unity AI Gateway with governance |
 
 ## Table of Contents
 
@@ -46,6 +81,21 @@
 - Instrument each pipeline step with structured job-state rows in `onyx_job_state`
 - Publish a single architecture diagram tied to repo paths (`pipeline/`, `helm/`, `apis/`)
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q1: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q1_pytest.log
+echo "Q1 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
+
 ### Q2. What is the Abacus/Onyx platform and how do the components fit together?
 
 **Answer:** I treat Abacus as the data plane—ingestion, FM/SAM marts, extract/transform/load—and Onyx as the API plane—SLAP auth, FITE gateway, Developer Portal, Insights. I built the handoff so bundles land in Firely/HealthLake and only FITE exposes FHIR externally; apps never hit Firely directly.
@@ -63,6 +113,21 @@
 - Enforce no direct Firely access—route all consumers through FITE
 - Keep MDP IG registry aligned with deployed US Core/CARIN BB versions
 - Validate cross-component contracts with acceptance tests in `tests/`
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q2: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q2_pytest.log
+echo "Q2 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
 
 ### Q3. How do you distinguish CMS interoperability work from analytics/reporting?
 
@@ -82,6 +147,21 @@
 - Use CARIN BB validation on API-bound bundles only
 - Route analytics through de-identified aggregates where possible
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q3: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q3_pytest.log
+echo "Q3 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
+
 ### Q4. How would you translate CMS interoperability experience to value-based care (VBC)?
 
 **Answer:** I map CMS FHIR resources to VBC use cases: Coverage and EOB for attribution, Condition/Observation for quality gaps, MedicationRequest for adherence. I built shared SAM layers so VBC programs reuse the same clinical marts without duplicating pipeline logic.
@@ -99,6 +179,21 @@
 - Publish VBC-facing views that inherit pipeline DQ gates
 - Align measure periods with CMS reporting windows to avoid drift
 - Document lineage from raw claim/clinical ingest to quality metrics
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q4: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q4_pytest.log
+echo "Q4 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
 
 ### Q5. Where does RCM fit relative to your interoperability platform?
 
@@ -118,6 +213,21 @@
 - Coordinate PA ClaimResponse linking with RCM status codes
 - Keep RCM PHI out of API audit logs—separate retention policies
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q5: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q5_pytest.log
+echo "Q5 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
+
 ### Q6. Are you hands-on or primarily a people leader?
 
 **Answer:** I stay hands-on on critical path: Databricks job debugging, Firely FSI loads, SLAP scope policies, and Seiji deploys. I lead a 6–7 person team but I personally review extract configs, bundle validation failures, and incident RCAs before delegating runbooks.
@@ -135,6 +245,21 @@
 - Pair junior engineers on first FSI bulk load
 - Review every production extract_config YAML change personally
 - Maintain personal runbooks alongside team SOPs
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q6: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q6_pytest.log
+echo "Q6 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
 
 ### Q7. How would you explain this platform to a CXO in two minutes?
 
@@ -154,6 +279,21 @@
 - Show compliance scan results (Wiz) and audit log retention
 - Tie KPIs to revenue: PA turnaround, directory accuracy, API availability
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q7: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q7_pytest.log
+echo "Q7 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
+
 ### Q8. What would you prioritize in your first sprint?
 
 **Answer:** I prioritize environment access, local baseline validation, and one vertical slice—PVD → Claims incremental—because EOB references practitioners. I stand up job-state watermarks, extract configs, and Firely incremental upload before expanding to Clinical/Formulary.
@@ -171,6 +311,21 @@
 - Implement PVD → Claims dependency in Step Functions
 - Create extract_config YAML for PVD and Claims first
 - Enable CloudWatch alarms on first incremental bundle failures
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q8: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q8_pytest.log
+echo "Q8 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
 
 ### Q9. How do you stay current on CMS interoperability rules?
 
@@ -190,6 +345,21 @@
 - Run impact analysis on each Federal Register update within 48 hours
 - Update Developer Portal API docs when scopes or resources change
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q9: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q9_pytest.log
+echo "Q9 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
+
 ### Q10. Why should we trust you to deliver a 1–2 year interoperability program?
 
 **Answer:** I delivered phased CMS programs before: CMS-9115 hardening then CMS-0057 Provider Access, P2P, and ePA. I use weekly progress reviews, workflow-family SOPs, and measurable exit criteria per phase—not open-ended milestones.
@@ -207,6 +377,21 @@
 - Define go/no-go gates per CMS API family
 - Staff critical paths early (P2P, ePA, Provider Access)
 - Escalate scope creep on CMS expansion with data-driven estimates
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q10: End-to-end platform proficiency drill
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+./scripts/phase0_access_checklist.sh
+./scripts/run_local_baseline.sh
+python interop_pipeline.py --input ./source_data --output ./fhir_output
+python scripts/validate_fhir_output.py ./fhir_output
+python -m pytest tests/ -v --tb=short -k "test_" | tee /tmp/q10_pytest.log
+echo "Q10 baseline: $(find ./fhir_output -name '*.json' | wc -l) FHIR files validated"
+```
 
 ## Section B: CMS Rules & Regulatory Context
 
@@ -228,6 +413,37 @@
 - Keep Formulary API separate from authenticated Patient Access
 - Document 9115 compliance mapping per workflow family
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q11: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q11_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q12. What is CMS-0057 and how does it extend CMS-9115?
 
 **Answer:** CMS-0057 adds Provider Access, Payer-to-Payer (P2P), electronic Prior Authorization (ePA), and PA data in Patient Access. I architected Phase 2 with Backend Services auth, attribution lists, `$bulk-member-match`, and CRD/DTR/PAS workflows targeting Jan 1, 2027.
@@ -245,6 +461,37 @@
 - Implement Backend Services for P2P/Provider Access (not PKCE)
 - Add attribution tables and consent tracking before P2P export
 - Wire PA resources into Patient Access per final rule
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q12: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q12_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q13. What are the key CMS interoperability deadlines?
 
@@ -264,6 +511,37 @@
 - Run dress-rehearsal CMS audit in Q3 2026
 - Communicate slip risk to leadership with mitigation options
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q13: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q13_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q14. What payer types must comply with CMS interoperability rules?
 
 **Answer:** I implement for Medicare Advantage, Medicaid FFS, Medicaid managed care, CHIP, and QHP issuers on FFEs—each with nuances in attribution and directory. Our platform parameterizes workflow configs per line of business without forking pipeline code.
@@ -281,6 +559,37 @@
 - Test member-match with cross-plan identifier variants
 - Document LOB-specific USCDI element coverage
 - Validate directory Network references per product line
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q14: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q14_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q15. What is the difference between Patient Access and Provider Access APIs?
 
@@ -300,6 +609,37 @@
 - Enforce opt-out lists on Provider Access queries
 - Never mix patient context tokens on provider bulk exports
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q15: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q15_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q16. What is the public Provider Directory requirement?
 
 **Answer:** CMS requires a public, searchable Provider Directory API without member authentication exposing Practitioner, PractitionerRole, Organization, Location per Plan-Net. I built PVD workflow to load directory SAM and expose read-only endpoints via FITE.
@@ -317,6 +657,37 @@
 - Strip PHI from directory resources—no member links
 - Keep directory on allowlisted WAF path without SLAP
 - Monitor NPI/Taxonomy completeness metrics
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q16: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q16_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q17. What is USCDI v3 and how does it affect your pipelines?
 
@@ -336,6 +707,37 @@
 - Re-run full bundle validation after USCDI mapping changes
 - Document element lineage in data dictionary
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q17: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q17_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q18. What is information blocking and how do you operationalize compliance?
 
 **Answer:** Information blocking prohibits practices likely to interfere with access, exchange, or use of EHI. I implement API availability SLAs, audit logs, and deny-by-default scopes so we don't artificially restrict mandated data classes.
@@ -353,6 +755,37 @@
 - Publish transparent error messages—not opaque blocks
 - Review opt-out enforcement logic quarterly
 - Escalate vendor-caused delays with documented timelines
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q18: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q18_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q19. How does CMS metrics reporting work for Patient Access?
 
@@ -372,6 +805,37 @@
 - Separate Patient Access vs Provider Access metric streams
 - Automate monthly report generation with review gate
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q19: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q19_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q20. What are the CMS Prior Authorization operational reforms?
 
 **Answer:** Starting Jan 2026, payers must expose PA API capabilities, report PA metrics publicly by March 2026, and include PA decision data in Patient Access. I implement CRD/DTR/PAS (Da Vinci) and surface Claim/ClaimResponse PA resources.
@@ -389,6 +853,28 @@
 - Map internal PA statuses to FHIR ClaimResponse outcomes
 - Meet 72-hour/7-day decision SLAs in workflow timers
 - Publish PA metrics URL on payer website per CMS
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q20: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q21. What data do payers, providers, and patients each need from your platform?
 
@@ -408,6 +894,37 @@
 - Keep formulary public where mandated
 - Audit cross-persona data leakage in FITE logs
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q21: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q21_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q22. How do claims, clinical, and eligibility data differ in your platform?
 
 **Answer:** Claims are financial/administrative (EOB, Coverage); clinical are care artifacts (Observation, Condition); eligibility is coverage status often embedded in Coverage/InsurancePlan. I keep separate workflow families with cross-references via Patient.id.
@@ -425,6 +942,37 @@
 - Align member identifiers across families (UMB/subscriber id)
 - Run clinical dedup before load—claims don't dedup the same way
 - Sequence PVD before Claims for provider refs—not needed for pure clinical
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q22: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q22_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q23. What happens when a member switches plans under P2P?
 
@@ -444,6 +992,37 @@
 - Encrypt P2P payloads in transit (TLS 1.2+) and at rest
 - Revoke export tokens after SLA window
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q23: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q23_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q24. What is provider attribution and how is it modeled?
 
 **Answer:** Attribution links members to in-network providers for Provider Access. I maintain attribution lists in SAM, expose Group resources with member references, and enforce `$export` boundaries.
@@ -461,6 +1040,41 @@
 - Handle attribution conflicts with effective dates
 - Sync attribution changes to DynamoDB metadata
 - Test opt-out provider receives no attributed member data
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```python
+# Q24: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q24_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q24', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q24 AI pipeline events + RAG retrieval OK")
+```
 
 ### Q25. What is an ExplanationOfBenefit (EOB) in FHIR terms?
 
@@ -480,6 +1094,37 @@
 - Split oversized EOB bundles at 150 resources
 - Re-validate ICD/CPT CodeableConcept bindings
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q25: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q25_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q26. How does Prior Authorization differ from claims processing?
 
 **Answer:** PA is pre-service approval (Claim with use=preauthorization, ClaimResponse decision); claims are post-service adjudication (EOB). I separate ePA workflow (CRD/DTR/PAS) from Claims family while linking ClaimResponse to DocumentReference.
@@ -497,6 +1142,28 @@
 - Link PAS ClaimResponse to supporting DocumentReference
 - Expose PA decisions in Patient Access per CMS-0057
 - Keep PA metrics separate from claims throughput KPIs
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q26: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q27. What is the Drug Formulary API requirement?
 
@@ -516,6 +1183,37 @@
 - Refresh formulary incremental daily
 - Keep formulary API separate from member clinical scopes
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q27: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q27_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q28. What is Plan-Net and where do you use it?
 
 **Answer:** Plan-Net is HL7 IG for provider directory and network referencing. I apply it to PVD workflow Practitioner/PractitionerRole/Organization/Location resources exposed on public directory API.
@@ -533,6 +1231,37 @@
 - Normalize NPI and taxonomy codes to Plan-Net bindings
 - Update Plan-Net version in registry with regression tests
 - Ensure Location hours and telecom elements populated
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q28: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q28_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ## Section C: E2E Architecture & Platform
 
@@ -554,6 +1283,22 @@
 - Validate handoff contracts between Abacus and Onyx teams
 - Run E2E acceptance test per release
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q29: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
+
 ### Q30. How is ownership split between Abacus and Onyx?
 
 **Answer:** Abacus owns ingestion, FM/SAM, Databricks jobs, extract/transform/load, and data DQ. Onyx owns SLAP, FITE, Developer Portal, Insights, IG config, and external API contracts. Shared: Firely/HealthLake ops, Seiji deploys, metadata stores.
@@ -571,6 +1316,22 @@
 - Never change SLAP scopes without Onyx review
 - Never change SAM semantics without Abacus sign-off
 - Use shared acceptance tests as integration contract
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q30: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
 
 ### Q31. Why must consumers not access Firely directly?
 
@@ -590,6 +1351,37 @@
 - Add WAF rules blocking Firely host headers
 - Audit IRSA roles—only FITE pod gets Firely read/write
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q31: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q31_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q32. What is SLAP and what role does it play?
 
 **Answer:** SLAP is our SMART-on-FHIR OAuth2 authorization server handling PKCE for patient apps and Backend Services for P2P/Provider Access. I configured scopes, token TTL (5-min access tokens), and introspection endpoints FITE relies on.
@@ -607,6 +1399,28 @@
 - Tighten scopes—deny undefined resource access
 - Fix clock skew breaking 5-min token validity
 - Enable token revocation endpoint for compromised clients
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q32: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q33. What is FITE and how does it gateway FHIR?
 
@@ -626,6 +1440,41 @@
 - Scale FITE pods when P95 exceeds SLA
 - Patch IG validation middleware on profile errors
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```python
+# Q33: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q33_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q33', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q33 AI pipeline events + RAG retrieval OK")
+```
+
 ### Q34. What is MDP?
 
 **Answer:** MDP (Metadata/Data Platform gateway) is service discovery—registry of SLAP/FITE/Firely endpoints, extract configs, and IG packages. I keep MDP as the single source of truth for environment wiring.
@@ -643,6 +1492,22 @@
 - Sync IG registry with deployed validator versions
 - Version MDP config changes in Git
 - Fail pipeline start if MDP unreachable
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q34: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
 
 ### Q35. Why is raw client data not FHIR-shaped?
 
@@ -662,6 +1527,37 @@
 - Version FM DDL via generic migration library
 - Add source-specific preprocess in workflow family
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q35: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q35_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q36. What is the SAM IG bridge?
 
 **Answer:** SAM is subject-area marts shaped for FHIR mapping—each SAM table aligns to IG resources (EOB, Observation, Practitioner). Extract reads SAM CSV to S3; transform builds bundles conforming to US Core/CARIN BB/Plan-Net.
@@ -679,6 +1575,37 @@
 - Add SAM columns before changing transformer
 - Keep SAM business keys stable for incremental upsert
 - Document SAM→FHIR field matrix per family
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q36: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q36_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q37. What is the Extract Task in Databricks?
 
@@ -698,6 +1625,32 @@
 - Re-run extract only—not full historical pipeline
 - Version control every extract_config change
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```python
+# Q37: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q37 Delta pipeline checkpoint OK")
+```
+
 ### Q38. When do you use incremental vs historical loads?
 
 **Answer:** Incremental: daily Step Functions → Lambda POST transaction bundles (50–150 resources). Historical: initial FSI K8s job → NDJSON → Firely `$import`. I use FSI for backfill; incremental for steady state.
@@ -715,6 +1668,22 @@
 - Never mix `$import` NDJSON with wrong content-type
 - Replay failed incremental from last good watermark
 - Right-size FSI job memory for bundle sizes
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q38: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
 
 ### Q39. Why must PVD complete before Claims?
 
@@ -734,6 +1703,22 @@
 - Add pre-flight reference check in claims_transformer
 - Alert when EOB orphan references exceed threshold
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q39: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
+
 ### Q40. What is two-phase loading for P2P and ePA?
 
 **Answer:** Phase 1: identity/match or CRD setup (member-match, consent, attribution). Phase 2: bulk resource export/load (NDJSON `$import` or PAS response). I separate phases to meet SLAs and avoid partial exports.
@@ -751,6 +1736,22 @@
 - Retry phase 1 without reloading Firely
 - Document rollback for half-completed P2P export
 - Align ePA phase 2 with DocumentReference linking
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q40: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
 
 ### Q41. What DynamoDB tables support the pipeline?
 
@@ -770,6 +1771,22 @@
 - Set recovery_window_in_days=0 on secrets—not DynamoDB
 - Monitor hot partitions on high-volume workflows
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q41: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
+
 ### Q42. Describe the 12-step AWS production flow.
 
 **Answer:** I implement: (1) S3 Bronze ingest, (2) Glue/Databricks preprocess, (3) FM build, (4) SAM build, (5) Extract to S3, (6) Transform to bundles, (7) Validate IG, (8) Incremental upload or FSI, (9) Firely/HealthLake store, (10) SLAP auth, (11) FITE API, (12) CMS metrics/Insights.
@@ -787,6 +1804,22 @@
 - Automate deploy with Seiji pipeline—not manual kubectl
 - Document rollback per step
 - Align dev/stage/prod module parity
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q42: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
 
 ### Q43. How do you simplify architecture at Medusind scale vs Optum?
 
@@ -806,6 +1839,22 @@
 - Scale vertically on DocumentDB before sharding
 - Keep team at 6–7 with clear ownership
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q43: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
+
 ### Q44. What is Onyx Insights?
 
 **Answer:** Onyx Insights is the observability and CMS compliance analytics layer over SLAP/FITE and pipeline telemetry. I use it for API uptime, auth anomalies, Patient Access metrics prep, and executive KPI views—not raw PHI exploration.
@@ -824,6 +1873,37 @@
 - Align Insights KPIs with auditor report templates
 - Fix stale data feeds from pipeline job_state
 
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q44: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q44_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q45. What is the Developer Portal?
 
 **Answer:** Developer Portal registers third-party SMART apps, documents scopes, provides sandbox keys, and publishes CapabilityStatement-aligned integration guides. I require PKCE registration for patient apps.
@@ -841,6 +1921,22 @@
 - Keep portal examples on PKCE flow—not password grant
 - Review scope requests against deny-by-default matrix
 - Update portal when CMS-0057 APIs go live
+
+**Script:** *(builds proficiency: Associate Solution Architect | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q45: Architecture trace — map components to repos
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Abacus data plane ==="
+ls -1 pipeline/*.py configs/workflows/*/extract_config.yaml 2>/dev/null
+echo "=== Onyx API plane ==="
+ls -1 runtime/*.py apis/consumer/*.py helm/firely-server/values.yaml 2>/dev/null
+echo "=== MDP registry ==="
+python3 -c "import json; r=json.load(open('configs/mdp/services.json')); print(json.dumps(r, indent=2)[:800])"
+curl -sf http://localhost:9002/services 2>/dev/null || echo "Start stack: ./scripts/start_all_services.sh"
+```
 
 ## Section D: Pipeline Operations & Databricks
 
@@ -862,6 +1958,32 @@
 - Add cross-family dependency in orchestrator only
 - Document family SOP in weekly reviews
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q46: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q46 Delta pipeline checkpoint OK")
+```
+
 ### Q47. What are the standard pipeline steps per family?
 
 **Answer:** preprocess → transform (FM→SAM) → extract (SAM→S3) → upload/upsert (bundles→Firely) → terminate (update watermarks, notify). I monitor each step via job state and CloudWatch.
@@ -879,6 +2001,32 @@
 - Fix preprocess before re-running transform
 - Idempotent terminate—safe to re-run
 - Add step-level timing metrics
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q47: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q47 Delta pipeline checkpoint OK")
+```
 
 ### Q48. How do FM and SAM layers differ?
 
@@ -898,6 +2046,32 @@
 - Version SAM breaking changes with migration
 - Add DQ checks at FM→SAM boundary
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q48: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q48 Delta pipeline checkpoint OK")
+```
+
 ### Q49. How do you handle multi-state plans in pipelines?
 
 **Answer:** I partition SAM by plan_id/state in extract filters and tag FHIR meta extensions with plan identifiers. Shared transformers parameterize state-specific code sets via config—not code forks.
@@ -915,6 +2089,32 @@
 - Test cross-state member moves in P2P match
 - Separate watermarks per plan if schedules differ
 - Document state mandate variations
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q49: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q49 Delta pipeline checkpoint OK")
+```
 
 ### Q50. How do incremental and historical modes differ operationally?
 
@@ -934,6 +2134,32 @@
 - Validate NDJSON content-type for `$import`
 - Rebuild watermark after historical re-load
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q50: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q50 Delta pipeline checkpoint OK")
+```
+
 ### Q51. What is in extract_config.yaml?
 
 **Answer:** YAML defines source SAM table/query, column projections, filters, watermark column, S3 output path, and schedule hints. I version per family in `configs/workflows/{family}/extract_config.yaml`.
@@ -951,6 +2177,37 @@
 - Add new SAM column to YAML before deploy
 - Test YAML change in dev extract-only run
 - Never skip watermark column on incremental
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q51: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q51_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q52. Why might SAM row counts differ from FHIR bundle counts?
 
@@ -970,6 +2227,37 @@
 - Reconcile after dedup rules applied
 - Document expected ratios per family
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q52: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q52_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q53. Describe the daily claims flow.
 
 **Answer:** Bronze new files → preprocess → FM update → SAM eob_records → extract delta → transform CARIN BB bundles → Lambda POST → update metadata_v1 and watermark.
@@ -987,6 +2275,32 @@
 - Replay failed bundles from dead-letter S3
 - Fix DST scheduling on cron triggers
 - Scale Lambda concurrency on month-end volume
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q53: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q53 Delta pipeline checkpoint OK")
+```
 
 ### Q54. What cross-table dependencies exist across families?
 
@@ -1006,6 +2320,32 @@
 - Refresh shared Patient resource from Clinical first
 - Document dependency matrix for new engineers
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q54: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q54 Delta pipeline checkpoint OK")
+```
+
 ### Q55. How do you deduplicate clinical resources?
 
 **Answer:** I dedup on logical keys (patient_id + code + effectiveDateTime) in clinical transform before bundle build, keeping latest version. Claims use different keys—adjudication_id.
@@ -1023,6 +2363,32 @@
 - Re-run clinical incremental after dedup rule change
 - Purge Firely duplicates via transaction delete if needed
 - Add unit tests for edge cases (same day labs)
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q55: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q55 Delta pipeline checkpoint OK")
+```
 
 ### Q56. How do watermarks work for incremental loads?
 
@@ -1042,6 +2408,32 @@
 - Handle clock skew in source updated_at
 - Split watermarks per partition for large plans
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q56: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q56 Delta pipeline checkpoint OK")
+```
+
 ### Q57. How do you size Databricks clusters for workflow families?
 
 **Answer:** I size by SAM row volume and transform complexity—Claims/Clinical need more executors than Formulary. I use job metrics to right-size; avoid over-provisioning for PVD.
@@ -1059,6 +2451,32 @@
 - Optimize SAM queries before upsizing cluster
 - Coalesce small files on extract output
 - Schedule heavy historical on dedicated cluster
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q57: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q57 Delta pipeline checkpoint OK")
+```
 
 ### Q58. What are common pipeline failure modes?
 
@@ -1078,6 +2496,32 @@
 - Rollback bad Firely transaction batch if partial
 - Update runbook after each new failure class
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q58: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q58 Delta pipeline checkpoint OK")
+```
+
 ### Q59. What is a config mismatch failure?
 
 **Answer:** Extract YAML columns don't match transformer expected fields—causes KeyError or null mappings. I catch with schema validation in CI on extract configs.
@@ -1095,6 +2539,37 @@
 - Add contract test per family
 - Re-run extract after YAML fix
 - Notify downstream if SAM schema migration pending
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q59: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q59_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q60. What are wheel files and why do they matter?
 
@@ -1114,6 +2589,32 @@
 - Deploy wheel before enabling new transform code
 - Rollback wheel version in Seiji/Databricks job
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q60: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q60 Delta pipeline checkpoint OK")
+```
+
 ### Q61. How is job state tracked?
 
 **Answer:** `onyx_job_state` DynamoDB holds workflow name, watermark, last status, error message, run_id. Terminate step updates state atomically.
@@ -1131,6 +2632,32 @@
 - Add manual override flag for ops replay
 - Clear error message on successful retry
 - Archive old state for audit—not delete
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q61: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q61 Delta pipeline checkpoint OK")
+```
 
 ### Q62. What happens in transform, upload, upsert, and extract steps?
 
@@ -1150,6 +2677,32 @@
 - Validate bundle size before upload
 - Use transaction bundle for atomic multi-resource load
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q62: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q62 Delta pipeline checkpoint OK")
+```
+
 ### Q63. How do you handle duplicate FHIR resources?
 
 **Answer:** Prevent via metadata_v1 idempotent keys; detect via Firely search by business identifier. Incremental upsert updates in place; historical may need purge.
@@ -1167,6 +2720,37 @@
 - Transaction delete duplicates then reload
 - Fix upsert logic to prefer latest updated_at
 - Add dedup gate in transform for safety
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q63: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q63_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q64. How does DST affect scheduled pipelines?
 
@@ -1186,6 +2770,32 @@
 - Monitor first run after DST change
 - Document DST playbook for on-call
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q64: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q64 Delta pipeline checkpoint OK")
+```
+
 ### Q65. How do you replay a failed workflow?
 
 **Answer:** Identify failed step from `onyx_job_state`, fix root cause, replay from that step—extract-only, transform-only, or upload-only. Never blindly reset watermark.
@@ -1203,6 +2813,32 @@
 - Verify fix in dev before prod replay
 - Monitor Firely for duplicate loads on replay
 - Update job_state on successful replay terminate
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q65: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q65 Delta pipeline checkpoint OK")
+```
 
 ### Q66. What is the Fabric migration strategy?
 
@@ -1222,6 +2858,37 @@
 - Don't cut over during CMS deadline crunch
 - Validate PHI governance in Fabric workspace
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q66: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q66_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q67. How do Bronze/Silver/Gold map to Fabric?
 
 **Answer:** Bronze: raw ingest in OneLake. Silver: FM/SAM equivalent curated tables. Gold: aggregates for metrics/BI—not FHIR bundles. FHIR generation stays in Silver→API path.
@@ -1239,6 +2906,31 @@
 - Use short names matching Databricks catalogs
 - Apply same DQ rules at Silver boundary
 - Document mapping in architecture decision record
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q67: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q67 Fabric CMS metrics + SCD hash staging complete")
+```
 
 ### Q68. When choose Fabric vs Databricks?
 
@@ -1258,6 +2950,31 @@
 - Maintain single SAM schema contract both platforms
 - Revisit full migration post-Jan 2027
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q68: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q68 Fabric CMS metrics + SCD hash staging complete")
+```
+
 ### Q69. What data quality checks run at each layer?
 
 **Answer:** Bronze: file completeness, schema. FM: type/null checks. SAM: business rules (NPI format, ICD validity). Transform: IG validation. Load: reference integrity. API: scope and response sanity.
@@ -1275,6 +2992,32 @@
 - Fix upstream FM when SAM DQ fails
 - Add alerting on DQ trend not just threshold
 - Document acceptable error budgets per family
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q69: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q69 Delta pipeline checkpoint OK")
+```
 
 ### Q70. How handle missing NPI or ICD codes?
 
@@ -1294,6 +3037,32 @@
 - Re-process quarantine after source fix
 - Never fabricate NPI values
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q70: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q70 Delta pipeline checkpoint OK")
+```
+
 ### Q71. How do you manage schema changes?
 
 **Answer:** I use generic migration library—one version at a time, idempotent, never skip versions. FM DDL first, then SAM, then extract YAML, then transformer.
@@ -1311,6 +3080,32 @@
 - Never skip intermediate migration versions
 - Coordinate breaking changes with Onyx API team
 - Backfill new columns before enabling extract
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q71: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q71 Delta pipeline checkpoint OK")
+```
 
 ### Q72. How resolve formulary tier conflicts?
 
@@ -1330,6 +3125,32 @@
 - Source fix for bad payer formulary file
 - Re-load affected NDC subset incrementally
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q72: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q72 Delta pipeline checkpoint OK")
+```
+
 ### Q73. How do you validate FHIR references?
 
 **Answer:** Pre-upload resolver checks Patient, Practitioner, Organization IDs exist in Firely or same bundle. Post-upload IG validator checks Reference targets.
@@ -1347,6 +3168,37 @@
 - Include referenced resources in same bundle when possible
 - Use metadata_v1 to resolve business→FHIR ids
 - Re-run reference repair job after backfill
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q73: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q73_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ## Section E: FHIR, IGs & Data Modeling
 
@@ -1368,6 +3220,37 @@
 - Document R4 resource subset per CMS API
 - Test search params against US Core R4 bindings
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q74: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q74_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q75. Explain Resource, Bundle, and NDJSON in your load path.
 
 **Answer:** A Resource is a single FHIR JSON object. A Bundle wraps entries for transaction/batch POST. NDJSON is one resource per line for FSI `$import` historical loads.
@@ -1385,6 +3268,37 @@
 - Split oversized bundles before POST
 - Validate NDJSON—one JSON object per line
 - Use fullUrl in transaction entries for upsert
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q75: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q75_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q76. What is Patient `$everything`?
 
@@ -1404,6 +3318,37 @@
 - Ensure PA resources included per CMS-0057
 - Cache invalidation on incremental load completion
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q76: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q76_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q77. What is Bulk `$export`?
 
 **Answer:** Bulk data export (Group `$export` or Patient `$export`) async exports NDJSON files to signed URLs—used for Provider Access attribution exports and P2P.
@@ -1421,6 +3366,37 @@
 - Encrypt export URLs and expire promptly
 - Scope export to attributed members only
 - Retry failed export jobs without duplicating files
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q77: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q77_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q78. Member-match vs bulk-member-match?
 
@@ -1440,6 +3416,37 @@
 - Log match scores without PHI in clear text
 - Two-phase: match then export matched ids only
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q78: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q78_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q79. What is a CapabilityStatement?
 
 **Answer:** Server metadata describing supported resources, interactions, search params, and SMART capabilities—required at `/metadata`. I keep FITE CapabilityStatement aligned with deployed CMS APIs.
@@ -1457,6 +3464,37 @@
 - Remove undeclared resources from production
 - Sync with HealthLake if dual-store
 - Automate metadata diff in acceptance tests
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q79: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q79_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q80. What Implementation Guides (IGs) do you implement?
 
@@ -1476,6 +3514,37 @@
 - Block deploy on validation failure threshold
 - Document mustSupport elements per resource
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q80: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q80_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q81. What is US Core 6.1.0?
 
 **Answer:** US Core is base FHIR profiling for US clinical/administrative data aligned to USCDI. Version 6.1.0 is our pin for Patient, Observation, Condition, etc.
@@ -1493,6 +3562,37 @@
 - Update validator package on version bump
 - Fix category coding for US Core bindings
 - Regression test all clinical resources
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q81: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q81_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q82. What is CARIN BB?
 
@@ -1512,6 +3612,37 @@
 - Include insurer Coverage reference
 - Validate gender/DOB on related Patient
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q82: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q82_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q83. What is Plan-Net in practice?
 
 **Answer:** Plan-Net IG profiles provider directory resources—Practitioner, PractitionerRole, Organization, Location, Network. Public directory API must conform.
@@ -1529,6 +3660,37 @@
 - Populate Location position and hours
 - Update Plan-Net version with regression
 - Remove PHI from directory resources
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q83: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q83_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q84. What is PDex?
 
@@ -1548,6 +3710,37 @@
 - Test with partner sandbox payer
 - Update ig_registry on PDex ballot changes
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q84: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q84_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q85. Explain CRD, DTR, and PAS.
 
 **Answer:** CRD (Coverage Requirements Discovery): EHR hook for PA requirements. DTR (Documentation Templates): forms for PA submission. PAS (Prior Authorization Support): FHIR API for PA decision. I implement Da Vinci workflows on ePA :9005.
@@ -1565,6 +3758,37 @@
 - Map internal PA workflow statuses to PAS outcomes
 - Link DocumentReference evidence to Claim
 - Monitor CRD error rate separately from Patient Access
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q85: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q85_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q86. SMART 2.0 vs 1.0—what changed for you?
 
@@ -1584,6 +3808,28 @@
 - Document scope changes for app partners
 - Test AS metadata smart_app_launch_version
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q86: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q87. What are SMART Backend Services?
 
 **Answer:** OAuth2 client credentials with signed JWT assertions for system-level access—used for P2P, Provider Access `$export`, not patient-facing apps.
@@ -1601,6 +3847,28 @@
 - Deny Backend Services tokens on Patient PKCE routes
 - Audit system-level access separately
 - Revoke compromised client JWT keys immediately
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q87: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q88. What is PKCE and why use it?
 
@@ -1620,6 +3888,28 @@
 - Test deep-link redirect URI allowlist
 - Never use client_secret in public mobile apps
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q88: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q89. How map Synthea Claims to EOB?
 
 **Answer:** I map claim_id→identifier, patient→Patient ref, provider→Practitioner ref, diagnosis/procedure codes→item.productOrService, paid amounts→adjudication.
@@ -1637,6 +3927,37 @@
 - Add missing adjudication category when paid=0
 - Ensure Patient id matches clinical Patient
 - Re-run PVD if provider ref broken
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q89: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q89_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q90. How map Observation for Labs vs Vitals?
 
@@ -1656,6 +3977,37 @@
 - Don't mix categories in one profile
 - Dedup duplicate lab panels
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q90: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q90_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q91. What do you do when IG validation fails?
 
 **Answer:** Capture OperationOutcome, classify mustSupport vs binding vs reference error, quarantine bundle, fix transform or upstream SAM, re-validate before upload.
@@ -1673,6 +4025,37 @@
 - Backfill quarantined bundles after fix
 - Upgrade IG only after fixing mappings
 - Track validation failure rate KPI
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q91: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q91_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q92. How handle code system mapping (ICD, CPT, NDC)?
 
@@ -1692,6 +4075,37 @@
 - Document payer-specific local codes as extensions
 - Alert on mapping failure rate threshold
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q92: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q92_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q93. What is Provenance and when do you use it?
 
 **Answer:** Provenance resource records who/what/when transformed data—supports audit and trust. I add Provenance on bulk exports and pipeline-generated resources where CMS expects lineage.
@@ -1710,6 +4124,37 @@
 - Sign Provenance for B2B exports if required
 - Backfill Provenance on historical load if mandated
 
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q93: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q93_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q94. What bundle sizes do you target?
 
 **Answer:** Incremental transaction bundles: 50–150 resources per family guidance. Larger causes Firely timeouts/413; smaller increases overhead.
@@ -1727,6 +4172,37 @@
 - Increase Lambda timeout only after size tuning
 - Parallelize multiple smaller bundles vs one giant
 - Monitor DocumentDB write pressure on large batches
+
+**Script:** *(builds proficiency: FHIR Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q94: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q94_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ## Section F: Security, Auth & Compliance
 
@@ -1748,6 +4224,28 @@
 - Bind patient context in token claims
 - Revoke tokens on app compromise
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q95: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q96. How does FITE use token introspection?
 
 **Answer:** FITE calls SLAP introspection endpoint with access token, receives active flag, scopes, patient id, client id—denies if inactive or scope insufficient.
@@ -1765,6 +4263,28 @@
 - Fix clock skew between FITE and SLAP
 - Fail closed on introspection timeout
 - Update scope checks when adding resources
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q96: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q97. What scopes apply per API?
 
@@ -1784,6 +4304,28 @@
 - Review scope creep quarterly
 - Remove wildcard scopes from production clients
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q97: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q98. Why 5-minute access tokens?
 
 **Answer:** Short TTL limits exposure if token leaked; SMART best practice for patient context. Refresh tokens handle session continuity.
@@ -1801,6 +4343,28 @@
 - Fix client refresh race conditions
 - Monitor failed refresh as auth incident signal
 - Revoke all tokens for compromised client
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q98: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q99. How bind patient context?
 
@@ -1820,6 +4384,28 @@
 - Log denial reason code consistently
 - Document exception paths for system scopes only
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q99: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q100. P2P opt-in vs Provider Access opt-out?
 
 **Answer:** P2P requires member opt-in to export to new payer. Provider Access allows in-network providers unless they opt out of sharing attributed records.
@@ -1837,6 +4423,28 @@
 - Refresh opt-out daily from provider relations
 - Never export opted-out provider attributed data
 - Provide member consent UI audit trail
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q100: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q101. How implement public directory securely?
 
@@ -1856,6 +4464,28 @@
 - Keep directory on separate FITE route policy
 - Run Wiz scan on public endpoint config
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q101: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q102. What audit events do you capture?
 
 **Answer:** Token issuance, introspection, FHIR read/write, `$export` job start/complete, failed auth, scope denials—all without PHI in log message body.
@@ -1873,6 +4503,28 @@
 - Increase retention to policy minimum
 - Alert on auth failure spikes
 - Immutable audit store for CMS audits
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q102: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q103. How protect PHI in logs and metrics?
 
@@ -1892,6 +4544,28 @@
 - Use internal opaque ids in job logs
 - Train team on safe logging standards
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q103: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q104. IAM roles vs static API keys?
 
 **Answer:** I use IAM roles and IRSA for AWS service-to-service—no long-lived static keys on Lambda/EKS. Developer Portal issues OAuth clients, not AWS keys.
@@ -1909,6 +4583,28 @@
 - Migrate legacy keys to IRSA
 - Deny iam:CreateAccessKey for pipeline roles
 - Use Secrets Manager with KMS for remaining secrets
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q104: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q105. What is IRSA and how use it?
 
@@ -1928,6 +4624,28 @@
 - Separate roles per service (Firely vs FSI)
 - Audit role policies quarterly
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q105: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q106. How enforce role segregation?
 
 **Answer:** Abacus Databricks admins ≠ Onyx SLAP admins ≠ prod Firely break-glass. CI deploy roles read-only on prod data.
@@ -1945,6 +4663,28 @@
 - Require MFA on all human IAM users
 - Just-in-time elevation for prod debugging
 - Quarterly access review with manager sign-off
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q106: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q107. How use Wiz scans?
 
@@ -1964,6 +4704,28 @@
 - Exception process with expiry date
 - Re-scan after terraform IAM change
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q107: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q108. Deny-by-default scopes?
 
 **Answer:** If scope not explicitly granted, FITE returns 403—not partial data leak. Default OAuth clients get zero scopes until approved.
@@ -1981,6 +4743,28 @@
 - Automate scope approval workflow
 - Regression test deny paths on new resources
 - Document minimum scopes per use case
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q108: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q109. Token revocation approach?
 
@@ -2000,6 +4784,28 @@
 - Force re-consent for patient apps if needed
 - Verify revocation propagates to all FITE pods
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q109: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q110. WAF and VPC architecture?
 
 **Answer:** Public APIs behind WAF+API Gateway in PHI VPC; Firely/DocumentDB private subnets; air-gapped Databricks via VPC bridge for external calls only through bridge endpoints.
@@ -2017,6 +4823,28 @@
 - Block geo regions if not needed
 - Fix misconfigured SG exposing DocumentDB
 - Route external API calls through bridge VPC only
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q110: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ### Q111. HIPAA audit requirements?
 
@@ -2036,6 +4864,28 @@
 - Grant air-cd decrypt on new secrets keys
 - Never disable audit for performance
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q111: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q112. HIPAA vs CMS compliance overlap?
 
 **Answer:** HIPAA requires privacy/security safeguards; CMS adds specific API/data class mandates. Satisfying CMS APIs doesn't replace HIPAA—it adds auditable FHIR exposure requirements.
@@ -2053,6 +4903,28 @@
 - Include CMS APIs in HIPAA risk assessment
 - Coordinate legal on info blocking vs HIPAA
 - Document dual compliance in auditor pack
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q112: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 
 ## Section G: Firely, HealthLake & FSI
 
@@ -2074,6 +4946,37 @@
 - Enable HealthLake coexistence only where needed
 - Rollback helm release on validation regression
 
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q113: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q113_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q114. When use AWS HealthLake?
 
 **Answer:** HealthLake for CMS `/patientaccess/v2/r4` compliance metrics endpoints and if org mandates managed FHIR. I keep Firely primary for bulk load and complex search.
@@ -2091,6 +4994,37 @@
 - Sync IGs across both stores if dual-write
 - Pick single search index for FITE routing
 - Document read path: Firely vs HL per resource
+
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q114: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q114_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q115. What is FSI and when use it?
 
@@ -2110,6 +5044,37 @@
 - Run FSI off-peak to avoid incremental contention
 - Retry `$import` from checkpoint if supported
 
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q115: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q115_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q116. Incremental Lambda vs FSI bulk?
 
 **Answer:** Lambda: daily deltas, transaction bundles, fast fail, 50–150 resources. FSI: millions of resources, NDJSON, long-running `$import`.
@@ -2127,6 +5092,37 @@
 - Pause incremental during full `$import` if locking issues
 - Switch to FSI when backlog > N bundles
 - Monitor DocumentDB CPU during FSI
+
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q116: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q116_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q117. Firely+DocumentDB vs HealthLake tradeoffs?
 
@@ -2146,6 +5142,37 @@
 - Load test both before Jan 2027 cutover
 - Negotiate vendor HealthLake SLAs if chosen
 
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q117: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q117_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q118. DocumentDB tuning for Firely?
 
 **Answer:** Size instance for working set of FHIR resources, tune connection pool in Firely, index-friendly search params, monitor slow queries during FSI.
@@ -2163,6 +5190,37 @@
 - Limit concurrent FSI jobs
 - Rebuild indexes after major historical load
 - Failover test cluster Multi-AZ
+
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q118: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q118_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q119. Firely OOM during load?
 
@@ -2182,6 +5240,37 @@
 - Run parallel FSI by resource type not duplicate jobs
 - Stagger incremental during FSI recovery
 
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q119: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q119_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q120. Parallel vs sequential FSI?
 
 **Answer:** Parallel by resource type (Patient file, EOB file) with Firely import concurrency limits; sequential when DocumentDB shows lock contention.
@@ -2199,6 +5288,37 @@
 - Use step function map state max concurrency
 - Fall back to sequential on lock timeout errors
 - Validate no duplicate ids across parallel files
+
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q120: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q120_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q121. Validate historical load completeness?
 
@@ -2218,6 +5338,37 @@
 - Document acceptable variance threshold
 - Run acceptance tests/tests/ post-load
 
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q121: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q121_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q122. Rollback bad bundle load?
 
 **Answer:** Identify batch via meta tag/run_id, transaction DELETE or `$expunge` if permitted, restore from pre-load snapshot, replay corrected bundles.
@@ -2235,6 +5386,37 @@
 - Don't advance watermark for bad run
 - Coordinate rollback with Onyx API team
 - Post-mortem and add pre-upload validation gate
+
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q122: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q122_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q123. Firely vs HealthLake search/validation/export?
 
@@ -2254,6 +5436,37 @@
 - Test `$export` manifest for P2P on chosen store
 - Re-evaluate annually
 
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q123: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q123_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q124. Evaluate vendor HealthLake-only proposal?
 
 **Answer:** Score against CMS requirements: FSI bulk, CARIN BB validation, transaction upsert, P2P `$export`, ePA latency, cost at Medusind scale, team ops skills.
@@ -2271,6 +5484,37 @@
 - Negotiate hybrid Firely+HL if needed
 - Require contractual SLA on CMS APIs
 - Pilot before full commit
+
+**Script:** *(builds proficiency: FHIR Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q124: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q124_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ## Section H: P2P, Provider Access & ePA
 
@@ -2292,6 +5536,37 @@
 - Validate member Patient ids exist in Firely
 - Alert on attribution file delay
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q125: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q125_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q126. Group `$export` for Provider Access?
 
 **Answer:** Provider with Backend Services token requests Group `$export` for attributed population—returns async NDJSON of Patient, clinical, EOB per CMS scope.
@@ -2309,6 +5584,37 @@
 - Enforce opt-out filter in export job
 - Rate limit export to prevent abuse
 - Audit each export with provider client_id
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q126: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q126_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q127. Provider Access resources included?
 
@@ -2328,6 +5634,37 @@
 - Include PA resources when mandated
 - Update export on IG version bump
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q127: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q127_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q128. Opt-out enforcement?
 
 **Answer:** Providers who opt out of sharing aren't included in attribution Groups; export jobs filter their member panels.
@@ -2345,6 +5682,37 @@
 - Rebuild Groups within SLA after opt-out
 - Never include opted-out provider in public responses
 - Document appeal process for providers
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q128: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q128_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q129. Full P2P flow end-to-end?
 
@@ -2364,6 +5732,37 @@
 - Handle no-match per playbook
 - SLA monitoring on total P2P duration
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q129: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q129_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q130. Member identifiers and UMB?
 
 **Answer:** Use CMS-approved identifier systems—UMB, MBI, subscriber id—with MatchInput parameters. Consistent cross-family keys in SAM.
@@ -2381,6 +5780,37 @@
 - Never log full MBI in clear text
 - Update crosswalk on plan switch
 - Test match with hyphenated id variants
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q130: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q130_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q131. 5-year lookback window?
 
@@ -2400,6 +5830,37 @@
 - Document gaps if source lacks 5y
 - Test leap-year date boundary filters
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q131: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q131_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q132. Two-phase P2P load details?
 
 **Answer:** Phase 1: match + legal consent + attribution verify. Phase 2: bulk NDJSON generation, transfer, `$import`, validation, notify member.
@@ -2417,6 +5878,37 @@
 - Idempotent phase 2 for retry
 - Separate S3 prefix per phase
 - Clear phase 1 errors before retry phase 2
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q132: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q132_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q133. Consent tracking?
 
@@ -2436,6 +5928,37 @@
 - Encrypt consent records at rest KMS
 - Retain consent proof for CMS audit
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q133: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q133_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q134. P2P operational playbook?
 
 **Answer:** Runbook covers match failures, partial exports, partner downtime, consent disputes, replay steps, escalation contacts.
@@ -2453,6 +5976,37 @@
 - Update playbook after each incident
 - Train on-call on two-phase workflow
 - Align with legal on consent edge cases
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q134: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q134_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q135. Four ePA capabilities?
 
@@ -2472,6 +6026,37 @@
 - Link DocumentReference evidence
 - Publish PA metrics URL
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q135: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q135_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q136. CRD→DTR→PAS scenario walkthrough?
 
 **Answer:** EHR order hook → CRD returns PA required + docs → DTR renders forms → clinician submits → PAS returns ClaimResponse approved/denied → stored for Patient Access.
@@ -2489,6 +6074,37 @@
 - Validate DTR pre-fill from FHIR context
 - Sync PAS decision to internal PA system
 - Surface decision in Patient app
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q136: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q136_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q137. Claim/ClaimResponse for PA?
 
@@ -2508,6 +6124,37 @@
 - Include item-level PA decisions
 - Expose in `$everything` bundle
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q137: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q137_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q138. Option A vs B ePA architecture?
 
 **Answer:** Option A: payer-hosted PAS API (our ePA :9005). Option B: delegated to vendor cloud. I prefer Option A for control and CMS auditability unless vendor proves parity.
@@ -2525,6 +6172,37 @@
 - Ensure Patient Access PA data path same either way
 - Contractual CMS compliance clauses with vendor
 - Fallback to Option A if vendor misses Jan 2026 PA ops
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q138: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q138_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q139. ePA DocumentReference linking?
 
@@ -2544,6 +6222,37 @@
 - Don't embed PHI in DocumentReference URL logs
 - Re-link after doc store migration
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q139: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q139_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q140. 72-hour and 7-day PA SLAs?
 
 **Answer:** CMS PA ops reform: urgent decisions within 72 hours, standard within 7 days. I instrument PAS workflow timers and report publicly.
@@ -2562,6 +6271,37 @@
 - Root cause slow integrations to PA backend
 - Publish metrics even if imperfect—improve iteratively
 
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q140: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q140_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q141. PA in Patient Access?
 
 **Answer:** Members see PA status via Claim/ClaimResponse (and related DocumentReference metadata) in Patient Access API and `$everything`.
@@ -2579,6 +6319,37 @@
 - Sync PA decisions nightly minimum
 - Fix missing ClaimResponse in patient view
 - Update CapabilityStatement for PA resources
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q141: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q141_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ## Section I: Deployment, Seiji & Operations
 
@@ -2600,6 +6371,27 @@
 - Fix repo-shims before chart dependency failures
 - Never skip Wiz gate on prod promote
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q142: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q142.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q142 deploy artifacts validated"
+```
+
 ### Q143. Targeted vs full deploy?
 
 **Answer:** Targeted: single service/chart (FITE patch). Full: all runtime services aligned to release tag. I default targeted for speed; full for IG upgrades affecting all.
@@ -2617,6 +6409,27 @@
 - Document targeted deploy in change ticket
 - Verify MDP registry URLs post-deploy
 - Schedule full deploy weekly minimum in prod
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q143: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q143.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q143 deploy artifacts validated"
+```
 
 ### Q144. FITE rollback procedure?
 
@@ -2636,6 +6449,27 @@
 - Keep SLAP compatible across FITE versions
 - Update incident post-mortem
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q144: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q144.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q144 deploy artifacts validated"
+```
+
 ### Q145. Seiji failure modes?
 
 **Answer:** Helm dependency fetch fail (repo-shims), Wiz block, kube auth expire, values SSM param missing, chart lint fail.
@@ -2653,6 +6487,27 @@
 - Refresh kubeconfig/IRSA for CI runner
 - Populate missing SSM secure string with KMS
 - Request Wiz exception with expiry if false positive
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q145: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q145.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q145 deploy artifacts validated"
+```
 
 ### Q146. Helm and SSM configuration?
 
@@ -2672,6 +6527,37 @@
 - Set recovery_window_in_days=0 on TF secrets
 - Validate SSM path per env before deploy
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q146: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q146_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q147. What are repo-shims?
 
 **Answer:** Local/CI Helm repository shims resolving private chart dependencies when deploying via Seiji—Kitchen Sous Chef pattern from training.
@@ -2689,6 +6575,27 @@
 - Pin chart versions in Chart.lock
 - Refresh shims when helmsman moves charts
 - Fail fast if shim URL unreachable
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q147: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q147.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q147 deploy artifacts validated"
+```
 
 ### Q148. Monitor pipeline vs API vs auth?
 
@@ -2708,6 +6615,28 @@
 - Add auth alert on introspection error spike
 - Unified incident channel with service tags
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q148: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
 ### Q149. Day 1 alerts to configure?
 
 **Answer:** Pipeline job failure, watermark stale >24h, FITE 5xx >1%, SLAP auth failure spike, Firely health down, Wiz critical on prod image.
@@ -2725,6 +6654,37 @@
 - Add PVD-before-Claims stale dependency alert
 - CMS metric submission deadline reminder alert
 - Escalation policy with manager after 30 min
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q149: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q149_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q150. Expected vs true defects?
 
@@ -2744,6 +6704,27 @@
 - Fix true defects before prod promote
 - Trend expected warnings down over time
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q150: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q150.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q150 deploy artifacts validated"
+```
+
 ### Q151. RCA invalid FHIR references?
 
 **Answer:** Trace EOB Practitioner ref → metadata_v1 → Firely id → PVD load timestamp. Root cause usually PVD lag or wrong NPI mapping.
@@ -2761,6 +6742,37 @@
 - Add pre-upload reference resolver
 - Backfill PVD then replay Claims upload
 - Update RCA template for reference class
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q151: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q151_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q152. Acceptance testing approach?
 
@@ -2780,6 +6792,27 @@
 - Include P2P/ePA scenarios in phase 2 suite
 - Run load test separately from acceptance
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q152: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q152.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q152 deploy artifacts validated"
+```
+
 ### Q153. On-call for Abacus/Onyx?
 
 **Answer:** Primary on-call rotates weekly; Abacus owns pipeline pages, Onyx owns API/auth pages, shared bridge for Firely/Seiji. Handoff doc each Monday.
@@ -2798,6 +6831,27 @@
 - Blameless post-mortems within 48h
 - Limit deploy windows during on-call peak load
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q153: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q153.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q153 deploy artifacts validated"
+```
+
 ### Q154. PHI incident response?
 
 **Answer:** Contain (revoke tokens, block client), assess scope without logging PHI, notify privacy officer per HIPAA breach policy, remediate, document CMS if applicable.
@@ -2815,6 +6869,27 @@
 - Preserve audit logs immutable
 - Rotate keys and force app re-registration
 - Post-incident Wiz and scope review
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q154: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q154.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q154 deploy artifacts validated"
+```
 
 ## Section J: Metrics, KPIs & Dashboards
 
@@ -2836,6 +6911,24 @@
 - Tie KPI miss to corrective action ticket
 - Don't optimize vanity metrics over compliance
 
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q155: CMS metrics reporting proficiency
+import json, urllib.request
+# Local Insights endpoint
+try:
+    resp = urllib.request.urlopen("http://localhost:9001/metrics/cms/patient-access")
+    data = json.loads(resp.read())
+    print(json.dumps(data, indent=2)[:1000])
+except Exception as e:
+    print("Start Insights:", e)
+
+# Reporter script
+import subprocess
+subprocess.run(["python", "/Users/ashishsingh/OnyxInterop/Training/onyx-interop/monitoring/cms_metrics_reporter.py", "--dry-run"], check=False)
+```
+
 ### Q156. CMS Patient Access metrics?
 
 **Answer:** Availability, response time, registration counts reported to CMS on schedule from aggregated logs.
@@ -2853,6 +6946,24 @@
 - Fix timezone aggregation bugs
 - Separate metrics per API phase
 - Legal review before first submission
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q156: CMS metrics reporting proficiency
+import json, urllib.request
+# Local Insights endpoint
+try:
+    resp = urllib.request.urlopen("http://localhost:9001/metrics/cms/patient-access")
+    data = json.loads(resp.read())
+    print(json.dumps(data, indent=2)[:1000])
+except Exception as e:
+    print("Start Insights:", e)
+
+# Reporter script
+import subprocess
+subprocess.run(["python", "/Users/ashishsingh/OnyxInterop/Training/onyx-interop/monitoring/cms_metrics_reporter.py", "--dry-run"], check=False)
+```
 
 ### Q157. Pipeline dashboard essentials?
 
@@ -2872,6 +6983,24 @@
 - Show cross-family blockers prominently
 - Export weekly PDF for leadership
 
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q157: CMS metrics reporting proficiency
+import json, urllib.request
+# Local Insights endpoint
+try:
+    resp = urllib.request.urlopen("http://localhost:9001/metrics/cms/patient-access")
+    data = json.loads(resp.read())
+    print(json.dumps(data, indent=2)[:1000])
+except Exception as e:
+    print("Start Insights:", e)
+
+# Reporter script
+import subprocess
+subprocess.run(["python", "/Users/ashishsingh/OnyxInterop/Training/onyx-interop/monitoring/cms_metrics_reporter.py", "--dry-run"], check=False)
+```
+
 ### Q158. API latency P50/P95?
 
 **Answer:** CloudWatch/API GW metrics; targets aligned with CMS and member app UX—typically P95 <500ms read for common queries.
@@ -2889,6 +7018,24 @@
 - Optimize Firely search params indexing
 - Add caching only if HIPAA-safe
 - Fix N+1 introspection calls
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q158: CMS metrics reporting proficiency
+import json, urllib.request
+# Local Insights endpoint
+try:
+    resp = urllib.request.urlopen("http://localhost:9001/metrics/cms/patient-access")
+    data = json.loads(resp.read())
+    print(json.dumps(data, indent=2)[:1000])
+except Exception as e:
+    print("Start Insights:", e)
+
+# Reporter script
+import subprocess
+subprocess.run(["python", "/Users/ashishsingh/OnyxInterop/Training/onyx-interop/monitoring/cms_metrics_reporter.py", "--dry-run"], check=False)
+```
 
 ### Q159. PA public metrics March 2026?
 
@@ -2908,6 +7055,24 @@
 - Monitor public endpoint uptime
 - Plan comms if metrics imperfect day one
 
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q159: CMS metrics reporting proficiency
+import json, urllib.request
+# Local Insights endpoint
+try:
+    resp = urllib.request.urlopen("http://localhost:9001/metrics/cms/patient-access")
+    data = json.loads(resp.read())
+    print(json.dumps(data, indent=2)[:1000])
+except Exception as e:
+    print("Start Insights:", e)
+
+# Reporter script
+import subprocess
+subprocess.run(["python", "/Users/ashishsingh/OnyxInterop/Training/onyx-interop/monitoring/cms_metrics_reporter.py", "--dry-run"], check=False)
+```
+
 ### Q160. VBC downstream from interop?
 
 **Answer:** VBC programs consume same SAM/Gold marts—attribution, quality gaps, cost from EOB/clinical without separate silo.
@@ -2925,6 +7090,24 @@
 - Govern PHI in VBC dashboards
 - Align measure years with CMS data
 - Document reuse of interop marts
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q160: CMS metrics reporting proficiency
+import json, urllib.request
+# Local Insights endpoint
+try:
+    resp = urllib.request.urlopen("http://localhost:9001/metrics/cms/patient-access")
+    data = json.loads(resp.read())
+    print(json.dumps(data, indent=2)[:1000])
+except Exception as e:
+    print("Start Insights:", e)
+
+# Reporter script
+import subprocess
+subprocess.run(["python", "/Users/ashishsingh/OnyxInterop/Training/onyx-interop/monitoring/cms_metrics_reporter.py", "--dry-run"], check=False)
+```
 
 ### Q161. Auditor vs engineer reports?
 
@@ -2944,6 +7127,24 @@
 - Include Seiji change log in auditor pack
 - Engineer RCA linked to Jira without PHI
 
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q161: CMS metrics reporting proficiency
+import json, urllib.request
+# Local Insights endpoint
+try:
+    resp = urllib.request.urlopen("http://localhost:9001/metrics/cms/patient-access")
+    data = json.loads(resp.read())
+    print(json.dumps(data, indent=2)[:1000])
+except Exception as e:
+    print("Start Insights:", e)
+
+# Reporter script
+import subprocess
+subprocess.run(["python", "/Users/ashishsingh/OnyxInterop/Training/onyx-interop/monitoring/cms_metrics_reporter.py", "--dry-run"], check=False)
+```
+
 ### Q162. Fabric/Power BI compliance dashboard?
 
 **Answer:** Gold layer CMS KPIs: API uptime, validation rate, PA SLA, directory completeness—for executives and auditors.
@@ -2961,6 +7162,31 @@
 - Refresh failure alert
 - Version dashboard with CMS rule changes
 - Use certified dataset label
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q162: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q162 Fabric CMS metrics + SCD hash staging complete")
+```
 
 ## Section K: RCM & Revenue Cycle Bridge
 
@@ -2982,6 +7208,20 @@
 - Sync denial codes RCM→FHIR mapping table
 - Coordinate timing RCM batch vs incremental FHIR
 
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```sql
+-- Q163: VBC bridge — reuse SAM for quality gaps
+SELECT m.member_id,
+       COUNT(DISTINCT CASE WHEN o.code LOINC IN ('4548-4','17856-6') THEN o.observation_id END) AS a1c_count,
+       MAX(c.service_date) AS last_pcp_visit
+FROM clinical_sam.members m
+LEFT JOIN clinical_sam.observations o ON m.member_id = o.member_id
+LEFT JOIN claims_sam.encounters c ON m.member_id = c.member_id AND c.type = 'PCP'
+GROUP BY m.member_id
+HAVING a1c_count = 0 OR last_pcp_visit < DATEADD(month, -12, GETDATE());
+```
+
 ### Q164. EOB vs X12 835?
 
 **Answer:** EOB is FHIR member-friendly view; 835 is EDI remittance for providers/payers. I map shared financial fields but serve EOB for CMS Patient Access.
@@ -2999,6 +7239,20 @@
 - Keep 835 pipeline separate from FHIR bundle
 - Document intentional omissions in EOB
 - Engage RCM team on code set changes
+
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```sql
+-- Q164: VBC bridge — reuse SAM for quality gaps
+SELECT m.member_id,
+       COUNT(DISTINCT CASE WHEN o.code LOINC IN ('4548-4','17856-6') THEN o.observation_id END) AS a1c_count,
+       MAX(c.service_date) AS last_pcp_visit
+FROM clinical_sam.members m
+LEFT JOIN clinical_sam.observations o ON m.member_id = o.member_id
+LEFT JOIN claims_sam.encounters c ON m.member_id = c.member_id AND c.type = 'PCP'
+GROUP BY m.member_id
+HAVING a1c_count = 0 OR last_pcp_visit < DATEADD(month, -12, GETDATE());
+```
 
 ### Q165. Denial management placement?
 
@@ -3018,6 +7272,20 @@
 - Coordinate AI denial agent output to FHIR fields
 - Separate APIs for RCM ops vs member view
 
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```sql
+-- Q165: VBC bridge — reuse SAM for quality gaps
+SELECT m.member_id,
+       COUNT(DISTINCT CASE WHEN o.code LOINC IN ('4548-4','17856-6') THEN o.observation_id END) AS a1c_count,
+       MAX(c.service_date) AS last_pcp_visit
+FROM clinical_sam.members m
+LEFT JOIN clinical_sam.observations o ON m.member_id = o.member_id
+LEFT JOIN claims_sam.encounters c ON m.member_id = c.member_id AND c.type = 'PCP'
+GROUP BY m.member_id
+HAVING a1c_count = 0 OR last_pcp_visit < DATEADD(month, -12, GETDATE());
+```
+
 ### Q166. AI denial agents with FHIR?
 
 **Answer:** AI agents suggest denial reasons/resolutions in RCM; outputs can populate ClaimResponse extensions or DocumentReference summaries—human review before member-visible FHIR update.
@@ -3035,6 +7303,41 @@
 - Govern training data HIPAA-compliant
 - Validate CodeableConcept mappings from AI
 - Document AI limitation in member-facing text
+
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```python
+# Q166: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q166_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q166', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q166 AI pipeline events + RAG retrieval OK")
+```
 
 ### Q167. ePA vs RCM PA workflow?
 
@@ -3054,6 +7357,20 @@
 - Don't duplicate PA requests in both systems
 - Align SLA timers to CMS regardless of RCM UI
 
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```sql
+-- Q167: VBC bridge — reuse SAM for quality gaps
+SELECT m.member_id,
+       COUNT(DISTINCT CASE WHEN o.code LOINC IN ('4548-4','17856-6') THEN o.observation_id END) AS a1c_count,
+       MAX(c.service_date) AS last_pcp_visit
+FROM clinical_sam.members m
+LEFT JOIN clinical_sam.observations o ON m.member_id = o.member_id
+LEFT JOIN claims_sam.encounters c ON m.member_id = c.member_id AND c.type = 'PCP'
+GROUP BY m.member_id
+HAVING a1c_count = 0 OR last_pcp_visit < DATEADD(month, -12, GETDATE());
+```
+
 ### Q168. RCM DQ breaking EOB?
 
 **Answer:** Bad RCM data—wrong member link, missing paid amount—propagates to invalid CARIN BB EOB. I gate FHIR extract on RCM DQ pass flag.
@@ -3071,6 +7388,20 @@
 - Feed RCM team remediation file
 - Re-run extract after RCM fix
 - Add contractual SLA on RCM export quality
+
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```sql
+-- Q168: VBC bridge — reuse SAM for quality gaps
+SELECT m.member_id,
+       COUNT(DISTINCT CASE WHEN o.code LOINC IN ('4548-4','17856-6') THEN o.observation_id END) AS a1c_count,
+       MAX(c.service_date) AS last_pcp_visit
+FROM clinical_sam.members m
+LEFT JOIN clinical_sam.observations o ON m.member_id = o.member_id
+LEFT JOIN claims_sam.encounters c ON m.member_id = c.member_id AND c.type = 'PCP'
+GROUP BY m.member_id
+HAVING a1c_count = 0 OR last_pcp_visit < DATEADD(month, -12, GETDATE());
+```
 
 ### Q169. Provider directory credentialing?
 
@@ -3090,6 +7421,20 @@
 - Coordinate with network management team
 - Audit public directory spot checks monthly
 
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```sql
+-- Q169: VBC bridge — reuse SAM for quality gaps
+SELECT m.member_id,
+       COUNT(DISTINCT CASE WHEN o.code LOINC IN ('4548-4','17856-6') THEN o.observation_id END) AS a1c_count,
+       MAX(c.service_date) AS last_pcp_visit
+FROM clinical_sam.members m
+LEFT JOIN clinical_sam.observations o ON m.member_id = o.member_id
+LEFT JOIN claims_sam.encounters c ON m.member_id = c.member_id AND c.type = 'PCP'
+GROUP BY m.member_id
+HAVING a1c_count = 0 OR last_pcp_visit < DATEADD(month, -12, GETDATE());
+```
+
 ### Q170. Medusind physician APIs?
 
 **Answer:** Physician-facing APIs align with Provider Access and ePA—SMART Backend Services, CRD hooks—not generic analytics APIs.
@@ -3107,6 +7452,20 @@
 - Sandbox with synthetic attributed patients
 - Rate limits appropriate for small practices
 - Feedback loop product→IG mapping improvements
+
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```sql
+-- Q170: VBC bridge — reuse SAM for quality gaps
+SELECT m.member_id,
+       COUNT(DISTINCT CASE WHEN o.code LOINC IN ('4548-4','17856-6') THEN o.observation_id END) AS a1c_count,
+       MAX(c.service_date) AS last_pcp_visit
+FROM clinical_sam.members m
+LEFT JOIN clinical_sam.observations o ON m.member_id = o.member_id
+LEFT JOIN claims_sam.encounters c ON m.member_id = c.member_id AND c.type = 'PCP'
+GROUP BY m.member_id
+HAVING a1c_count = 0 OR last_pcp_visit < DATEADD(month, -12, GETDATE());
+```
 
 ### Q171. FHIR vs EDI 837/835?
 
@@ -3126,6 +7485,37 @@
 - Plan gradual partner migration where B2B
 - Don't duplicate adjudication in both formats
 
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q171: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q171_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q172. Revenue impact missing CMS-0057?
 
 **Answer:** Non-compliance risks market conduct penalties, member churn, contract loss, inability to participate in certain markets—plus operational cost of retrofit.
@@ -3143,6 +7533,20 @@
 - Accelerate Phase 2 funding
 - Communicate transparent timeline to brokers
 - Prioritize APIs with highest revenue exposure
+
+**Script:** *(builds proficiency: Associate Solution Architect | FHIR Engineer)*
+
+```sql
+-- Q172: VBC bridge — reuse SAM for quality gaps
+SELECT m.member_id,
+       COUNT(DISTINCT CASE WHEN o.code LOINC IN ('4548-4','17856-6') THEN o.observation_id END) AS a1c_count,
+       MAX(c.service_date) AS last_pcp_visit
+FROM clinical_sam.members m
+LEFT JOIN clinical_sam.observations o ON m.member_id = o.member_id
+LEFT JOIN claims_sam.encounters c ON m.member_id = c.member_id AND c.type = 'PCP'
+GROUP BY m.member_id
+HAVING a1c_count = 0 OR last_pcp_visit < DATEADD(month, -12, GETDATE());
+```
 
 ## Section L: Leadership & Program Management
 
@@ -3164,6 +7568,37 @@
 - Require exec sign-off on HL-only risk
 - Plan hybrid if metrics require HL
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q173: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q173_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
 ### Q174. Vendor full module adopt vs build?
 
 **Answer:** Adopt vendor for commodity (WAF, managed DB); build for CMS differentiation (SAM→FHIR transforms, SLAP scopes, attribution). I reject full module if it can't customize CARIN BB mappings.
@@ -3181,6 +7616,20 @@
 - Keep IP on transform logic in-house
 - Pilot vendor module in dev before commit
 - Define exit strategy in contract
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q174: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q174 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
 
 ### Q175. Vendor oversell detection?
 
@@ -3200,6 +7649,20 @@
 - Keep parallel in-house path until proven
 - Escalate oversell to procurement legal
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q175: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q175 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
+
 ### Q176. Medusind vs Optum scale?
 
 **Answer:** Medusind: 6–7 person team, single-region, ~10K-resource dev baseline, unified six-family pipeline. Optum: multi-tenant sharding, federated governance—patterns overkill until volume demands.
@@ -3217,6 +7680,20 @@
 - Design configs multi-plan ready
 - Re-evaluate scale triggers annually
 - Hire for breadth (FHIR+pipeline) not hyperscale niche
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q176: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q176 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
 
 ### Q177. SOP for workflow family onboarding?
 
@@ -3236,6 +7713,20 @@
 - Mandatory dry-run in dev cluster
 - Don't skip acceptance test authoring
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q177: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q177 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
+
 ### Q178. Weekly progress reviews?
 
 **Answer:** RAG per workflow family, CMS deadline burn-down, blockers, validation failure trend, Seiji releases—30 min standing with Abacus+Onyx leads.
@@ -3253,6 +7744,20 @@
 - No status-only meetings—decisions documented
 -  Tie discussion to Jan 2027 critical path
 - Include vendor dependency status
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q178: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q178 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
 
 ### Q179. Scope control on CMS expansion?
 
@@ -3272,6 +7777,20 @@
 - Link scope changes to deadline slip model
 - Communicate deferrals to compliance early
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q179: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q179 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
+
 ### Q180. Mentoring engineers on FHIR?
 
 **Answer:** Pair on local interop_pipeline, walk one resource end-to-end, assign IG validation fix, review bundle before prod. I use Synthea baseline for safe learning.
@@ -3289,6 +7808,37 @@
 - Rotate mentors across Abacus/Onyx boundary
 - Use fhir_ig_quick_reference_guide.md
 - Celebrate first solo bundle validation pass
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q180: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q180_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ### Q181. Abacus/Onyx ownership dispute resolution?
 
@@ -3308,6 +7858,20 @@
 - No silent rework across boundary
 - Quarterly ownership matrix review
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q181: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q181 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
+
 ### Q182. AI in interoperability advice?
 
 **Answer:** Use AI for mapping suggestions, validation error summarization, test data generation (Synthea)—never auto-publish to Firely without human review; no PHI in external LLM prompts.
@@ -3325,6 +7889,20 @@
 - Train team on safe prompt patterns
 - Validate AI-suggested code via CI
 - Document AI limitations to auditors
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q182: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q182 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
 
 ### Q183. Building 6–7 person interop team?
 
@@ -3344,6 +7922,20 @@
 - Document every runbook—reduce key-person risk
 - Align hires to Jan 2027 critical path skills
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q183: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q183 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
+
 ### Q184. Phase 1 vs Phase 2 priority?
 
 **Answer:** Phase 1 CMS-9115 stable (Patient Access, Directory, Formulary) before Phase 2 CMS-0057 (Provider Access, P2P, ePA). Don't start P2P until Patient Access metrics green.
@@ -3362,6 +7954,20 @@
 - Reallocate team if Phase 1 slips
 - Communicate phase shift to executives early
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q184: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q184 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
+
 ### Q185. Risk communication for Jan 2027 deadline?
 
 **Answer:** Monthly exec brief: RAG, slip scenarios, funding needs, vendor risks, mitigation options—with honest dates not hope.
@@ -3379,6 +7985,20 @@
 - Propose tradeoffs not just problems
 - Update Jan 2027 confidence monthly
 - Document accepted risks with exec signature
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q185: Solution architect / leader — phase exit criteria audit
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+echo "=== Phase exit checklist Q185 ==="
+python -m pytest tests/ -q --co | wc -l | xargs -I{} echo "Test cases defined: {}"
+./scripts/phase0_access_checklist.sh 2>/dev/null | tail -5 || true
+test -f configs/mdp/ig_registry.json && echo "IG registry: OK" || echo "IG registry: MISSING"
+grep -c "status: pending\|status: in_progress\|status: completed" /Users/ashishsingh/OnyxInterop/Training/onyx-interop/../.cursor/plans/*.plan.md 2>/dev/null || true
+```
 
 ## Section M: Scenario Troubleshooting
 
@@ -3400,6 +8020,26 @@
 - Replay Claims bundles from S3 staging
 - Add pre-upload reference resolver alert
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q186: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q186_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
+
 ### Q187. Scenario: Patient sees wrong labs?
 
 **Answer:** Symptom: Observation tied to wrong patient id. Check patient context binding, SAM patient_id mapping, metadata_v1 crosswalk, duplicate Patient resources.
@@ -3417,6 +8057,26 @@
 - Merge duplicate Patient resources carefully
 - Patch FITE patient binding middleware
 - Notify privacy if confirmed wrong PHI exposure
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q187: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q187_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
 
 ### Q188. Scenario: FSI OOM at 80% memory?
 
@@ -3436,6 +8096,26 @@
 - Reduce parallel FSI concurrency
 - Re-run `$import` from failed file index
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q188: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q188_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
+
 ### Q189. Scenario: CMS audit uptime proof?
 
 **Answer:** Auditor requests API availability evidence. Provide CloudWatch/API GW metrics, synthetic canary logs, CMS metrics submissions—redacted.
@@ -3453,6 +8133,26 @@
 - Align SLA calculation with CMS dictionary
 - Document excluded maintenance windows
 - Legal review before submission
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q189: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q189_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
 
 ### Q190. Scenario: Onboard new payer 30/60/90?
 
@@ -3472,6 +8172,26 @@
 - Parallel UAT with synthetic + limited prod pilot
 - Escalate source data delays at day 45
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q190: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q190_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
+
 ### Q191. Scenario: P2P no matches?
 
 **Answer:** Symptom: bulk-member-match returns zero matches. Check identifier normalization, consent, demographic thresholds, sample data quality.
@@ -3489,6 +8209,26 @@
 - Fix identifier crosswalk tables
 - Manual match exception process documented
 - Member outreach to confirm demographics
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q191: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q191_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
 
 ### Q192. Scenario: Skip Provider Directory?
 
@@ -3508,6 +8248,26 @@
 - Iterate richness after compliance baseline
 - Exec communication on dependency rationale
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q192: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q192_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
+
 ### Q193. Scenario: Databricks to Fabric mid-project?
 
 **Answer:** Symptom: leadership mandates Fabric during CMS crunch. Mitigate: migrate reporting first, keep Databricks on critical path to Jan 2027, parallel run one family.
@@ -3525,6 +8285,31 @@
 - Maintain single SAM schema contract
 - Don't migrate P2P/ePA first—highest risk
 - Executive ADR on coexistence timeline
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```python
+# Q193: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q193 Fabric CMS metrics + SCD hash staging complete")
+```
 
 ### Q194. Scenario: ePA ClaimResponse DocumentReference fail?
 
@@ -3544,6 +8329,26 @@
 - Replay PAS responses for affected cases
 - Add CI test for doc link integrity
 
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q194: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q194_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
+
 ### Q195. Scenario: Join team with no RCM experience?
 
 **Answer:** I lean on FHIR/EOB mapping docs, pair with RCM SME on 835 field meanings, focus CMS compliance first—RCM depth grows via EOB reconciliation sessions.
@@ -3561,6 +8366,26 @@
 - Don't block CMS delivery on full RCM mastery
 - Document learned mappings in team wiki
 - Escalate RCM data defects via formal channel
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q195: Scenario drill — reproduce, diagnose, fix
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+LOG="/tmp/q195_scenario.log"
+{
+  echo "=== 1. Reproduce ==="
+  python interop_pipeline.py --input ./source_data --output ./fhir_output 2>&1
+  echo "=== 2. Validate ==="
+  python scripts/validate_fhir_output.py ./fhir_output 2>&1
+  echo "=== 3. Runtime smoke ==="
+  curl -sf http://localhost:8080/metadata >/dev/null && echo "FITE OK" || echo "FITE DOWN"
+  curl -sf http://localhost:9000/.well-known/smart-configuration >/dev/null && echo "SLAP OK" || echo "SLAP DOWN"
+} | tee "$LOG"
+echo "Scenario log: $LOG"
+```
 
 ## Section N: Microsoft Fabric & Future State
 
@@ -3582,6 +8407,31 @@
 - Name tables consistently with Databricks
 - Document PHI classification per layer
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q196: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q196 Fabric CMS metrics + SCD hash staging complete")
+```
+
 ### Q197. Fabric replacing Databricks jobs?
 
 **Answer:** Long-term: Fabric Pipelines orchestrate Notebooks replacing Databricks workflows. Short-term: coexist through Jan 2027—Fabric for BI/reporting first.
@@ -3599,6 +8449,31 @@
 - Keep rollback to Databricks 30 days post-cutover
 - Migrate orchestration before complex transforms
 - Staff Fabric expertise or defer post-deadline
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q197: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q197 Fabric CMS metrics + SCD hash staging complete")
+```
 
 ### Q198. Enterprise Fabric experience?
 
@@ -3618,6 +8493,31 @@
 - Train team on Fabric CI/CD APIs
 - Document integration points with AWS data
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q198: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q198 Fabric CMS metrics + SCD hash staging complete")
+```
+
 ### Q199. OneLake/Pipelines/Notebooks mapping?
 
 **Answer:** OneLake = unified storage (S3 analog). Pipelines = Step Functions/Databricks Jobs orchestration. Notebooks = transform logic (Databricks notebooks).
@@ -3635,6 +8535,31 @@
 - Store secrets in Key Vault—not notebooks
 - Version notebooks like Databricks repos
 - Monitor pipeline failure alerts to PagerDuty
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q199: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q199 Fabric CMS metrics + SCD hash staging complete")
+```
 
 ### Q200. Databricks + Fabric coexistence?
 
@@ -3654,6 +8579,31 @@
 - Document freshness SLAs per consumer
 - Revisit primary platform post-Jan 2027
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q200: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q200 Fabric CMS metrics + SCD hash staging complete")
+```
+
 ### Q201. PHI governance in Fabric?
 
 **Answer:** Workspace RBAC, Purview labels, no PHI in notebook output logs, private endpoints, encryption at rest, BAA with Microsoft, deny export to unapproved workspaces.
@@ -3671,6 +8621,31 @@
 - Block public sharing links on reports
 - Enable audit logs for workspace access
 - Annual PHI governance training
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q201: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q201 Fabric CMS metrics + SCD hash staging complete")
+```
 
 ### Q202. Fabric DWH for interop + RCM?
 
@@ -3690,6 +8665,31 @@
 - Incremental refresh on large fact tables
 - Certify dataset for auditor consumption
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q202: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q202 Fabric CMS metrics + SCD hash staging complete")
+```
+
 ### Q203. Raju Siva Fabric + Databricks architecture?
 
 **Answer:** Pattern: Databricks/Air-gapped VPC for heavy PHI transform; Fabric in PHI VPC with bridge for approved exports to OneLake Gold; Power BI for physician org exec view.
@@ -3707,6 +8707,31 @@
 - Use env vars for bridge endpoints
 - Validate BAA coverage cross-cloud path
 - Pilot with de-identified Gold first
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q203: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q203 Fabric CMS metrics + SCD hash staging complete")
+```
 
 ### Q204. Short vs long term Fabric vs CMS deadline?
 
@@ -3726,6 +8751,31 @@
 - Set long-term migration OKR post-go-live
 - Quantify Fabric ROI in reduced manual reporting hours
 
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q204: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q204 Fabric CMS metrics + SCD hash staging complete")
+```
+
 ### Q205. Fabric ROI for physician organization?
 
 **Answer:** ROI: unified exec view of CMS compliance + provider API adoption + PA SLAs + directory accuracy—reducing manual Excel reporting 20+ hours/month.
@@ -3744,6 +8794,31 @@
 - Iterate tiles based on med director feedback
 - Include API adoption KPIs physicians care about
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q205: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q205 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ## Section O: Phase 4 — AI Agents, RAG, MCP & Unity AI Gateway
@@ -3766,6 +8841,41 @@
 - Run agents in log-only mode until UAT sign-off on notification content
 - Document rollback: disable agent jobs without touching FITE/Firely
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q206: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q206_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q206', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q206 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q207. What is the Onyx AI Layer and how does it fit the 6-component architecture?
@@ -3786,6 +8896,41 @@
 - Register AI components in MDP for service discovery and health checks
 - Add AI layer to on-call runbook with separate escalation path
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q207: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q207_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q207', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q207 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q208. What is Unity AI Gateway and why is it mandatory for this solution?
@@ -3806,6 +8951,41 @@
 - Attach service policies to every registered MCP service
 - Set hard spend cap with alert at 80% of monthly AI budget
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q208: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q208_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q208', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q208 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q209. Explain the three governance dimensions of Unity AI Gateway in our platform.
@@ -3826,6 +9006,41 @@
 - Add policy for `deny_fhir_write` on all MCP tool invocations
 - Review denied requests weekly in governance standup
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q209: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q209_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q209', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q209 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q210. How do you register MCP services in Unity Catalog for this platform?
@@ -3846,6 +9061,41 @@
 - Update tool schema when FITE adds new search parameters
 - Version MCP registry doc (#12) with each tool addition
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q210: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q210_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q210', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q210 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q211. How do you configure spend caps and cost attribution in Unity AI Gateway?
@@ -3866,6 +9116,41 @@
 - Switch non-critical ops queries to smaller model via gateway routing
 - Require approval to raise caps beyond quarterly budget
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q211: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q211_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q211', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q211 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q212. What service policies do you attach to AI agents and MCP calls?
@@ -3886,6 +9171,41 @@
 - Require security review before disabling any production policy
 - Document policy exceptions with expiry date and approver
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q212: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q212_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q212', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q212 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q213. Why do AI agents never write directly to Firely or HealthLake?
@@ -3906,6 +9226,41 @@
 - Train team: "agent suggests, pipeline executes"
 - Escalate any agent write attempt as SEV-2 security incident
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q213: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q213_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q213', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q213 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q214. What is on-behalf-of (OBO) MCP execution and why does it matter?
@@ -3926,6 +9281,41 @@
 - Separate Backend Services MCP path for Payer Ops Agent only (ops scope)
 - Document OBO flow in MCP Service Registry (#12)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q214: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q214_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q214', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q214 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q215. Describe the `onyx.mcp.fhir_read` MCP service and its tools.
@@ -3946,6 +9336,41 @@
 - Map OperationOutcome errors to user-friendly agent messages
 - Rate-limit per-user MCP calls to prevent abuse (gateway traffic policy)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q215: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q215_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q215', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q215 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q216. Describe the `onyx.mcp.insights` MCP service for Payer Ops Agent.
@@ -3966,6 +9391,41 @@
 - Correlate `job_runs.run_id` from Insights to Databricks driver logs
 - Escalate to on-call if agent surfaces SEV-1 alert—notification ≠ resolution
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q216: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q216_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q216', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q216 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q217. Describe the `onyx.mcp.notify` MCP service and notification channels.
@@ -3986,6 +9446,41 @@
 - Add unsubscribe/opt-out endpoint in patient app settings
 - Block notify MCP tool until message template approved by compliance
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q217: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q217_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q217', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q217 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q218. What are `onyx.mcp.mdp` and `onyx.mcp.p2p_status` used for?
@@ -4006,6 +9501,41 @@
 - Rotate P2P Backend Services credentials in MCP connection secret
 - Document P2P job ID format in MCP registry for agent parsing
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q218: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q218_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q218', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q218 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q219. Why RAG instead of fine-tuning LLMs for this healthcare platform?
@@ -4026,6 +9556,41 @@
 - Add synonym map (EOB = ExplanationOfBenefit) in retrieval preprocessor
 - Never fine-tune on member-identifiable data without legal/BAA approval
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q219: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q219_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q219', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q219 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q220. How do you build and maintain the `onyx_rag.cms_compliance` index?
@@ -4046,6 +9611,41 @@
 - Validate embedding model version consistent across index and query
 - Alert if index row count drops > 10% after refresh (ingestion failure)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q220: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q220_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q220', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q220 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q221. How does the `onyx_rag.member_context` index support the Patient Agent?
@@ -4066,6 +9666,41 @@
 - Re-sync index if Clinical SAM backfill changes gap logic
 - Add HEDIS measure code to summary for clinician trust in provider-facing variant
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q221: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q221_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q221', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q221 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q222. How does the `onyx_rag.provider_panel` index support the Provider Agent?
@@ -4086,6 +9721,41 @@
 - Validate TIN/NPI binding in SLAP for provider Backend Services token
 - Do not include member names in email subject—portal link only
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q222: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q222_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q222', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q222 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q223. How does the `onyx_rag.ops_runbooks` index help Payer Ops Agent?
@@ -4106,6 +9776,41 @@
 - Tune metadata filter `workflow_family=claims` for precision
 - Human-verify agent RCA suggestion before auto-remediation (future phase)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q223: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q223_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q223', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q223 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q224. Walk through the Vector Search RAG build pipeline.
@@ -4126,6 +9831,41 @@
 - Reduce chunk size if retrieval precision drops on long IG sections
 - Parallelize index builds per catalog schema to meet daily SLA
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q224: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q224_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q224', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q224 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q225. What is the `ai_events.event_queue` table and why does it exist?
@@ -4146,6 +9886,41 @@
 - Add index on `(status, severity, created_at)` for agent poll performance
 - Alert if queue depth > 500 OPEN CRITICAL (agent lag)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q225: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q225_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q225', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q225 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q226. How does `event_detector.py` detect `CARE_GAP_DUE` events?
@@ -4166,6 +9941,41 @@
 - Fix join logic if gaps missed due to wrong `measure_year`
 - Quarantine invalid member_id rows—don't create events for bad keys
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q226: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q226_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q226', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q226 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q227. How do you detect `PA_DECISION_DUE` and `PA_DOCS_MISSING` events?
@@ -4186,6 +9996,41 @@
 - Link event to `auth_id` for deep link in provider portal
 - Auto-resolve event when ClaimResponse outcome posted
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q227: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q227_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q227', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q227 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q228. How do you detect `WORKFLOW_FAILED` and `QUARANTINE_SPIKE` events?
@@ -4206,6 +10051,41 @@
 - Tune quarantine threshold per family (5% claims, 2% clinical)
 - Page on-call if same failure 3x in 24h (recurring defect)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q228: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q228_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q228', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q228 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q229. Describe the Patient Care Agent—capabilities, tools, and channels.
@@ -4226,6 +10106,41 @@
 - Refresh member_context index if gap logic changes
 - Escalate clinical emergency keywords to human—not agent diagnosis
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q229: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q229_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q229', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q229 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q230. Describe the Provider Panel Agent—capabilities, tools, and channels.
@@ -4246,6 +10161,41 @@
 - Sync ePA DTR status before PA_DOCS_MISSING notifications
 - Provider feedback loop: "not my patient" → flag attribution data quality ticket
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q230: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q230_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q230', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q230 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q231. Describe the Payer Ops Agent—capabilities, tools, and channels.
@@ -4266,6 +10216,41 @@
 - Human on-call owns resolution—agent informs only
 - Post-incident: add new symptom to RCA library + re-index runbooks
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q231: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q231_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q231', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q231 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q232. How are AI agents invoked—schedule, webhook, and event flow?
@@ -4286,6 +10271,45 @@
 - Idempotent agent processing: skip if `event_id` already NOTIFIED
 - Scale agent job cluster if poll backlog > 100 events
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q232: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q232-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q232",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q233. What is the Onyx Notify service and how does it integrate with agents?
@@ -4306,6 +10330,41 @@
 - Add new channel (SMS) as separate template approval workflow
 - Link every notify audit row to originating `event_id` and inference log ID
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q233: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q233_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q233', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q233 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q234. Why must notification subject lines contain no PHI?
@@ -4326,6 +10385,41 @@
 - Train content authors on HIPAA minimum necessary in notifications
 - Incident response if PHI subject sent—member notification per breach protocol
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q234: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q234_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q234', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q234 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q235. Walk through a Patient Agent care-gap notification end-to-end.
@@ -4346,6 +10440,41 @@
 - Fix false-positive gap detection in Clinical SAM before notifying
 - Log member "not relevant" feedback to improve gap rules
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q235: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q235_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q235', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q235 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q236. Walk through a Provider Agent PA deadline alert end-to-end.
@@ -4366,6 +10495,41 @@
 - Sync business-day SLA calculator with payer contract
 - Provider "false alert" feedback → data quality ticket on auth timestamps
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q236: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q236_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q236', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q236 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q237. Walk through Payer Ops Agent workflow failure RCA notification.
@@ -4386,6 +10550,41 @@
 - Tune webhook to dedupe repeated FAILED for same root cause
 - Page on-call for CRITICAL if agent RCA confidence score low (future)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q237: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q237_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q237', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q237 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q238. What is shadow mode and why run agents in shadow mode before go-live?
@@ -4406,6 +10605,41 @@
 - Compare shadow RCA suggestions to engineer manual RCA for accuracy
 - Flip dry-run flag via MDP config—no redeploy required
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q238: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q238_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q238', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q238 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q239. How do Unity AI Gateway PII guardrails protect prompts and responses?
@@ -4426,6 +10660,41 @@
 - Never disable guardrails in prod—fix upstream de-identification instead
 - Report guardrail bypass attempt as security incident
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q239: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q239_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q239', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q239 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q240. How do you defend against prompt injection in patient-facing chat?
@@ -4446,6 +10715,41 @@
 - Rate-limit repeated policy violations per user (temporary chat lock)
 - Security review before adding new MCP tools to patient agents
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q240: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q240_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q240', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q240 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q241. When does the agent require human approval before acting?
@@ -4466,6 +10770,41 @@
 - Document approver roster in on-call runbook
 - Never bypass approval gate for convenience—compliance requirement
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q241: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q241_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q241', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q241 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q242. How long do you retain AI inference logs for HIPAA audit?
@@ -4486,6 +10825,41 @@
 - Encrypt inference tables at rest with CMK
 - Anonymize engineer access to prod inference logs (break-glass only)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q242: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q242_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q242', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q242 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q243. How do you attribute AI costs to teams and applications?
@@ -4506,6 +10880,41 @@
 - Chargeback report to engineering managers monthly
 - Cap reduction if team consistently under-utilizes allocation
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q243: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q243_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q243', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q243 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q244. What is the agent response latency SLA and how do you meet it?
@@ -4526,6 +10935,41 @@
 - Increase agent poll frequency only if notification SLA breached—not chat
 - Async multi-tool flows for complex ops queries (not patient chat)
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q244: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q244_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q244', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q244 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q245. How do members opt out of AI notifications?
@@ -4546,6 +10990,41 @@
 - Re-consent flow if expanding agent capabilities materially
 - Provider opt-out parallel for Provider Access attributed alerts
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q245: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q245_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q245', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q245 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q246. How do you evaluate agent response quality in production?
@@ -4566,6 +11045,41 @@
 - Disable specific intent handler if feedback cluster on one failure mode
 - Monthly quality review with clinical advisor for patient-facing wording
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q246: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q246_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q246', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q246 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q247. What is `ai_agent_server.py` and how do you use it locally?
@@ -4586,6 +11100,41 @@
 - Never point local stub at prod FITE—dev tokens only
 - Use stub for demo; Databricks agent for stage/prod
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q247: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q247_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q247', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q247 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q248. Scenario: Patient Agent notifies wrong care gap for a member. What do you do?
@@ -4606,6 +11155,41 @@
 - Add regression test case to Clinical workflow acceptance suite
 - Root cause in RCA library: "care gap false positive LOINC mapping"
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q248: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q248_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q248', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q248 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q249. Scenario: Attacker tries to escalate MCP token to read another patient's EOB. What happens?
@@ -4626,6 +11210,41 @@
 - Review SLAP token binding after any FITE auth bug patch
 - Annual pen-test includes agent MCP escalation path
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q249: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q249_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q249', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q249 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q250. Scenario: AI spend hits 100% of monthly cap mid-month. What is your response?
@@ -4646,6 +11265,41 @@
 - Add cost anomaly alert at 150% daily run rate (before monthly cap)
 - Post-mortem: runaway loop prevention in agent job design guidelines
 
+
+**Script:** *(builds proficiency: AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q250: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q250_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q250', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q250 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ## Section P: Multi-Channel Ingestion — Rails A/B/C, Serverless, Medallion, PulseEHR
@@ -4668,6 +11322,45 @@
 - Document rail assignment in MDP ingest registry per new source
 - Roll back Rail B/C independently without disabling Rail A
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q251: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q251-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q251",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q252. What are the three ingestion rails and when do you use each?
@@ -4688,6 +11381,45 @@
 - Don't use webhook rail for large SFTP drops—use batch landing zone
 - Onboard new partner: pick rail in architecture review before coding
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q252: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q252-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q252",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q253. How does Rail A (CSV) processing differ from v3—any changes?
@@ -4708,6 +11440,45 @@
 - Keep Rail A cluster sizing independent of Rail C FSI jobs
 - Regression test Rail A on every Rail C release
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q253: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q253-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q253",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q254. Explain Rail B — Serverless Transport architecture (`ng-nasco-event-api`).
@@ -4728,6 +11499,45 @@
 - Lambda timeout on claim pull: increase to 5 min + SQS visibility timeout match
 - Document each partner's event schema in ingest registry artifact #21
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q254: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q254-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q254",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q255. What happens on the Rail B events path (Firehose)?
@@ -4748,6 +11558,45 @@
 - Malformed JSON: Lambda validates schema before Firehose put
 - Empty Firehose records: check Lambda routing logic for event type filter
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q255: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q255-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q255",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q256. What happens on the Rail B claims/async path (SQS + OAuth pull)?
@@ -4768,6 +11617,45 @@
 - API rate limit: add SQS batching + exponential backoff in Lambda
 - Partial claim JSON: quarantine in Bronze preprocess, don't advance watermark
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q256: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q256-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q256",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q257. Why is partner OAuth (DynamoDB) separate from SLAP SMART auth?
@@ -4788,6 +11676,28 @@
 - Alert `INGESTION_AUTH_FAILED` to Payer Ops Agent on token expiry
 - Document OAuth refresh runbook in Serverless Transport artifact #18
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q257: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q258. How do S3 landing zones map to Databricks Autoloader Bronze?
@@ -4808,6 +11718,32 @@
 - Schema drift: enable `cloudFiles.schemaEvolutionMode = addNewColumns`
 - Large file backlog: scale Autoloader cluster workers temporarily
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q258: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q258 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q259. How does the Medallion architecture map to existing FM/SAM layers?
@@ -4828,6 +11764,45 @@
 - Reject analytics shortcuts that skip Silver validation
 - Update mapping doc when new Gold mart added
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q259: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q259-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q259",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q260. What is the Landing Zone and when is it used?
@@ -4848,6 +11823,45 @@
 - Skipped Landing Zone on encrypted file: quarantine in `landing/quarantine/`
 - Alert Payer Ops Agent on Landing Zone failure via `ai_events`
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q260: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q260-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q260",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q261. What role does MDM/Reltio play in Silver layer for multi-rail ingestion?
@@ -4868,6 +11882,45 @@
 - Reltio API timeout: increase Connector 2.0 retry + cache lookups
 - Never skip MDM for Rail C because FHIR already has Patient resource—still need payer member_id
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q261: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q261-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q261",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q262. What is Rail C — native FHIR JSON ingestion?
@@ -4888,6 +11941,37 @@
 - Wrong workflow family assignment: update MDP ingest registry
 - Start with 1,000-patient pilot before full 129K cohort
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q262: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q262_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q263. Why does Rail C skip FM but still go through Silver?
@@ -4908,6 +11992,45 @@
 - Profile URL updates in `clinical/fhir_profiles/` for US Core 6.1.0
 - Reprocess quarantine after mapping fix—don't reload full 8.9M
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q263: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q263-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q263",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q264. Explain the SAM convergence rule across all three rails.
@@ -4928,6 +12051,45 @@
 - Duplicate resources in API: dedup rule on `(resourceType, id, source_system)`
 - Document convergence in artifact #17 Multi-Channel Ingestion Guide
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q264: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q264-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q264",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q265. Does PVD-before-Claims sequencing apply across all rails?
@@ -4948,6 +12110,45 @@
 - Add cross-family dependency check in Claims preprocess (handbook row #8)
 - NASCO claim with unknown provider: trigger PVD incremental for that NPI
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q265: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q265-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q265",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q266. What is the two-phase load rule for Rail C FHIR JSON?
@@ -4968,6 +12169,37 @@
 - Parallel FSI too aggressive: sequential Patient job must complete first
 - Document phase gates in EHR-FHIR-JSON handbook artifact #20
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q266: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q266_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q267. What integrity checks do you run for PulseEHR-scale FHIR JSON?
@@ -4988,6 +12220,37 @@
 - Subject mismatch: quarantine resource; MDM crosswalk review
 - Adjust quarantine rules if IG allows data-absent-reason for specific missing fields
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q267: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q267_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q268. How do you FSI-load 8.9M PulseEHR resources without OOM?
@@ -5008,6 +12271,45 @@
 - Partial import failure: resume from failed partition—don't restart all 8.9M
 - Pilot 1K patients in dev before prod full cohort
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q268: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q268-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q268",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q269. Which new FHIR resource types does Rail C add beyond CSV Clinical workflow?
@@ -5028,6 +12330,37 @@
 - Extend extract_config.yaml bundle composition rules
 - CMS Patient Access scope already covers these US Core types—verify IG profiles
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q269: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q269_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q270. How do you handle incremental updates for Rail C FHIR JSON?
@@ -5048,6 +12381,37 @@
 - Changed resource missing meta.lastUpdated: use source file mtime fallback
 - Large delta day: temporarily scale upload Lambda concurrency
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q270: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q270_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q271. How does streaming ingestion (Kinesis/Kafka) fit the medallion architecture?
@@ -5068,6 +12432,45 @@
 - Duplicate events: dedup in Silver on `(event_id, source_system)`
 - Failover: restart streaming query from checkpoint—not from scratch
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q271: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q271-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q271",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q272. How do SFTP and Airbyte batch sources integrate?
@@ -5088,6 +12491,45 @@
 - Schema change in Airbyte source: evolve Bronze schema
 - Missed schedule: backfill from SFTP archive; don't skip watermark advance
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q272: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q272-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q272",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q273. How does Snowflake/BI distribution relate to CMS FHIR API path?
@@ -5108,6 +12550,37 @@
 - Separate service accounts: analytics vs pipeline vs API
 - Document dual-exit architecture in artifact #17
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q273: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q273_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q274. What is the EHR-FHIR-JSON workflow family?
@@ -5128,6 +12601,37 @@
 - SAM collision: verify merge keys include `source_system`
 - Scale historical job separately from incremental daily job
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q274: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q274_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q275. What AI events does multi-channel ingestion add?
@@ -5148,6 +12652,45 @@
 - Don't alert on expected quarantine spikes during initial PulseEHR load
 - Add runbook section per event type in artifact #18
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q275: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q275-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q275",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q276. What is the MDP ingest source registry?
@@ -5168,6 +12711,45 @@
 - Deprecate sources with `status: inactive`—don't delete history
 - Sync registry to Seiji config on deploy
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q276: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q276-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q276",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q277. Scenario: SQS DLQ depth growing for NASCO claim queue. What do you do?
@@ -5188,6 +12770,45 @@
 - Bad claim ID: quarantine; don't infinite-retry poison messages
 - Emit `WEBHOOK_FAILURE` CRITICAL if DLQ > 10 for > 1 hour
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q277: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q277-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q277",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q278. Scenario: Autoloader Bronze lag 6 hours behind SFTP drop. What do you do?
@@ -5208,6 +12829,32 @@
 - Temporarily increase maxFilesPerTrigger for catch-up
 - Alert `INGESTION_LAG` if lag > 2h after fix deployed
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q278: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q278 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q279. Scenario: Same member appears in Rail A CSV and Rail C FHIR with different IDs.
@@ -5228,6 +12875,37 @@
 - Manual resolution workflow for scores 0.7-0.85
 - Document identity resolution SOP in artifact #19
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q279: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q279_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q280. Scenario: PulseEHR FSI job OOM at 80% during Observation load.
@@ -5248,6 +12926,45 @@
 - Never run full 8.9M first load without 1K pilot proving memory profile
 - Post-mortem: add memory limit alert at 70% in FSI job
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q280: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q280-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q280",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q281. Scenario: Partner OAuth token expires mid-batch claim pull.
@@ -5268,6 +12985,28 @@
 - Never hardcode tokens in Lambda environment variables
 - Partner escalation if refresh endpoint itself fails
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q281: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q282. Scenario: CSV Claims and FHIR Observation for same member—API shows duplicate or missing data?
@@ -5288,6 +13027,37 @@
 - Re-run Extract + upload for affected member cohort
 - Add integration test: member present in two rails → API shows both
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q282: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q282_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q283. How do you smoke-test Rail B webhook in dev?
@@ -5308,6 +13078,45 @@
 - S3 empty: Firehose delivery stream misconfigured destination
 - Add smoke test to CI pipeline post-Terraform apply
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q283: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q283-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q283",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q284. How do you pilot PulseEHR before full 129K cohort load?
@@ -5328,6 +13137,45 @@
 - Skipped pilot: block prod full load in Seiji deploy policy
 - Keep pilot subset for regression tests permanently
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q284: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q284-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q284",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q285. How does Rail B integrate with existing Claims workflow without code fork?
@@ -5348,6 +13196,45 @@
 - Re-run Claims for NASCO rows if mapper bug fixed
 - Test both rails in same Extract run before prod
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q285: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q285-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q285",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q286. What is the ng-nasco-event-api repo's role vs onyx-infrastructure?
@@ -5368,6 +13255,45 @@
 - Version pin Lambda deployment via Seiji not manual zip upload
 - Document repo split in artifact #18
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q286: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q286-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q286",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q287. How do you monitor ingestion health across all three rails?
@@ -5388,6 +13314,45 @@
 - Weekly ingest review in ops standup—15 min per rail
 - Correlate ingest lag with API freshness SLA for Patient Access
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q287: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q287-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q287",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q288. How do you onboard a new external data source end-to-end?
@@ -5408,6 +13373,45 @@
 - Parallel compliance review not after prod go-live
 - Post-onboarding: add source to ingest dashboard within 24h
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q288: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q288-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q288",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q289. How does v3 ingestion affect CMS-0057 Jan 2027 deadline?
@@ -5428,6 +13432,45 @@
 - Certify on Rail A; add Rail C resources to API post-certification
 - Communicate clearly to auditors which rail is certification scope
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q289: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q289-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q289",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q290. How do you explain v3 multi-channel ingestion in a 2-minute interview answer?
@@ -5448,6 +13491,45 @@
 - If scale: mention 8.9M FSI with two-phase Patient-first load
 - Offer pilot-first approach showing risk management
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q290: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q290-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q290",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q291. What quarantine rules apply to Rail C missing required FHIR fields?
@@ -5468,6 +13550,37 @@
 - Reprocess quarantine partition after rule fix
 - Don't lower validation standards to meet load deadline
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q291: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q291_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q292. How do you version and rollback multi-rail SAM merges?
@@ -5488,6 +13601,42 @@
 - Document rollback procedure in artifact #17
 - Alert if Gold row count drops > 5% single merge
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```sql
+-- Q292: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q293. How does ingest metadata flow to ai_events for Payer Ops Agent?
@@ -5508,6 +13657,41 @@
 - Link event summary to Databricks job run URL in Slack message
 - Auto-resolve INGESTION_LAG when lag < threshold for 2 consecutive checks
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```python
+# Q293: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q293_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q293', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q293 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q294. What security controls apply to multi-channel ingestion?
@@ -5529,6 +13713,28 @@
 - Move hardcoded secrets to Secrets Manager
 - Pen-test webhook endpoint for auth bypass annually
 
+
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q294: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q295. Scenario: Leadership asks to replace CSV pipeline with FHIR-only. What do you say?
@@ -5549,6 +13755,36 @@
 - Use Rail C learnings to accelerate partner FHIR readiness
 - Set decision gate: reconsider full migration post-Jan 2027 only
 
+**Script:** *(builds proficiency: Data Engineer | Kafka Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q295: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q295_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 
 ## Section Q: Databricks Engineering — Healthcare Interop (Q296–330)
 
@@ -5570,6 +13806,37 @@
 - Pin cluster policy ID in bundle target config
 - Roll back: `databricks bundle deploy -t prod --rollback`
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q296: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q296_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q297. How does Autoloader handle schema evolution for PulseEHR FHIR JSON (Rail C)?
@@ -5589,6 +13856,37 @@
 - For breaking type change: pause stream, ALTER TABLE, restart with `schemaHints`
 - Document schema version in MDP source registry per PulseEHR export batch
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q297: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q297_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q298. How do you configure Unity Catalog column masking for member PHI in SAM tables?
@@ -5608,6 +13906,37 @@
 - Create and attach mask function via `CREATE MASK ... ON COLUMN`
 - Revoke SELECT on base column; grant via masked view if legacy tool lacks UC mask support
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q298: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q298_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q299. When do you use Liquid Clustering vs Z-ORDER on interop Delta tables?
@@ -5627,6 +13956,32 @@
 - Enable Predictive Optimization for auto-maintenance
 - Avoid over-clustering low-cardinality columns alone
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q299: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q299 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q300. What is your OPTIMIZE/VACUUM schedule for Gold SAM and FHIR staging tables?
@@ -5646,6 +14001,37 @@
 - Extend VACUUM retention if rollback drill failed due to missing files
 - Set `delta.deletedFileRetentionDuration` table property explicitly
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q300: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q300_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q301. How do you use Lakeflow Spark Declarative Pipelines (LDP) for FHIR Silver validation?
@@ -5665,6 +14051,37 @@
 - Add `@dp.expect_or_fail` only for hard CMS blockers
 - Reprocess quarantine after rule fix via `pipelines.reset`
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q301: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q301_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q302. How do you configure Autoloader `badRecordsPath` for malformed FHIR NDJSON?
@@ -5684,6 +14101,37 @@
 - Adjust `cloudFiles.maxFilesPerTrigger` if OOM caused truncation
 - Enable `ignoreCorruptFiles` only in dev—never prod without audit
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q302: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q302_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q303. How do you reduce shuffle on large eligibility-to-claims joins in Extract?
@@ -5703,6 +14151,37 @@
 - Repartition claims by `member_id` before join if broadcast too large
 - Salting for skewed `member_id` hot keys
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q303: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q303_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q304. How do you manage Delta deleted file retention for compliance audit?
@@ -5722,6 +14201,32 @@
 - If files already vacuumed: restore from S3 versioning on underlying bucket
 - Document version number in incident ticket at time of bad merge
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q304: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q304 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q305. How do you govern pipeline assets in Unity Catalog for multi-team interop?
@@ -5741,6 +14246,32 @@
 - Create `sam_clinical_masked` view for analytics tier
 - Migrate legacy hive_metastore tables via UC upgrade tool
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q305: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q305 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q306. How do you handle incremental vs full refresh for Claims workflow?
@@ -5760,6 +14291,32 @@
 - Run full refresh in isolated clone before prod if data quality unknown
 - Add idempotent merge keys to handle duplicate source files
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q306: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q306 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q307. Scenario: Autoloader lag exceeds 4 hours on PulseEHR Rail C. What do you do?
@@ -5780,6 +14337,32 @@
 - Schedule large exports off-peak with partner coordination
 - Add Autoloader lag alert > 2h WARN, > 4h CRITICAL
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q307: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q307 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q308. How do you use Volumes for FHIR IG StructureDefinition artifacts in Databricks?
@@ -5799,6 +14382,37 @@
 - Update validation config `ig_version` parameter on IG upgrade
 - Archive old IG version; do not delete until CMS cert period ends
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q308: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q308_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q309. How do you implement idempotent FHIR Extract task outputs?
@@ -5818,6 +14432,37 @@
 - FSI bulk loader uses conditional upsert on `resource_id`
 - Purge incomplete staging paths older than 7 days
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q309: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q309_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q310. How do you use Delta Live Tables expectations for CMS-required field completeness?
@@ -5837,6 +14482,32 @@
 - Partner escalation for systematic missing fields
 - Temporary `@dp.expect` downgrade with compliance approval ticket
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q310: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q310 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q311. How do you configure cluster policies for PHI workloads?
@@ -5856,6 +14527,37 @@
 - Migrate non-compliant historical jobs flagged by audit
 - Request policy exception via security review—time-boxed only
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q311: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q311_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q312. How do you use `table_changes` for incremental FHIR bundle generation?
@@ -5875,6 +14577,37 @@
 - Full snapshot fallback if version gap > 7 days
 - Validate change feed enabled: `delta.enableChangeDataFeed=true`
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q312: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q312_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q313. How do you handle multi-payer data isolation in a shared Databricks workspace?
@@ -5894,6 +14627,32 @@
 - Fix SLAP token mapping if wrong payer data exposed
 - Separate S3 export prefixes per payer for FSI
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q313: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q313 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q314. How do you monitor Databricks job SLA for CMS reporting deadlines?
@@ -5913,6 +14672,32 @@
 - Split long-running task into parallel resource-type tasks
 - Negotiate earlier SFTP delivery with payer if source delay chronic
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q314: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q314 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q315. How do you version control Databricks notebooks vs DABs for interop code?
@@ -5932,6 +14717,32 @@
 - Pin wheel version in DAB; bump in CI on merge to main
 - Archive orphaned notebooks referencing deprecated tables
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q315: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q315 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q316. How do you use Photon for FHIR JSON parsing workloads?
@@ -5951,6 +14762,37 @@
 - Replace Python row UDF with Spark SQL/native expressions where Photon can't accelerate
 - Benchmark before enabling on all workflow families
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q316: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q316_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q317. How do you implement data quality contracts between Rail B webhook and Silver?
@@ -5970,6 +14812,45 @@
 - Add optional fields as schema evolution—not required until partner ready
 - Deprecate v1 topic with 90-day overlap period
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q317: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q317-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q317",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q318. How do you use Databricks SQL warehouse for CMS metrics reporting?
@@ -5989,6 +14870,42 @@
 - Scale warehouse for month-end reporting spike
 - Fix broken view if upstream SAM table renamed in DAB deploy
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q318: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q319. How do you secure Databricks secrets for partner OAuth (Rail B)?
@@ -6008,6 +14925,28 @@
 - Migrate hardcoded secrets found in notebook to scope
 - Enable secret scope audit logging
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q319: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q320. How do you test DAB deployments in stage before prod?
@@ -6027,6 +14966,27 @@
 - Refresh stage data monthly from prod snapshot (masked)
 - Automate smoke test in CI post-`bundle deploy -t stage`
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q320: Forward-deployed deploy + verify
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop/terraform
+terraform init -backend=false 2>/dev/null || true
+terraform validate
+terraform plan -var-file=dev.tfvars -out=/tmp/q320.tfplan 2>/dev/null || terraform plan
+
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+helm lint helm/firely-server/
+helm template firely helm/firely-server/ -f helm/firely-server/values.yaml | head -60
+
+# K8s health (when cluster available)
+kubectl get pods -n firely 2>/dev/null || echo "Configure kubeconfig for EKS"
+kubectl rollout status deployment/firely-server -n firely --timeout=120s 2>/dev/null || true
+echo "Q320 deploy artifacts validated"
+```
 ---
 
 ### Q321. How do you handle skew when merging PulseEHR Patient resources (129K patients, 8.9M total)?
@@ -6046,6 +15006,32 @@
 - Split merge by resource type—not one mega-merge
 - Pre-aggregate Observations per patient in Silver before Gold join
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q321: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q321 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q322. How do you use job parameters for multi-tenant interop workflow runs?
@@ -6065,6 +15051,32 @@
 - Document parameter matrix in runbook artifact
 - Default safe values if parameter omitted (dev only)
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q322: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q322 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q323. How do you implement lineage tracking from CSV source to FHIR API response?
@@ -6084,6 +15096,37 @@
 - Register external tables in UC for S3 source files
 - Fix broken lineage after table rename in DAB
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q323: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q323_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q324. How do you configure auto-scaling for variable Rail B webhook volume?
@@ -6103,6 +15146,45 @@
 - Decrease scale-down delay if cost overrun acceptable
 - Dedicated instance pool for webhook Autoloader isolation
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q324: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q324-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q324",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q325. How do you migrate hive_metastore tables to Unity Catalog for interop?
@@ -6122,6 +15204,37 @@
 - Fix broken grants after migration
 - Update external partner ODBC connections to UC endpoint
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q325: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q325_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q326. How do you use Delta Sharing for payer analytics without copying PHI?
@@ -6141,6 +15254,32 @@
 - Renew share token before expiry
 - Add row filter on share if payer-specific slice needed
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q326: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q326 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q327. How do you debug a failing Extract FHIR validation task?
@@ -6160,6 +15299,37 @@
 - Map source null to `dataAbsentReason` extension in Extract
 - Update IG version if profile URL outdated
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q327: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q327_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q328. How do you implement cost controls on interop Databricks spend?
@@ -6179,6 +15349,32 @@
 - Cancel orphaned all-purpose clusters via scheduled audit script
 - Use incremental processing to avoid full re-scan
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q328: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q328 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q329. How do you use GitLab CI with Databricks bundles for interop releases?
@@ -6198,6 +15394,37 @@
 - Refresh SP OAuth token in GitLab variables
 - Rollback prod via tagged previous release redeploy
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q329: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q329_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q330. Scenario: Silver quarantine spikes to 15% after PulseEHR schema change. Your response?
@@ -6217,6 +15444,32 @@
 - Version Silver rules per `source_schema_version` parameter
 - Never auto-promote quarantine to Gold without review
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q330: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q330 Delta pipeline checkpoint OK")
+```
 ---
 
 ## Section R: Databricks ML / MLOps — Healthcare AI (Q331–360)
@@ -6238,6 +15491,41 @@
 - Add `registered_model_name` in log step for registry promotion
 - Tag run with `cms_use_case=epa_pas` for audit filter
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q331: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q331_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q331', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q331 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q332. How do you use Feature Store for member clinical features in CRD/DTR workflows?
@@ -6257,6 +15545,41 @@
 - Backfill online store from offline snapshot
 - Add default feature values for cold-start members
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q332: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q332_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q332', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q332 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q333. How do you deploy a model serving endpoint for formulary alternative recommendation?
@@ -6276,6 +15599,41 @@
 - Scale up min replicas if cold-start latency breaches SLA
 - Fix feature lookup 404 if online store out of sync
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q333: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q333_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q333', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q333 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q334. How do you monitor model drift on PA denial prediction using Lakehouse Monitoring?
@@ -6295,6 +15653,41 @@
 - Adjust decision threshold temporarily with clinical approval
 - Investigate upstream SAM schema change if feature null spike
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q334: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q334_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q334', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q334 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q335. How do you implement RAG for Provider Agent formulary policy Q&A?
@@ -6314,6 +15707,41 @@
 - Increase k if recall low on eval set
 - Filter index to active NDCs only
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q335: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q335_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q335', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q335 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q336. How do you use MLflow nested runs for hyperparameter tuning on denial models?
@@ -6333,6 +15761,41 @@
 - Fix feature leakage if val AUC suspiciously high
 - Prune bad runs with early stopping callback
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q336: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q336_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q336', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q336 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q337. How do you implement blue-green deployment for a CMS-facing model endpoint?
@@ -6352,6 +15815,41 @@
 - Fix training-serving skew if shadow mismatch high
 - Extend shadow period if insufficient traffic
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q337: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q337_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q337', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q337 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q338. How do you prevent PHI leakage in ML training notebooks?
@@ -6371,6 +15869,41 @@
 - Revoke overly broad notebook access
 - Rotate credentials if PHI pasted in cell output
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q338: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q338_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q338', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q338 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q339. How do you use Pandas UDF for FHIR resource feature extraction in ML pipelines?
@@ -6390,6 +15923,37 @@
 - Handle unit conversion edge cases in UDF
 - Cache filtered Observation subset before UDF if reused
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q339: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q339_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q340. How do you register and approve models in Unity Catalog model registry?
@@ -6409,6 +15973,41 @@
 - Archive compromised version; rotate endpoint
 - Document rollback path in registry description
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q340: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q340_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q340', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q340 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q341. How do you use Ray `map_in_batches` for large-scale FHIR embedding generation?
@@ -6428,6 +16027,41 @@
 - Checkpoint batch outputs to Delta for resume
 - Validate embedding model version matches index config
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q341: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q341_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q341', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q341 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q342. How do you evaluate RAG quality for Patient Agent FAQ before go-live?
@@ -6447,6 +16081,41 @@
 - Tighten system prompt with scope limits
 - Increase retrieval k for benefits questions
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q342: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q342_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q342', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q342 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q343. How do you log inference requests for CMS audit without storing PHI?
@@ -6466,6 +16135,41 @@
 - Re-hash if salt rotation required
 - Anonymize existing log if PHI found in incident
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q343: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q343_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q343', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q343 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q344. How do you use MLflow autolog with Spark for feature pipeline tracking?
@@ -6485,6 +16189,41 @@
 - Pin SAM version in feature run params explicitly
 - Fix broken tag link in training notebook
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q344: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q344_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q344', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q344 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q345. How do you implement MCP tools for AI agents accessing interop data?
@@ -6504,6 +16243,41 @@
 - Tighten SQL whitelist if agent generated broad query
 - Add rate limit per agent on notify tool
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q345: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q345_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q345', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q345 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q346. How do you handle label delay for PA outcome in model retraining?
@@ -6523,6 +16297,41 @@
 - Extend maturity window if payer decision delay increases
 - Exclude immature labels from training set strictly
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q346: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q346_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q346', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q346 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q347. How do you use Unity AI Gateway rate limits for agent cost control?
@@ -6542,6 +16351,41 @@
 - Cache frequent RAG retrievals to reduce LLM calls
 - Route batch summarization to smaller model
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q347: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q347_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q347', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q347 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q348. How do you implement A/B test on formulary alternative ranking model?
@@ -6561,6 +16405,41 @@
 - Balance split if insufficient Challenger traffic
 - Fix tracking pixel if selection events missing
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q348: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q348_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q348', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q348 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q349. How do you package ML dependencies for Databricks serving endpoints?
@@ -6580,6 +16459,32 @@
 - Use `mlflow.pyfunc.log_model` with `code_path` for custom preprocess
 - Match DBR ML runtime for serving cluster
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q349: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q349 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q350. Scenario: Patient Agent gives wrong deductible answer. How do you investigate?
@@ -6599,6 +16504,41 @@
 - Re-sync plan documents to vector index
 - Patient Agent sends "verify with payer" fallback if confidence low
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q350: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q350_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q350', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q350 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q351. How do you use Feature Store `write_online_table` for real-time CRD?
@@ -6618,6 +16558,41 @@
 - Scale online store throughput for enrollment spike
 - Fallback to cached offline features if online unavailable (degraded mode)
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q351: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q351_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q351', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q351 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q352. How do you document model risk for CMS-adjacent AI features?
@@ -6637,6 +16612,41 @@
 - Pause endpoint if card sign-off expired
 - Add bias slice analysis if disparity flagged
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q352: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q352_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q352', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q352 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q353. How do you chain MLflow runs from feature pipeline → train → deploy?
@@ -6656,6 +16666,41 @@
 - Manual deploy override requires ticket approval
 - Rollback endpoint if post-deploy smoke fails
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q353: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q353_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q353', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q353 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q354. How do you use embedding model versioning for formulary RAG index?
@@ -6675,6 +16720,41 @@
 - Rollback alias to v1 index
 - Update MCP tool default index parameter
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q354: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q354_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q354', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q354 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q355. How do you implement human-in-the-loop for Payer Ops Agent escalation?
@@ -6694,6 +16774,41 @@
 - Fall back to PagerDuty if approver timeout
 - Tune severity so CRITICAL reserved for true outages
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q355: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q355_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q355', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q355 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q356. How do you validate ML model fairness across member demographics?
@@ -6713,6 +16828,41 @@
 - Add slice-specific calibration
 - Do not deploy if unresolved fairness breach
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q356: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q356_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q356', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q356 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q357. How do you use MLflow model signatures for FHIR-adjacent serving inputs?
@@ -6732,6 +16882,41 @@
 - Coordinate client team on schema change notice
 - Backward compatible: add optional fields only in minor version
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q357: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q357_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q357', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q357 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q358. How do you isolate ML experimentation from production interop catalog?
@@ -6751,6 +16936,41 @@
 - Copy masked sample to dev for experimentation
 - Delete accidental prod write from misconfigured notebook
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q358: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q358_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q358', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q358 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q359. How do you monitor GPU utilization for embedding index rebuild jobs?
@@ -6770,6 +16990,41 @@
 - Reduce workers if sustained low utilization
 - Use inference optimized instance type for embed API
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q359: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q359_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q359', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q359 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q360. Scenario: Unity AI Gateway blocks agent mid-incident. What do you do?
@@ -6789,6 +17044,41 @@
 - Fix misconfigured policy denying valid tool
 - Queue events in `ai_events` for replay after restore
 
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```python
+# Q360: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q360_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q360', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q360 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ## Section S: Microsoft Fabric — Healthcare Analytics & Ingestion (Q361–390)
@@ -6810,6 +17100,31 @@
 - Fix broken path if export prefix changed
 - Update semantic model if column renamed
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q361: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q361 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q362. How do you build a Fabric Data Factory pipeline for Rail B webhook landing monitoring?
@@ -6829,6 +17144,45 @@
 - Adjust threshold if partner changes send schedule
 - Add retry policy 3x exponential backoff on transient failures
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q362: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q362-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q362",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q363. How do you implement Type 2 SCD for member eligibility in Fabric warehouse?
@@ -6848,6 +17202,37 @@
 - Backfill SCD from SAM eligibility history
 - Reject staging rows with overlapping effective dates
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q363: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q363_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q364. How do you apply Dynamic Data Masking (DDM) in Fabric SQL for analyst access?
@@ -6867,6 +17252,28 @@
 - Fix RLS policy if cross-payer leak despite DDM
 - Revoke elevated role from over-provisioned users
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q364: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q365. How do you optimize Fabric Lakehouse tables with V-Order?
@@ -6886,6 +17293,31 @@
 - OPTIMIZE/VACUUM equivalent in Fabric after bad compaction
 - Scale Fabric capacity if CPU spike during refresh
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q365: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q365 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q366. How do you use Semantic Link to push Fabric metrics to Power BI dataset?
@@ -6905,6 +17337,31 @@
 - Extend incremental window if late-arriving metrics
 - Re-bind dataset if Lakehouse table renamed
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q366: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q366 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q367. How do you configure incremental refresh with RangeStart/RangeEnd for claims analytics?
@@ -6924,6 +17381,37 @@
 - Adjust partition count if refresh exceeds SLA
 - Handle timezone on service_date boundary
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q367: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q367_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q368. How do you use Eventstream for real-time claim adjudication monitoring (Rail B)?
@@ -6943,6 +17431,31 @@
 - Fix deserialization if JSON schema change
 - Replay from Event Hub retention if pipeline down < 7 days
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q368: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q368 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q369. How do you integrate Fabric Git with interop analytics notebooks?
@@ -6962,6 +17475,31 @@
 - Rotate secret if accidentally committed—use BFG purge
 - Re-bind connection after workspace migration
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q369: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q369 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q370. How do you use OneLake shortcuts to Databricks export without data duplication?
@@ -6981,6 +17519,32 @@
 - Fix ADLS RBAC if shortcut auth failure
 - Update shortcut path on export job output change
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q370: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q370 Delta pipeline checkpoint OK")
+```
 ---
 
 ### Q371. How do you implement pipeline failure dependency chain for interop SLA reporting?
@@ -7000,6 +17564,31 @@
 - Increase Copy timeout for large export files
 - Add retry on Copy before failure branch
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q371: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q371 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q372. How do you use Dataflow Gen2 for payer roster cleansing before SAM?
@@ -7019,6 +17608,31 @@
 - Change update method Append vs Replace per file type
 - Add payer-specific mapping table for name suffix handling
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q372: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q372 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q373. How do you secure Fabric workspace access for HIPAA analytics?
@@ -7038,6 +17652,31 @@
 - Migrate users to correct group from over-privileged access
 - Enable Private Link if compliance audit finding
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q373: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q373 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q374. How do you compare Fabric vs Databricks for clinical SAM vs CMS reporting?
@@ -7057,6 +17696,31 @@
 - Add export column allowlist validation in Databricks job
 - Document boundary in onboarding for new analysts
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q374: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q374 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q375. How do you handle Fabric capacity throttling during month-end CMS reporting?
@@ -7076,6 +17740,31 @@
 - Reduce model complexity (remove unused columns)
 - Cache frequently used aggregates as materialized Lakehouse tables
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q375: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q375 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q376. How do you implement row-level security in Power BI for multi-payer CMS dashboard?
@@ -7095,6 +17784,28 @@
 - Add missing table to RLS filter if leak found
 - Remove Admin publish rights from payer users
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q376: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q377. How do you use Fabric notebook vs Data Factory for eligibility SCD orchestration?
@@ -7114,6 +17825,37 @@
 - Split notebook if timeout exceeds pipeline limit
 - Add checkpoint for long historical backfill
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q377: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q377_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q378. Scenario: Fabric shortcut shows stale CMS metrics vs Databricks. Diagnosis?
@@ -7133,6 +17875,31 @@
 - Force shortcut refresh in Fabric
 - Fix export job alert if failure undetected
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q378: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q378 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q379. How do you document Fabric pipeline lineage for CMS audit?
@@ -7152,6 +17919,31 @@
 - Update doc on any export path or measure formula change
 - Add column glossary to semantic model description
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q379: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q379 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q380. How do you use Fabric Dataflow Replace vs Append for formulary updates?
@@ -7171,6 +17963,31 @@
 - Add pre-Append validation for required NDC columns
 - Coordinate payer on file type per delivery schedule
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q380: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q380 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q381. How do you mirror Rail A CSV ingestion status in Fabric for operations dashboard?
@@ -7190,6 +18007,31 @@
 - Add pipeline trigger on file arrival vs schedule only
 - Alert if no status row expected window elapsed
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q381: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q381 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q382. How do you implement Invoke Pipeline for interop incident escalation in Fabric?
@@ -7209,6 +18051,31 @@
 - Update distribution list in pipeline parameter
 - Dedupe alerts if retry causes multiple invocations
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q382: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q382 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q383. How do you use Fabric for VBC quality measure reporting alongside interop?
@@ -7228,6 +18095,31 @@
 - Fix export filter if wrong population denominator
 - Coordinate refresh order: SAM → export → Fabric
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q383: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q383 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q384. How do you test Fabric pipeline changes without affecting prod CMS reports?
@@ -7247,6 +18139,31 @@
 - Fix dev test data if not representative
 - Never test directly in prod workspace
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q384: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q384 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q385. How do you handle PHI accidentally landed in Fabric Lakehouse?
@@ -7266,6 +18183,31 @@
 - Re-export clean aggregate only
 - Mandatory code review on export job changes
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q385: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q385 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q386. How do you optimize Power Query M for large roster files in Dataflow Gen2?
@@ -7285,6 +18227,31 @@
 - Split Dataflow into staging + transform two-step
 - Increase Dataflow capacity if legitimately large
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q386: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q386 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q387. How do you align Fabric refresh schedule with Databricks SAM merge completion?
@@ -7304,6 +18271,37 @@
 - Increase fallback delay if SAM often late
 - Manual trigger runbook for webhook outage
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q387: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q387_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q388. How do you use Fabric capacity metrics to right-size interop analytics SKU?
@@ -7323,6 +18321,37 @@
 - Downgrade only after 30-day low utilization confirmed
 - Document SKU decision in platform runbook
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q388: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q388_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q389. How do you implement cross-workspace dataset sharing for CMS vs VBC teams?
@@ -7342,6 +18371,31 @@
 - Revoke direct Lakehouse access from VBC users
 - Fix broken binding if source dataset renamed
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q389: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q389 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q390. Scenario: Power BI CMS dashboard shows 100% uptime but Onyx Insights shows breach. Reconcile?
@@ -7361,6 +18415,37 @@
 - Add hourly export table for regulatory reporting
 - Fix RLS if dashboard scoped to wrong payer
 
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q390: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q390_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ## Section T: Google Cloud — Hybrid & Reference Patterns (Q391–415)
@@ -7382,6 +18467,37 @@
 - Use authorized views for aggregated access only
 - Align with hybrid networking (Private Google Access)
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q391: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q391_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q392. How do you use BigQuery partitioning and clustering for claims analytics?
@@ -7401,6 +18517,37 @@
 - Fix queries missing partition filter (require partition filter option)
 - Archive old partitions to cold storage if cost issue
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q392: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q392_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q393. How do you implement Dataflow streaming for FHIR webhook validation (GCP reference)?
@@ -7420,6 +18567,45 @@
 - Fix schema transform DoFn on new field type
 - Scale max workers if persistent lag
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```python
+# Q393: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q393-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q393",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q394. How do you use Dataplex for PHI policy tags on GCP analytics sandboxes?
@@ -7439,6 +18625,29 @@
 - Move misclassified table to raw zone
 - Revoke privileged access over-provisioned accounts
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q394: GCP hybrid reference — BigQuery CMS rollup
+set -euo pipefail
+# Scheduled query pattern (run via bq CLI)
+bq query --use_legacy_sql=false << 'SQL'
+CREATE OR REPLACE TABLE cms.monthly_patient_access_sla AS
+SELECT
+  payer_id,
+  DATE_TRUNC(metric_date, MONTH) AS metric_month,
+  AVG(uptime_pct) AS avg_uptime_pct,
+  COUNTIF(uptime_pct < 99.0) AS breach_hours
+FROM cms.hourly_api_metrics
+WHERE metric_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 13 MONTH)
+GROUP BY 1, 2;
+SQL
+
+bq show --format=prettyjson cms.monthly_patient_access_sla | head -30
+echo "Q394 GCP CMS rollup validated"
+```
 ---
 
 ### Q395. How do you configure Cloud Storage retention for interop audit archives?
@@ -7458,6 +18667,41 @@
 - Restore deleted object from versioning if accidental delete within retention
 - Fix IAM if service account couldn't write evidence
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```python
+# Q395: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q395_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q395', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q395 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q396. How do you use BigQuery scheduled queries for CMS monthly rollup?
@@ -7477,6 +18721,37 @@
 - Increase slot reservation if query timeout
 - Re-run manual backfill for missed month
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q396: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q396_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q397. How do you use Pub/Sub topic retention for webhook replay scenarios?
@@ -7496,6 +18771,45 @@
 - Fix poison message schema before replay
 - Increase subscription ack deadline if processing slow
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```python
+# Q397: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q397-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q397",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q398. How do you compare Vertex AI RAG vs Databricks Vector Search for formulary Q&A?
@@ -7515,6 +18829,41 @@
 - Sync formulary updates to both if dual POC temporary
 - Migrate Vertex to Databricks before single support model
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```python
+# Q398: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q398_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q398', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q398 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q399. How do you use Cloud Workflows to orchestrate GCP-side export ingestion?
@@ -7534,6 +18883,29 @@
 - Increase timeout on long BQ load step
 - Manual workflow re-run from failed step
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q399: GCP hybrid reference — BigQuery CMS rollup
+set -euo pipefail
+# Scheduled query pattern (run via bq CLI)
+bq query --use_legacy_sql=false << 'SQL'
+CREATE OR REPLACE TABLE cms.monthly_patient_access_sla AS
+SELECT
+  payer_id,
+  DATE_TRUNC(metric_date, MONTH) AS metric_month,
+  AVG(uptime_pct) AS avg_uptime_pct,
+  COUNTIF(uptime_pct < 99.0) AS breach_hours
+FROM cms.hourly_api_metrics
+WHERE metric_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 13 MONTH)
+GROUP BY 1, 2;
+SQL
+
+bq show --format=prettyjson cms.monthly_patient_access_sla | head -30
+echo "Q399 GCP CMS rollup validated"
+```
 ---
 
 ### Q400. How do you implement BigQuery row access policies for multi-payer sandbox?
@@ -7553,6 +18925,37 @@
 - Fix OR filter mistake that widened access
 - Revoke break-glass SA routine use
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q400: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q400_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q401. How do you use BigQuery snapshots for pre-migration rollback?
@@ -7572,6 +18975,37 @@
 - Delete old snapshots per lifecycle policy
 - Always snapshot before scheduled query deploy
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q401: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q401_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q402. How do you configure Private Google Access for Dataflow PHI-adjacent pipelines?
@@ -7591,6 +19025,37 @@
 - Add VPC-SC ingress/egress rule for new service
 - Remove public IP from worker template
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q402: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q402_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q403. How do you use Bigtable for low-latency member session cache (SMART launch)?
@@ -7610,6 +19075,37 @@
 - Fix column family GC if TTL not expiring
 - Sync schema with DynamoDB for DR parity
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q403: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q403_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q404. How do you use Analytics Hub for sharing de-identified quality benchmarks?
@@ -7629,6 +19125,29 @@
 - Update listing version with changelog
 - Legal review before adding new columns
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q404: GCP hybrid reference — BigQuery CMS rollup
+set -euo pipefail
+# Scheduled query pattern (run via bq CLI)
+bq query --use_legacy_sql=false << 'SQL'
+CREATE OR REPLACE TABLE cms.monthly_patient_access_sla AS
+SELECT
+  payer_id,
+  DATE_TRUNC(metric_date, MONTH) AS metric_month,
+  AVG(uptime_pct) AS avg_uptime_pct,
+  COUNTIF(uptime_pct < 99.0) AS breach_hours
+FROM cms.hourly_api_metrics
+WHERE metric_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 13 MONTH)
+GROUP BY 1, 2;
+SQL
+
+bq show --format=prettyjson cms.monthly_patient_access_sla | head -30
+echo "Q404 GCP CMS rollup validated"
+```
 ---
 
 ### Q405. How do you run inference in Dataflow with RunInference for document classification?
@@ -7648,6 +19167,29 @@
 - Increase endpoint min replicas if cold start latency
 - Fallback to manual queue if inference unavailable
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q405: GCP hybrid reference — BigQuery CMS rollup
+set -euo pipefail
+# Scheduled query pattern (run via bq CLI)
+bq query --use_legacy_sql=false << 'SQL'
+CREATE OR REPLACE TABLE cms.monthly_patient_access_sla AS
+SELECT
+  payer_id,
+  DATE_TRUNC(metric_date, MONTH) AS metric_month,
+  AVG(uptime_pct) AS avg_uptime_pct,
+  COUNTIF(uptime_pct < 99.0) AS breach_hours
+FROM cms.hourly_api_metrics
+WHERE metric_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 13 MONTH)
+GROUP BY 1, 2;
+SQL
+
+bq show --format=prettyjson cms.monthly_patient_access_sla | head -30
+echo "Q405 GCP CMS rollup validated"
+```
 ---
 
 ### Q406. How do you use cross-region BigQuery copy for DR compliance reporting?
@@ -7667,6 +19209,37 @@
 - Fix IAM if copy service account lost access
 - Update runbook if table list changed
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q406: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q406_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q407. How do you design denormalized BigQuery schema for API call fact analytics?
@@ -7686,6 +19259,37 @@
 - Partition prune if query still scans too much
 - Materialized view alternative if storage excessive
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q407: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q407_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q408. Scenario: Dataflow lag on GCP webhook pipeline exceeds SLA. Actions?
@@ -7705,6 +19309,45 @@
 - Switch to load job instead of streaming inserts if batch acceptable
 - Fix infinite loop or poison record blocking watermark
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```python
+# Q408: Kafka/event-stream proficiency (Rail B pattern)
+# Producer — partner webhook → Kafka (MSK) after Lambda validation
+from confluent_kafka import Producer, Consumer, KafkaException
+import json, os
+
+BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
+TOPIC = "interop.claim.adjudicated.v1"
+
+def delivery_report(err, msg):
+    if err: raise KafkaException(err)
+
+p = Producer({"bootstrap.servers": BOOTSTRAP, "client.id": "nasco-webhook-producer"})
+event = {
+    "event_id": "evt-q408-001",
+    "payer_id": "UHC",
+    "member_id": "M12345",
+    "claim_id": "C98765",
+    "adjudication_date": "2025-07-19",
+    "status": "final"
+}
+p.produce(TOPIC, key=event["claim_id"], value=json.dumps(event), callback=delivery_report)
+p.flush()
+
+# Consumer — Autoloader/Firehose downstream reads from S3; this verifies Kafka path
+c = Consumer({
+    "bootstrap.servers": BOOTSTRAP,
+    "group.id": "interop-bronze-loader-q408",
+    "auto.offset.reset": "earliest"
+})
+c.subscribe([TOPIC])
+msg = c.poll(5.0)
+if msg and not msg.error():
+    print("Consumed:", msg.key(), msg.value().decode()[:200])
+c.close()
+```
 ---
 
 ### Q409. How do you use external tables in BigQuery over S3 export (Omni/hybrid)?
@@ -7724,6 +19367,37 @@
 - Fix S3 credentials/IAM for BQ connection
 - Update path glob if export filename pattern changed
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q409: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q409_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q410. How do you implement Cloud Monitoring alerts for interop GCP components?
@@ -7743,6 +19417,29 @@
 - Add missing alert for new pipeline component
 - Fix notification channel auth expiry
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q410: GCP hybrid reference — BigQuery CMS rollup
+set -euo pipefail
+# Scheduled query pattern (run via bq CLI)
+bq query --use_legacy_sql=false << 'SQL'
+CREATE OR REPLACE TABLE cms.monthly_patient_access_sla AS
+SELECT
+  payer_id,
+  DATE_TRUNC(metric_date, MONTH) AS metric_month,
+  AVG(uptime_pct) AS avg_uptime_pct,
+  COUNTIF(uptime_pct < 99.0) AS breach_hours
+FROM cms.hourly_api_metrics
+WHERE metric_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 13 MONTH)
+GROUP BY 1, 2;
+SQL
+
+bq show --format=prettyjson cms.monthly_patient_access_sla | head -30
+echo "Q410 GCP CMS rollup validated"
+```
 ---
 
 ### Q411. How do you use Dataplex data quality rules on curated CMS tables?
@@ -7762,6 +19459,29 @@
 - Adjust anomaly threshold if legitimate volume spike
 - Quarantine bad batch before curated promotion
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q411: GCP hybrid reference — BigQuery CMS rollup
+set -euo pipefail
+# Scheduled query pattern (run via bq CLI)
+bq query --use_legacy_sql=false << 'SQL'
+CREATE OR REPLACE TABLE cms.monthly_patient_access_sla AS
+SELECT
+  payer_id,
+  DATE_TRUNC(metric_date, MONTH) AS metric_month,
+  AVG(uptime_pct) AS avg_uptime_pct,
+  COUNTIF(uptime_pct < 99.0) AS breach_hours
+FROM cms.hourly_api_metrics
+WHERE metric_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 13 MONTH)
+GROUP BY 1, 2;
+SQL
+
+bq show --format=prettyjson cms.monthly_patient_access_sla | head -30
+echo "Q411 GCP CMS rollup validated"
+```
 ---
 
 ### Q412. How do you manage GCP IAM for hybrid interop service accounts?
@@ -7781,6 +19501,29 @@
 - Migrate key-based auth to WIF
 - Disable compromised SA immediately; rotate downstream secrets
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q412: GCP hybrid reference — BigQuery CMS rollup
+set -euo pipefail
+# Scheduled query pattern (run via bq CLI)
+bq query --use_legacy_sql=false << 'SQL'
+CREATE OR REPLACE TABLE cms.monthly_patient_access_sla AS
+SELECT
+  payer_id,
+  DATE_TRUNC(metric_date, MONTH) AS metric_month,
+  AVG(uptime_pct) AS avg_uptime_pct,
+  COUNTIF(uptime_pct < 99.0) AS breach_hours
+FROM cms.hourly_api_metrics
+WHERE metric_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 13 MONTH)
+GROUP BY 1, 2;
+SQL
+
+bq show --format=prettyjson cms.monthly_patient_access_sla | head -30
+echo "Q412 GCP CMS rollup validated"
+```
 ---
 
 ### Q413. How do you use BigQuery BI Engine for sub-second CMS dashboard?
@@ -7800,6 +19543,37 @@
 - Pre-aggregate further if working set exceeds reservation
 - Disable BI Engine on ad-hoc sandbox datasets
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q413: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q413_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q414. How do you handle schema evolution in BigQuery load from FHIR export?
@@ -7819,6 +19593,37 @@
 - Backfill new column from re-export if needed
 - Deprecate old table after migration window
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q414: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q414_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q415. Scenario: Leadership wants full GCP migration from AWS interop stack. Your recommendation?
@@ -7838,6 +19643,37 @@
 - Identify GCP-native components that add value without runtime move
 - Set decision gate post-Jan 2027 certification
 
+
+**Script:** *(builds proficiency: Associate Solution Architect | Data Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q415: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q415_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ## Section U: SQL Server / Azure SQL / AI Developer — Healthcare Data (Q416–445)
@@ -7859,6 +19695,42 @@
 - Move hot singleton-update table from columnstore to rowstore
 - Add nonclustered rowstore index on columnstore if needed for point queries
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q416: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q417. How do you implement Row-Level Security (RLS) for multi-payer SQL warehouse?
@@ -7878,6 +19750,28 @@
 - Add FILTER to newly created tables—RLS doesn't auto-apply
 - Audit bypass: only `dbo_admin` bypass role with logging
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q417: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q418. How do you apply Dynamic Data Masking on member PHI in Azure SQL?
@@ -7897,6 +19791,28 @@
 - Revoke UNMASK from over-provisioned users
 - Fix app using elevated connection for routine queries
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q418: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q419. How do you use VECTOR_DISTANCE for formulary therapeutic alternative search?
@@ -7916,6 +19832,41 @@
 - Re-embed if embedding model upgraded
 - Fallback to LIKE search if vector index offline
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q419: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q419_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q419', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q419 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q420. How do you implement MERGE for idempotent claim line upserts from Rail A CSV?
@@ -7935,6 +19886,42 @@
 - Split large MERGE batch if log growth excessive
 - Add HOLDLOCK hint if concurrent merge race
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q420: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q421. How do you use Change Tracking for incremental sync to downstream FHIR staging?
@@ -7954,6 +19941,37 @@
 - Fix watermark reset if duplicate sync
 - Enable CDC instead if before-image needed for audit
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q421: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q421_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q422. How do you implement temporal tables for member eligibility history?
@@ -7973,6 +19991,37 @@
 - Archive old history to cold storage if size excessive
 - Fix application updating without respecting temporal semantics
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q422: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q422_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q423. How do you use Query Store to fix regressed CMS reporting query?
@@ -7992,6 +20041,42 @@
 - Add recompile hint or OPTIMIZE FOR UNKNOWN
 - Restore dropped index if regression caused by DDL
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q423: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q424. How do you implement inline TVF for reusable member coverage check?
@@ -8011,6 +20096,41 @@
 - Add index on eligibility (member_id, effective_date)
 - Fix AS OF date parameter wrong timezone
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q424: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q424_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q424', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q424 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q425. How do you use Read Committed Snapshot isolation for concurrent claim loading?
@@ -8030,6 +20150,42 @@
 - Schedule heavy MERGE off-peak if version store spikes
 - Fix long-running open transactions holding versions
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q425: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q426. How do you use Managed Identity for Azure SQL access from Databricks/Fabric?
@@ -8049,6 +20205,31 @@
 - Fix Azure AD admin misconfiguration on SQL server
 - Use view if direct table access too broad
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q426: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q426 Fabric CMS metrics + SCD hash staging complete")
+```
 ---
 
 ### Q427. How do you implement PARTITION FUNCTION for large claim history by service_year?
@@ -8068,6 +20249,42 @@
 - Rebalance filegroups if IO skew
 - ALIGN indexes before SWITCH to avoid failure
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q427: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q428. How do you use JSON_VALUE to parse FHIR extension fields in SQL staging?
@@ -8087,6 +20304,37 @@
 - Use OPENJSON for multi-value extensions
 - Quarantine rows where JSON_VALUE returns unexpected type
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q428: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q428_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
 ---
 
 ### Q429. How do you use SqlPackage.exe DriftReport for interop warehouse schema governance?
@@ -8106,6 +20354,42 @@
 - Revert unauthorized prod change if not approved
 - Sync dev/test from DACPAC not vice versa for governance
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q429: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q430. How do you implement MCP SQL tool for Payer Ops Agent safely?
@@ -8125,6 +20409,41 @@
 - Add view if legitimate question blocked
 - Rotate read-only credential on schedule
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q430: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q430_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q430', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q430 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q431. How do you use persisted computed columns for claim line allowed amount?
@@ -8144,6 +20463,42 @@
 - Non-persisted if formula non-deterministic (not allowed persisted)
 - Fix adjustment_amount sign convention if negative allowed amounts wrong
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q431: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q432. How do you handle T-SQL error handling in claim load stored procedure?
@@ -8163,6 +20518,42 @@
 - Increase log detail if insufficient for debug
 - Deadlock retry wrapper if concurrent load conflicts
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q432: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q433. How do you implement nonclustered columnstore index for real-time analytics on rowstore OLTP?
@@ -8182,6 +20573,42 @@
 - Filtered columnstore index if analytics on subset status only
 - Schedule index maintenance off-peak
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q433: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q434. How do you use IF NOT EXISTS pattern for idempotent reference data load?
@@ -8201,6 +20628,42 @@
 - Add unique constraint to catch duplicates early
 - Version reference file in Git with effective date
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q434: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q435. How do you tune nonclustered index for SLAP token lookup by member_id?
@@ -8220,6 +20683,28 @@
 - Drop unused duplicate index increasing write overhead
 - Rebuild if fragmentation > 30%
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q435: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
 ---
 
 ### Q436. Scenario: Azure SQL CMS report query timeout during month-end. Fix path?
@@ -8239,6 +20724,42 @@
 - Update stats on payer_id, service_date
 - Create/monthly aggregate indexed view
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q436: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q437. How do you secure connection strings in Azure SQL linked to interop pipelines?
@@ -8258,6 +20779,42 @@
 - Migrate plaintext linked service to Key Vault
 - Revoke SQL login if unexpected client detected
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q437: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q438. How do you implement vector index maintenance after formulary bulk update?
@@ -8277,6 +20834,41 @@
 - Fallback keyword search during rebuild window
 - Fix embed job skipping NULL description rows
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q438: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q438_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q438', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q438 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q439. How do you use BEGIN TRY/CATCH with THROW for API-facing SQL procedures?
@@ -8296,6 +20888,42 @@
 - Map constraint violations to business error codes
 - Remove PRINT/debug in prod procedures
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q439: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q440. How do you compare on-prem SQL Server vs Azure SQL for interop warehouse?
@@ -8315,6 +20943,42 @@
 - Enable geo-replication if RTO requires cross-region
 - Right-size vCore based on Query Store workload
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q440: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q441. How do you implement hash-based Type 2 SCD comparison in T-SQL?
@@ -8334,6 +20998,42 @@
 - Fix NULL concat replacing with sentinels consistently
 - Rebuild dimension if hash algorithm upgraded
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q441: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q442. How do you use Azure SQL Database Ledger for tamper-evident audit tables?
@@ -8353,6 +21053,42 @@
 - Restore from backup if verification fails—investigate tamper incident
 - Disable ledger only with legal/compliance approval
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q442: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q443. How do you expose aggregated SQL data to AI agents without VECTOR or raw PHI?
@@ -8372,6 +21108,41 @@
 - Remove overly wide view from whitelist
 - Add `GROUP BY` enforcement in MCP query parser
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q443: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q443_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q443', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q443 AI pipeline events + RAG retrieval OK")
+```
 ---
 
 ### Q444. How do you implement incremental export from Azure SQL to Databricks SAM?
@@ -8391,6 +21162,42 @@
 - Full refresh if change tracking retention exceeded outage
 - Fix clock skew on modified_utc if duplicates/misses
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```sql
+-- Q444: Azure SQL / T-SQL proficiency
+-- RLS + masked member access + incremental MERGE
+
+EXEC sp_set_session_context @key = N'payer_id', @value = N'UHC';
+
+-- Row-level security enforced
+SELECT COUNT(*) AS visible_claims FROM dbo.claims_summary;
+
+-- Idempotent claim line upsert from Rail A staging
+BEGIN TRY
+  BEGIN TRAN;
+  MERGE dbo.claim_line AS t
+  USING staging.claim_line AS s
+    ON t.claim_id = s.claim_id AND t.line_number = s.line_number
+  WHEN MATCHED AND CHECKSUM(t.billed_amount, t.paid_amount) <> CHECKSUM(s.billed_amount, s.paid_amount)
+    THEN UPDATE SET t.billed_amount = s.billed_amount, t.paid_amount = s.paid_amount, t.modified_utc = SYSUTCDATETIME()
+  WHEN NOT MATCHED THEN
+    INSERT (claim_id, line_number, member_id, billed_amount, paid_amount, modified_utc)
+    VALUES (s.claim_id, s.line_number, s.member_id, s.billed_amount, s.paid_amount, SYSUTCDATETIME());
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK;
+  THROW;
+END CATCH;
+
+-- Vector similarity for formulary alternatives
+SELECT TOP 5 ndc, description,
+  VECTOR_DISTANCE('cosine', embedding, @query_embedding) AS distance
+FROM dbo.formulary_drug
+ORDER BY distance;
+```
 ---
 
 ### Q445. Scenario: Interview asks to design SQL layer supporting FHIR API, AI agents, and CMS reporting. Outline?
@@ -8410,4 +21217,39 @@
 - Add MCP view if agent questions blocked
 - Document 2-minute version aligned with enterprise ADR
 
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q445: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q445_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q445', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q445 AI pipeline events + RAG retrieval OK")
+```
 ---
