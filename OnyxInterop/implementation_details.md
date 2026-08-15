@@ -762,6 +762,133 @@ Config: `configs/ai/governance_metrics.yaml`
 
 ---
 
+## Component 14: CMS-0057 Auth Paths (`configs/mdp/auth_paths.json`)
+
+### What It Does
+Documents and configures the **three distinct authentication paths** mandated by CMS-0057 — Patient Access (PAA), Provider Access (PVA), and Payer-to-Payer (P2P) — all converging on shared SLAP → FITE → Firely runtime but with different IGs, scopes, and auth models.
+
+### Why It Exists
+Production Onyx serves three API audiences with one FHIR store. Mixing auth paths (e.g., a member SMART token on `/pdexv2`) is a compliance and security failure. The auth-path diagram requires explicit route + scope binding at SLAP and FITE.
+
+### Architecture Role
+**Onyx runtime** — SLAP issues tokens; FITE routes by path; Apigee fronts machine-auth paths (PVA/P2P).
+
+### Three paths
+
+| Path | Auth model | FITE route | IGs | Actor |
+|------|------------|------------|-----|-------|
+| **PAA** | Member SAML → SMART PKCE | `/fhir` | US Core, CARIN BB | Member via third-party app |
+| **PVA** | `client_credentials` (Backend Services) | `/atr-consumer` | PDex, US Core | External provider system |
+| **P2P** | `client_credentials` + PDex scope | `/pdexv2` | PDex | External payer |
+
+### Shared vs different
+
+```
+Shared:    SLAP + FITE + Firely
+Different: IGs, scopes, gateway (Apigee for PVA/P2P), auth (member vs machine)
+```
+
+### How to Use
+
+```bash
+cat Training/onyx-interop/configs/mdp/auth_paths.json | python3 -m json.tool
+# Read full runbook:
+# Training/onyx-interop/docs/CMS0057_AUTH_PATHS.md
+```
+
+Local ports: PAA `:9000`, PVA `:9003`, P2P `:9004` (when reference services running).
+
+---
+
+## Component 15: ePA Option A/B (`docs/EPA_OPTION_A_B.md`)
+
+### What It Does
+Implements **Electronic Prior Authorization** via two deployment patterns sharing a common ingress: Provider EHR → AWS ALB → **APISIX** → CDS Service (`epa-appsvc`) with **dapr** sidecar.
+
+### Why It Exists
+Payers integrate PAS vendors differently — legacy batch (Gainwell/SFTP) vs real-time API (Wellmark/Jiva). CMS-0057 ePA requires CRD/DTR/PAS at point of care; the architecture must support both without duplicating FHIR generation.
+
+### Option A — Gainwell (batch)
+
+```
+Routing-DIR → AWS Transfer SFTP → Gainwell PAS → ClaimResponse batch (837/275/CSV)
+    → Databricks workflows → Firely
+```
+
+### Option B — Wellmark (real-time)
+
+```
+Auth table + 13 decision tables → Jiva PAS APIs + InterQual/Evicore DTR
+    → Event notification → FHIR Subscription callback → Provider EHR
+```
+
+### Mandatory deploy order
+
+```
+onyx.provision → onyx.epa → onyx.deploy
+    → databricks.provision → databricks_continuous_deployment → databricks.onyx
+```
+
+Each step gates the next — do not deploy Databricks ePA workflows before APISIX/CDS ingress is live.
+
+### How to Use
+
+```bash
+curl -s http://localhost:9005/cds-services 2>/dev/null | head -5
+grep -n cds-services $HOME/OnyxInterop/epa_burden_reduction_service.py | head -3
+```
+
+Full runbook: [EPA_OPTION_A_B.md](Training/onyx-interop/docs/EPA_OPTION_A_B.md)
+
+---
+
+## Component 16: Cambia BigQuery Ingestion — Rail D (`docs/CAMBIA_BIGQUERY_INGESTION.md`)
+
+### What It Does
+Cross-cloud **Rail D** connector: pulls Cambia pharmacy claims from **GCP BigQuery** into **AWS S3** as NDJSON via an **EKS CronJob** — no stored GCP service-account keys.
+
+### Why It Exists
+Partner data lives in GCP; Abacus primary PHI lake is AWS. XPORT-2596 defines a keyless auth chain (IRSA → WIF → BigQuery) and a strict S3 handoff so Bronze Databricks (`ng-pipelines-cambia`) remains a separate workflow.
+
+### Auth chain (no stored credentials)
+
+```
+EKS IRSA → AWS STS → Google Workload Identity Federation
+    → iamcredentials impersonation → BigQuery access token (1h TTL, memory only)
+```
+
+**Critical:** Export IRSA credentials before initializing Google auth libraries; pass GCP project explicitly.
+
+### Load modes
+
+| Mode | Purpose | Fail-closed rule |
+|------|---------|------------------|
+| **incremental** | Daily delta on `received_at` watermark | No checkpoint → abort (never auto-full) |
+| **full** | Initial or manual backfill | Operator-triggered |
+| **refresh** | Monthly correctness | Required — BQ change history unavailable to Abacus |
+| **replay** | Operator window re-export | Writes to `replay/` prefix |
+
+### S3 contract
+
+| Bucket | Content |
+|--------|---------|
+| **PHI data-lake** | NDJSON under `raw/bigquery-claims/` (atomic staging publish) |
+| **Metadata (non-PHI)** | Checkpoints, manifests, run status |
+
+Connector **ends at S3** — Bronze Autoloader is out of scope for this service.
+
+### Forbidden logging
+
+Never log row values, claim/member/prescriber IDs, drug names, PHI query predicates, or access tokens — only `run_id`, counts, job id, safe error category.
+
+### How to Use
+
+```bash
+grep -n 'IRSA\|Rail D\|Fail closed' Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md | head -10
+```
+
+---
+
 ## Summary
 
 This implementation covers the **complete interoperability stack**:
@@ -779,6 +906,9 @@ This implementation covers the **complete interoperability stack**:
 11. **AI Observability** — RCA/anomaly models on de-id telemetry (`observability/ai_observer.py`)
 12. **DevOps & CI/CD** — GitLab CI, DAB deploy, Seiji gates, local `run_ci_local.sh`
 13. **AI Governance & Evaluation** — MLflow traces, hallucination/bias/trust metrics, daily batch (`governance_metrics.py`)
+14. **CMS-0057 Auth Paths** — PAA/PVA/P2P route + scope config (`auth_paths.json`)
+15. **ePA Option A/B** — APISIX ingress, Gainwell batch vs Wellmark real-time PAS
+16. **Cambia BigQuery Ingest (Rail D)** — EKS CronJob + IRSA/WIF → S3 NDJSON handoff
 
 All components are **runnable locally** with just Python — giving engineers hands-on experience with the exact same architecture they'll work with in production. **Run `./scripts/ci/run_ci_local.sh` before every push.**
 
@@ -792,6 +922,9 @@ All components are **runnable locally** with just Python — giving engineers ha
 | AI Governance MVP | Deprioritize duplicate PHI/RBAC/version controls | Gateway + UC + GitLab |
 | CCA Dev Milestones | Metrics early, data before AI | Step 8 gate; Phase 1 before Phase 4 |
 | CCA Dev Milestones | UI ownership, Replit, SecOps, implementation | [AI_GOVERNANCE_ALIGNMENT.md](Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) decision log |
+| CMS-0057 Auth Paths diagram | PAA/PVA/P2P distinct auth; shared SLAP/FITE/Firely | Component 14, `auth_paths.json`, [CMS0057_AUTH_PATHS.md](Training/onyx-interop/docs/CMS0057_AUTH_PATHS.md) |
+| ePA Option A/B diagram | APISIX ingress; Gainwell SFTP vs Wellmark real-time; deploy order | Component 15, [EPA_OPTION_A_B.md](Training/onyx-interop/docs/EPA_OPTION_A_B.md) |
+| Cambia BigQuery Ingestion (XPORT-2596) | Rail D cross-cloud; IRSA/WIF; fail-closed checkpoint; monthly refresh | Component 16, [CAMBIA_BIGQUERY_INGESTION.md](Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md) |
 
 ---
 
@@ -799,7 +932,7 @@ All components are **runnable locally** with just Python — giving engineers ha
 
 > **Learning path:** Follow [LEARN_FROM_STEP_1.md](Training/LEARN_FROM_STEP_1.md) — 16-week Learn → Do → Check → Teach curriculum aligned to this implementation. Do not skip Step 1.
 
-Completing this implementation end-to-end — and running the **Script** segment attached to each of the 535 interview Q&A entries — is designed to guarantee working proficiency (not just conceptual familiarity) in eight roles:
+Completing this implementation end-to-end — and running the **Script** segment attached to each of the 553 interview Q&A entries — is designed to guarantee working proficiency (not just conceptual familiarity) in eight roles:
 
 | Role | What You Will Do in This Implementation | Exit Criteria |
 |------|------------------------------------------|---------------|
@@ -828,7 +961,7 @@ Phase 4 ──► AI Engineer, Data Engineer (RAG, agents, governance)
 2. Run **How to Check** commands to verify your environment.
 3. Execute the **Script** block — each is tagged with target role(s).
 4. If Script fails, follow **How to Fix**, then re-run until green.
-5. Track completion: `grep -c "**Script:**" Healthcare_Interop_Interview_Cheat_Sheet.md` should equal 485.
+5. Track completion: `grep -c "**Script:**" Healthcare_Interop_Interview_Cheat_Sheet.md` should equal 553.
 
 Script source generator (regenerate after Q&A edits): `Training/tmp/add_scripts_to_cheat_sheet.py`
 

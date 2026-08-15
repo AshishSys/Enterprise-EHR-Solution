@@ -1,6 +1,6 @@
 # Healthcare Interop Solution — Interview Answer Cheat Sheet
 
-> Abacus/Onyx CMS interoperability platform | 535 questions + Glossary | First-person, hands-on owner voice  
+> Abacus/Onyx CMS interoperability platform | 553 questions + Glossary | First-person, hands-on owner voice  
 > **Learn first:** [LEARN_FROM_STEP_1.md](/Users/ashishsingh/OnyxInterop/Training/LEARN_FROM_STEP_1.md) — start Day 1 before building production phases.  
 > **Proficiency guarantee:** Complete learning steps + run every **Script** below to reach working proficiency in eight roles (includes **DevOps Engineer**).
 
@@ -20,14 +20,14 @@ Each question includes five segments:
 
 | Target Role | Primary Sections | Script Languages |
 |-------------|------------------|------------------|
-| **Associate Solution Architect** | A, C, H, J, K, L, M, T | bash, architecture trace |
-| **FHIR Engineer** | B, E, G, H | bash, Python validation, curl |
-| **Data Engineer** | D, G, J, N, P, Q, S, U | PySpark, SQL, Delta, Fabric |
+| **Associate Solution Architect** | A, C, H, J, K, L, M, T, **AB** | bash, architecture trace |
+| **FHIR Engineer** | B, E, G, H, **AB** | bash, Python validation, curl |
+| **Data Engineer** | D, G, J, N, P, Q, S, U, **AB** | PySpark, SQL, Delta, Fabric |
 | **Kafka Engineer** | P (Rail B), event questions | Python confluent-kafka |
-| **Forward Deployed Engineer** | A, F, I, L, M | bash, Helm, Terraform, kubectl |
+| **Forward Deployed Engineer** | A, F, I, L, M, **AB** | bash, Helm, Terraform, kubectl |
 | **Intermediate Associate Programmer** | D, E, F, I, N, O, Q, S, U | Python, bash, SQL, YAML |
-| **AI Engineer** | O, R, U (vector/MCP) | MLflow, Vector Search, MCP |
-| **DevOps Engineer** | I, Z | GitLab CI, DAB, Helm, Terraform, run_ci_local.sh |
+| **AI Engineer** | O, R, U (vector/MCP), **AB (ePA B)** | MLflow, Vector Search, MCP |
+| **DevOps Engineer** | I, Z, **AB** | GitLab CI, DAB, Helm, Terraform, run_ci_local.sh |
 
 ## Implementation Phases → Role Outcomes
 
@@ -70,6 +70,7 @@ Each question includes five segments:
 - [Section Y: AI Observability (Q474–485)](#section-y-ai-observability)
 - [Section Z: DevOps & CI/CD (Q486–515)](#section-z-devops--cicd-q486515)
 - [Section AA: AI Governance & CCA Alignment (Q516–535)](#section-aa-ai-governance--cca-alignment-q516535)
+- [Section AB: CMS-0057 Auth, ePA A/B & Cambia BQ (Q536–553)](#section-ab-cms-0057-auth-epa-ab--cambia-bq-ingest-q536553)
 
 ## Section A: Opening & Role Fit
 
@@ -24253,6 +24254,406 @@ cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 pipeline/ai/g
 
 ---
 
+## Section AB: CMS-0057 Auth, ePA A/B & Cambia BQ Ingest (Q536–553)
+
+> Sources: CMS-0057 Auth Paths diagram, ePA Option A/B deployment diagram, Cambia BigQuery Ingestion Design (XPORT-2596).
+
+### Q536. What are the three CMS-0057 auth paths and how do they differ?
+
+**Answer:** PAA: member SAML→SMART PKCE→FITE us-core/carin-bb. PVA: Apigee→SLAP client_credentials→FITE /atr-consumer. P2P: Apigee→SLAP PDex token→FITE /pdexv2 bulk match/export.
+
+**Example:** Shared: SLAP+FITE+Firely. Different: IGs, scopes, auth models.
+
+**How to Check:**
+- Read /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CMS0057_AUTH_PATHS.md
+- cat configs/mdp/auth_paths.json | python3 -m json.tool
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+cat /Users/ashishsingh/OnyxInterop/Training/onyx-interop/configs/mdp/auth_paths.json | python3 -m json.tool
+```
+
+---
+
+### Q537. Why is Patient Access NOT machine client_credentials auth?
+
+**Answer:** Path A requires member login via payer IdP SAML federation then SMART/OAuth with PKCE — third-party apps act on behalf of the member with consent.
+
+**Example:** Provider/P2P paths use Backend Services client_credentials without member SAML.
+
+**How to Check:**
+- Compare auth_paths.json paa vs pva auth_model
+- curl localhost:9000/.well-known/smart-configuration
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: FHIR Engineer)*
+
+```bash
+curl -s http://localhost:9000/.well-known/smart-configuration | head -5
+```
+
+---
+
+### Q538. What is the Provider Access auth path end-to-end?
+
+**Answer:** External provider system → Apigee/Gateway → SLAP client_credentials → FITE /atr-consumer → attributed bulk $export → FHIR Store.
+
+**Example:** Attribution Group resources link members to practitioners.
+
+**How to Check:**
+- Read CMS0057_AUTH_PATHS Path B
+- provider_access.py on :9003 when services running
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: FHIR Engineer | Forward Deployed Engineer)*
+
+```bash
+grep atr-consumer /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CMS0057_AUTH_PATHS.md
+```
+
+---
+
+### Q539. What is the Payer-to-Payer auth path?
+
+**Answer:** External payer → Apigee → SLAP client_credentials with PDex scope → FITE /pdexv2 → $bulk-member-match + NDJSON export with consent.
+
+**Example:** CMS-0057 Jan 2027 deadline.
+
+**How to Check:**
+- Read auth_paths.json p2p entry
+- p2p_member_match.py :9004
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: FHIR Engineer)*
+
+```bash
+python3 $HOME/OnyxInterop/p2p_member_match.py --help 2>/dev/null || ls $HOME/OnyxInterop/p2p_member_match.py
+```
+
+---
+
+### Q540. Can a Patient Access SMART token call /pdexv2?
+
+**Answer:** No — auth paths must not mix. PAA scopes are patient compartment; P2P requires system-level PDex scopes via machine auth.
+
+**Example:** FITE enforces scope + route binding; audit in Onyx Insights.
+
+**How to Check:**
+- auth_paths.json note field
+- Review SLAP scope enforcement in slap_server.py
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: FHIR Engineer | Associate Solution Architect)*
+
+```bash
+grep -n scope $HOME/OnyxInterop/slap_server.py | head -5
+```
+
+---
+
+### Q541. What is shared vs different across PAA, PVA, and P2P?
+
+**Answer:** Shared: SLAP, FITE, Firely. Different: IGs (US Core/CARIN vs PDex), scopes, auth (member SMART vs client_credentials), gateway (Apigee for B/C).
+
+**Example:** Diagram: three columns, one footer.
+
+**How to Check:**
+- Read /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CMS0057_AUTH_PATHS.md design rules
+- configs/mdp/auth_paths.json
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Associate Solution Architect)*
+
+```bash
+cat /Users/ashishsingh/OnyxInterop/Training/onyx-interop/configs/mdp/auth_paths.json
+```
+
+---
+
+### Q542. What is the shared ePA ingress before Option A or B?
+
+**Answer:** Provider EHR → AWS ALB → APISIX Gateway → CDS Service (epa-appsvc) with dapr sidecar for CRD hooks.
+
+**Example:** CRD is point-of-care; PAS may be batch (A) or real-time API (B).
+
+**How to Check:**
+- Read /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/EPA_OPTION_A_B.md shared ingress
+- curl localhost:9005/cds-services
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Forward Deployed Engineer)*
+
+```bash
+curl -s http://localhost:9005/cds-services 2>/dev/null | head -3 || echo 'start epa service first'
+```
+
+---
+
+### Q543. What is ePA Option A (Gainwell pattern)?
+
+**Answer:** Batch/SFTP path: Routing-DIR → AWS Transfer SFTP → Gainwell PAS vendor → ClaimResponse batch (837/275/CSV) → Databricks → Firely.
+
+**Example:** Legacy PAS integrations; no real-time PAS API.
+
+**How to Check:**
+- Read /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/EPA_OPTION_A_B.md Option A
+- configs/workflows/epa/extract_config.yaml
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Data Engineer)*
+
+```bash
+head -20 /Users/ashishsingh/OnyxInterop/Training/onyx-interop/configs/workflows/epa/extract_config.yaml
+```
+
+---
+
+### Q544. What is ePA Option B (Wellmark pattern)?
+
+**Answer:** Real-time: Auth table + 13 decision tables → Jiva PAS APIs + InterQual/Evicore DTR → Event notification → FHIR Subscription callback to Provider EHR.
+
+**Example:** No SFTP for PAS; rules at point of care.
+
+**How to Check:**
+- Read /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/EPA_OPTION_A_B.md Option B
+- epa_burden_reduction_service.py CRD endpoint
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: FHIR Engineer | AI Engineer)*
+
+```bash
+grep -n cds-services $HOME/OnyxInterop/epa_burden_reduction_service.py | head -3
+```
+
+---
+
+### Q545. What is the mandatory ePA/cloud deploy order?
+
+**Answer:** onyx.provision → onyx.epa → onyx.deploy → databricks.provision → databricks_continuous_deployment → databricks.onyx — each gates the next.
+
+**Example:** Do not run Databricks ePA workflows before APISIX/CDS ingress is live.
+
+**How to Check:**
+- grep -A8 'Deploy order' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/EPA_OPTION_A_B.md
+- Plan Phase 0-1 sequencing
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: DevOps Engineer | Forward Deployed Engineer)*
+
+```bash
+grep -n 'onyx.provision' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/EPA_OPTION_A_B.md
+```
+
+---
+
+### Q546. What problem does Cambia BigQuery ingestion solve?
+
+**Answer:** Ingest Cambia pharmacy claims from GCP BigQuery into Abacus AWS S3 as NDJSON — cross-cloud without stored GCP service-account keys.
+
+**Example:** Rail D hybrid ingest; Bronze load is separate ng-pipelines-cambia workflow.
+
+**How to Check:**
+- Read /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md §1
+- XPORT-2596 design goal
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Data Engineer)*
+
+```bash
+head -25 /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md
+```
+
+---
+
+### Q547. How does Cambia BQ auth work with no stored credentials?
+
+**Answer:** EKS IRSA → AWS STS → Google WIF → iamcredentials impersonation → BigQuery token (1h TTL, memory only).
+
+**Example:** Must export IRSA creds before Google auth lib init; pass GCP project explicitly.
+
+**How to Check:**
+- Read CAMBIA doc §3
+- grep -n 'IRSA' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md | head -5
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: DevOps Engineer | Data Engineer)*
+
+```bash
+grep -n workloadIdentity $HOME/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md | head -3
+```
+
+---
+
+### Q548. What are the four Cambia BigQuery load modes?
+
+**Answer:** incremental (daily), full (initial/manual), refresh (monthly correctness), replay (operator window to replay/ prefix).
+
+**Example:** Incremental fails closed without checkpoint — never auto-runs full.
+
+**How to Check:**
+- Read §4 load modes
+- grep -n 'Fail closed' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Associate Solution Architect)*
+
+```bash
+grep -n 'load mode' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md | head -5
+```
+
+---
+
+### Q549. Why is periodic full refresh required for Cambia BQ ingest?
+
+**Answer:** BigQuery change history and time travel unavailable to Abacus — restated rows with unchanged watermark are silently lost; monthly refresh recovers them.
+
+**Example:** Not optional optimization — correctness requirement.
+
+**How to Check:**
+- Read §8.5
+- grep -A3 'change history' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Data Engineer)*
+
+```bash
+grep -n refresh /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md | head -5
+```
+
+---
+
+### Q550. What is the S3 handoff contract between BQ ingest and Databricks?
+
+**Answer:** Connector lands NDJSON under raw/bigquery-claims/ with atomic staging publish; manifest in metadata bucket (non-PHI). Bronze pipespec in ng-pipelines-cambia consumes prefix.
+
+**Example:** Same split as every platform connector: ingest ends at S3.
+
+**How to Check:**
+- Read §7-8 output contract
+- grep -n 'landing layout' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Data Engineer | DevOps Engineer)*
+
+```bash
+grep -n 'raw/bigquery-claims' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md
+```
+
+---
+
+### Q551. How does Cambia BQ ingest relate to Rail A/B/C?
+
+**Answer:** Rail D — hybrid GCP→AWS. Rail A=CSV, B=webhook/Kafka, C=FHIR JSON; D=partner BigQuery cross-cloud pull to same Bronze convergence.
+
+**Example:** Medallion Autoloader reads S3 prefix regardless of upstream rail.
+
+**How to Check:**
+- Plan multi-rail section + CAMBIA doc
+- grep -n 'Rail D' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+grep -n 'Rail [ABCD]' /Users/ashishsingh/OnyxInterop/implementation_details.md | head -8
+```
+
+---
+
+### Q552. What logging is forbidden in Cambia BQ ingest?
+
+**Answer:** Row values, claim/member/prescriber IDs, drug names, PHI query predicates, access tokens — only run_id, counts, job id, safe error category.
+
+**Example:** PHI to PHI bucket; metadata to non-PHI bucket — never mixed.
+
+**How to Check:**
+- Read §10
+- grep -n Forbidden /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: DevOps Engineer)*
+
+```bash
+grep -A5 'Forbidden' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA_BIGQUERY_INGESTION.md
+```
+
+---
+
+### Q553. How do these three attachments change cloud build priority?
+
+**Answer:** Cloud needs: Apigee+SLAP auth paths (PVA/P2P), APISIX+ePA stack, EKS CronJob+WIF for Rail D, then Databricks Bronze — after Phase 0 Terraform.
+
+**Example:** Local baseline still valid for FM/SAM/FHIR learning.
+
+**How to Check:**
+- CLOUD_BUILD_GUIDE.md + new docs
+- ls /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CMS0057*.md /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/EPA*.md /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/CAMBIA*.md
+
+**How to Fix:**
+- Re-read docs under `/Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/`
+- Trace auth path in configs/mdp/auth_paths.json
+
+**Script:** *(builds proficiency: Associate Solution Architect | DevOps Engineer)*
+
+```bash
+grep -n 'Rail D\|Apigee\|APISIX' $HOME/CursorInteropSolution/CLOUD_BUILD_GUIDE.md | head -10
+```
+
+---
+
 ## Glossary
 
 > All key terms from the Abacus/Onyx CMS interoperability solution — organized by category with description and practical example.
@@ -24311,6 +24712,15 @@ cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 pipeline/ai/g
 | **Rail A** | Multi-Channel Ingestion | CSV/batch ingestion path — existing Synthea/payer flat-file pipeline (unchanged) | `Patients.csv` → FM → SAM → FHIR via `interop_pipeline.py` |
 | **Rail B** | Multi-Channel Ingestion | Serverless webhook transport — API Gateway → Lambda → Kafka/SQS → S3 Bronze | NASCO claim adjudication webhook lands in `bronze.nasco_events` |
 | **Rail C** | Multi-Channel Ingestion | Native FHIR JSON from EHR exports (PulseEHR) via medallion Autoloader | 129K patients, 8.9M resources → Bronze → Silver → SAM convergence |
+| **Rail D** | Multi-Channel Ingestion | Cross-cloud partner pull — GCP BigQuery → EKS CronJob → AWS S3 NDJSON (Cambia/XPORT-2596) | IRSA + Google WIF; connector ends at S3; Bronze via ng-pipelines-cambia |
+| **WIF (Workload Identity Federation)** | Hybrid Cloud | GCP mechanism allowing AWS IAM roles to exchange tokens for GCP access without stored SA keys | Cambia BQ: IRSA → STS → WIF → iamcredentials → BigQuery token |
+| **IRSA (IAM Roles for Service Accounts)** | Deployment | EKS pod identity — Kubernetes SA mapped to AWS IAM role for keyless AWS/GCP federation | Cambia CronJob SA assumes role before Google auth lib init |
+| **Apigee** | Runtime & Security | API gateway in front of SLAP for machine-auth CMS paths (PVA, P2P) | External payer hits Apigee → SLAP client_credentials → FITE /pdexv2 |
+| **APISIX** | Runtime & Security | Open-source API gateway for ePA ingress (ALB → APISIX → CDS + dapr) | Provider EHR CRD hooks route through APISIX before PAS decision |
+| **/atr-consumer** | FHIR Operations | FITE route for Provider Access attribution and bulk export | PVA path: client_credentials → /atr-consumer → attributed $export |
+| **/pdexv2** | FHIR Operations | FITE route for Payer-to-Payer PDex bulk member match and export | P2P path: PDex scope → /pdexv2 → $bulk-member-match + NDJSON |
+| **Auth Path** | CMS & Regulatory | Distinct authentication + IG + scope binding for PAA, PVA, or P2P — must not mix | Member SMART token cannot call /pdexv2; see auth_paths.json |
+| **Fail-Closed Checkpoint** | Data Engineering | Incremental ingest aborts if watermark/checkpoint missing — never silently runs full load | Cambia BQ incremental without checkpoint → job fails |
 | **Medallion Architecture** | Data Engineering | Bronze (raw) → Silver (validated) → Gold (SAM/business) Delta Lake layers | Autoloader ingests FHIR NDJSON to Bronze; LDP validates Silver |
 | **Autoloader** | Data Engineering | Databricks streaming ingest from cloud files with schema evolution | `cloudFiles.schemaEvolutionMode=addNewColumns` for PulseEHR schema changes |
 | **Delta Lake** | Data Engineering | ACID table format on S3 — time travel, MERGE, change data feed | `RESTORE TABLE clinical_sam.conditions TO VERSION AS OF 842` rollback |
@@ -24405,16 +24815,16 @@ cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 pipeline/ai/g
 | DevOps & CI/CD | 6 | GitLab CI, DAB, run_ci_local, CMS Go-Live Gate |
 | AI Governance | 5 | Hallucination Rate, MLflow Trace, Controlled Query Set |
 | Platform & Architecture | 6 | Abacus, Onyx, MDP, Developer Portal |
-| Data Engineering | 22 | FM, SAM, Autoloader, Delta, DABs, Medallion, Watermark |
-| FHIR Standards | 18 | US Core, CARIN BB, Da Vinci, Bundle, NDJSON, Must Support |
-| CMS & Regulatory | 10 | CMS-9115, CMS-0057, Patient Access, P2P, ePA, HTI-1 |
-| Runtime & Security | 8 | SLAP, FITE, SMART, PKCE, Backend Services |
-| Multi-Channel Ingestion | 7 | Rail A/B/C, PulseEHR, ng-nasco-event-api |
+| Data Engineering | 23 | FM, SAM, Autoloader, Delta, DABs, Medallion, Fail-Closed Checkpoint |
+| FHIR Standards | 20 | US Core, CARIN BB, Da Vinci, /atr-consumer, /pdexv2 |
+| CMS & Regulatory | 11 | CMS-9115, CMS-0057, Patient Access, P2P, ePA, Auth Path |
+| Runtime & Security | 10 | SLAP, FITE, SMART, Apigee, APISIX, Backend Services |
+| Multi-Channel Ingestion | 8 | Rail A/B/C/D, PulseEHR, ng-nasco-event-api |
 | Kafka & Events | 3 | MSK, SQS DLQ, Schema Contract |
 | AI Layer | 12 | RAG, MCP, Unity AI Gateway, ai_events, Agents |
 | Analytics | 6 | Fabric, OneLake, V-Order, SCD, RLS, DDM |
-| Hybrid Cloud | 2 | BigQuery, Dataplex |
-| Deployment | 8 | Terraform, Helm, EKS, Seiji, Canary |
+| Hybrid Cloud | 4 | BigQuery, Dataplex, WIF, IRSA |
+| Deployment | 10 | Terraform, Helm, EKS, Seiji, Canary, IRSA |
 | Healthcare Domain | 8 | RCM, VBC, HEDIS, EOB, NPI, NDC, PA, Attribution |
 | Security & Compliance | 4 | PHI, HIPAA, BAA, Wiz |
 | Observability | 2 | Onyx Insights, CMS Metrics Reporter |

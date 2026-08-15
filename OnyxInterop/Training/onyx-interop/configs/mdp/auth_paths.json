@@ -1,0 +1,46 @@
+{
+  "auth_paths": [
+    {
+      "id": "paa",
+      "name": "Patient Access API",
+      "cms_rule": "CMS-9115",
+      "actor": "member_via_third_party_app",
+      "auth_model": "saml_federation_then_smart_pkce",
+      "gateway": null,
+      "slap_flow": "saml_from_payer_idp",
+      "fite_route": "/fhir",
+      "fite_profiles": ["us-core", "carin-bb"],
+      "scopes": ["patient/*.read", "openid", "fhirUser"],
+      "local_port": 9000
+    },
+    {
+      "id": "pva",
+      "name": "Provider Access API",
+      "cms_rule": "CMS-0057",
+      "actor": "external_provider_or_payer_system",
+      "auth_model": "client_credentials_backend_services",
+      "gateway": "apigee",
+      "slap_flow": "client_credentials",
+      "fite_route": "/atr-consumer",
+      "fite_profiles": ["pdex", "us-core"],
+      "scopes": ["system/*.read"],
+      "local_port": 9003
+    },
+    {
+      "id": "p2p",
+      "name": "Payer-to-Payer",
+      "cms_rule": "CMS-0057",
+      "actor": "external_payer",
+      "auth_model": "client_credentials_pdex_token",
+      "gateway": "apigee",
+      "slap_flow": "client_credentials",
+      "fite_route": "/pdexv2",
+      "fite_profiles": ["pdex"],
+      "scopes": ["system/Patient.read", "system/Group.read"],
+      "operations": ["$bulk-member-match", "$export"],
+      "local_port": 9004
+    }
+  ],
+  "shared_runtime": ["slap", "fite", "firely"],
+  "note": "Auth path differs; runtime stack is shared. Never mix member SMART tokens with machine PDex routes."
+}
