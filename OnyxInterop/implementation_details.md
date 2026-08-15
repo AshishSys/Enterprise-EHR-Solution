@@ -38,11 +38,15 @@ CMS rules (9115 & 0057) require payers to expose healthcare data via FHIR APIs. 
 
 | Layer | Name | What Happens | Why |
 |-------|------|--------------|-----|
+| 0 | **De-Identification** | HIPAA Safe Harbor (18 identifiers) or Expert Determination; split identified vs de-id paths | Analytics, Fabric, logs, and LLMs never see raw PHI. CMS APIs keep identified data behind SLAP |
+| 0b | **MDM** | AHIMA / ISO 8000 / HL7 PA golden records, survivorship, tokenized crosswalk | Stable member/provider keys before FM joins; PVD golden before Claims refs |
 | 1 | **Raw Ingestion** | Load CSV files as-is | Capture source data without modification |
 | 2 | **Foundational Marts (FM)** | Validate, normalize, deduplicate | Create a canonical, stable data model. FM is NOT FHIR-shaped — optimized for reuse and incremental updates |
 | 3 | **Subject Area Marts (SAM)** | Transform FM → IG-aligned structures | Bridge between canonical data and FHIR IG requirements. Each SAM maps to a CMS-0057 domain |
 | 4 | **FHIR Generation** | Convert SAM → FHIR R4 JSON | Create compliant resources per US Core / CARIN BB profiles |
 | 5 | **Bundle Packaging** | Create transaction bundles + NDJSON | Package for Firely (bundles) or HealthLake (NDJSON $import) |
+| 6 | **Dual Engine** | Same de-id SAM on Databricks and Microsoft Fabric | Cost/speed bake-off without changing CMS path |
+| 7 | **AI Observability** | RCA + anomaly models on de-id OpenTelemetry signals | Platform health without PHI in prompts |
 
 ### Use Cases
 
@@ -657,17 +661,39 @@ pip install pandas
 
 ---
 
+## Component 8: De-Identification Gate (`pipeline/deid_engine.py`)
+
+HIPAA Safe Harbor (45 CFR 164.514(b)(2)) and Expert Determination (b)(1). Splits ingest into an **identified CMS path** (SLAP/FITE/Firely) and a **de-identified analytics path** (Databricks Gold, Fabric, logs, LLMs). HMAC tokens require `DEID_TOKEN_PEPPER` from a secret store — empty pepper fails closed. Never logs raw field values.
+
+## Component 9: Master Data Management (`pipeline/mdm_engine.py`)
+
+AHIMA Information Governance + ISO 8000 + HL7 Patient Administration. Golden records for member, provider, organization, coverage with deterministic/probabilistic match, survivorship, and a tokenized crosswalk. PVD golden IDs must exist before Claims references.
+
+## Component 10: Dual Engine — Databricks ║ Fabric (`pipeline/fabric_benchmark.py`)
+
+Same `deid_sam` contract on both engines. Compares elapsed time and estimated USD (DBU vs CU) per million rows. Databricks remains the CMS critical path; Fabric is the bake-off and Gold/BI path. OneLake shortcuts only the de-id prefix.
+
+## Component 11: AI Observability (`observability/ai_observer.py`)
+
+Cross-stack SRE brain: OTel traces, job/API/auth/deploy metrics, structured de-id logs, plus Claude/GPT RCA and anomaly explanation via Unity AI Gateway. Rejects payloads containing identifier keys. Distinct from Onyx Insights (CMS filings).
+
+---
+
 ## Summary
 
 This implementation covers the **complete interoperability stack**:
 
-1. **Data Pipeline** — CSV → FM → SAM → FHIR (9,997 resources)
+1. **Data Pipeline** — De-ID → MDM → CSV → FM → SAM → FHIR (9,997 resources)
 2. **SLAP** — OAuth2/SMART authentication with 3 flows
 3. **FITE** — FHIR R4 API with search, read, $everything, $export
 4. **Firely** — Simulated FHIR store (in-memory)
 5. **HealthLake** — NDJSON export ready for AWS $import
 6. **Onyx Insights** — Monitoring, metrics, alerts, audit
 7. **MDP** — Service registry, config, IGs, workflows, dependencies
+8. **De-ID Gate** — HIPAA Safe Harbor / Expert Determination (`pipeline/deid_engine.py`)
+9. **MDM** — AHIMA / ISO 8000 golden records (`pipeline/mdm_engine.py`)
+10. **Fabric ║ Databricks** — parallel de-id processing + cost/speed (`pipeline/fabric_benchmark.py`)
+11. **AI Observability** — RCA/anomaly models on de-id telemetry (`observability/ai_observer.py`)
 
 All components are **runnable locally** with just Python — giving engineers hands-on experience with the exact same architecture they'll work with in production.
 
@@ -675,7 +701,7 @@ All components are **runnable locally** with just Python — giving engineers ha
 
 ## Proficiency Guarantee Framework
 
-Completing this implementation end-to-end — and running the **Script** segment attached to each of the 445 interview Q&A entries — is designed to guarantee working proficiency (not just conceptual familiarity) in seven roles:
+Completing this implementation end-to-end — and running the **Script** segment attached to each of the 485 interview Q&A entries — is designed to guarantee working proficiency (not just conceptual familiarity) in seven roles:
 
 | Role | What You Will Do in This Implementation | Exit Criteria |
 |------|------------------------------------------|---------------|
@@ -703,6 +729,8 @@ Phase 4 ──► AI Engineer, Data Engineer (RAG, agents, governance)
 2. Run **How to Check** commands to verify your environment.
 3. Execute the **Script** block — each is tagged with target role(s).
 4. If Script fails, follow **How to Fix**, then re-run until green.
-5. Track completion: `grep -c "**Script:**" Healthcare_Interop_Interview_Cheat_Sheet.md` should equal 445.
+5. Track completion: `grep -c "**Script:**" Healthcare_Interop_Interview_Cheat_Sheet.md` should equal 485.
 
 Script source generator (regenerate after Q&A edits): `Training/tmp/add_scripts_to_cheat_sheet.py`
+
+Glossary of all solution keywords: [Healthcare_Interop_Interview_Cheat_Sheet.md — Glossary tab](/Users/ashishsingh/Interview/Healthcare_Interop_Interview_Cheat_Sheet.md#glossary) (115 terms, 15 categories)

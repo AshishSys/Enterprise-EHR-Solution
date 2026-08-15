@@ -1,6 +1,6 @@
 # Healthcare Interop Solution — Interview Answer Cheat Sheet
 
-> Abacus/Onyx CMS interoperability platform | 445 questions | First-person, hands-on owner voice  
+> Abacus/Onyx CMS interoperability platform | 445 questions + Glossary | First-person, hands-on owner voice  
 > **Proficiency guarantee:** Complete this implementation + run every **Script** below to reach working proficiency as **AI Engineer**, **FHIR Engineer**, **Data Engineer**, **Kafka Engineer**, **Forward Deployed Engineer**, **Intermediate Associate Programmer**, and **Associate Solution Architect**.
 
 ## Answer Format
@@ -39,6 +39,7 @@ Each question includes five segments:
 
 ## Table of Contents
 
+- [Glossary — Key Terms (A–Z)](#glossary)
 - [Section A: Opening & Role Fit (Q1–10)](#section-a-opening--role-fit-q110)
 - [Section B: Healthcare Domain & CMS Compliance (Q11–28)](#section-b-healthcare-domain--cms-compliance-q1128)
 - [Section C: Architecture & System Design (Q29–45)](#section-c-architecture--system-design-q2945)
@@ -61,6 +62,151 @@ Each question includes five segments:
 - [Section T: Google Cloud — Hybrid & Reference Patterns (Q391–415)](#section-t-google-cloud--hybrid--reference-patterns-q391415)
 - [Section U: SQL Server / Azure SQL / AI Developer — Healthcare Data (Q416–445)](#section-u-sql-server--azure-sql--ai-developer--healthcare-data-q416445)
 
+
+## Glossary
+
+> All key terms from the Abacus/Onyx CMS interoperability solution — organized by category with description and practical example.
+
+| Term | Category | Description | Example |
+|------|----------|-------------|---------|
+| **Abacus** | Platform & Architecture | Data plane owned by Abacus Insights — ingestion, FM/SAM marts, extract/transform, FHIR bundle generation | Databricks Claims workflow writes `claims_sam.eob_records` before Firely load |
+| **Onyx** | Platform & Architecture | API/runtime plane — SLAP auth, FITE gateway, Developer Portal, Onyx Insights, MDP | Consumer apps call FITE :8080 after SLAP token, never Firely directly |
+| **FM (Foundational Mart)** | Data Engineering | Canonical normalized layer — NOT FHIR-shaped; validates, dedupes, stable keys for incremental updates | `claims_fm.claim_line` holds typed columns from raw CSV before SAM mapping |
+| **SAM (Subject Area Mart)** | Data Engineering | IG-aligned marts bridging FM to FHIR; each SAM maps to a CMS domain/workflow family | `clinical_sam.observations` → US Core Observation resources |
+| **Extract Task** | Data Engineering | Reads SAM Delta tables, writes NDJSON/bundles to S3 staging for transform/FSI | Extract pulls changed rows via `table_changes` since last watermark |
+| **FHIR Generation** | FHIR Engineering | Converts SAM rows to FHIR R4 JSON per US Core / CARIN BB / Da Vinci profiles | `claims_transformer.py` maps EOB SAM row → `ExplanationOfBenefit` resource |
+| **Bundle Packaging** | FHIR Engineering | Wraps resources in transaction bundles (Firely) or NDJSON files (HealthLake `$import`) | `bundle_Alberto639_Berge125.json` with 793 entries for bulk upsert |
+| **interop_pipeline.py** | Data Engineering | Local reference pipeline: CSV → FM → SAM → FHIR (5 layers) | `python interop_pipeline.py --input ./source_data --output ./fhir_output` → 9,997 resources |
+| **SLAP** | Runtime & Security | SMART Launch Authentication Proxy — OAuth2 tokens, PKCE, scopes, consent (:9000) | Patient app exchanges auth code + PKCE verifier at `/auth/token` |
+| **FITE** | Runtime & Security | FHIR Integration & Transformation Engine — API gateway proxying to Firely (:8080) | `GET /Patient/{id}/$everything` after SLAP Bearer token validation |
+| **MDP** | Platform & Architecture | Metadata & Discovery Platform — service registry, IG packages, workflow configs (:9002) | `configs/mdp/ig_registry.json` pins US Core 6.1.0 |
+| **Onyx Insights** | Observability | Monitoring, CMS metrics, alerts, audit trail (:9001) | CMS Patient Access uptime reporter feeds compliance dashboard |
+| **Developer Portal** | Runtime & Security | App registration, SMART client configs, API documentation for third-party developers | Register `patient-app-001` with `patient/*.read` scopes |
+| **Firely Server** | FHIR Store | Production FHIR R4 store on EKS; serves resources after FSI bulk/incremental load | `kubectl get pods -n firely` — Patient Access queries hit Firely via FITE |
+| **HealthLake** | FHIR Store | AWS managed FHIR store; accepts NDJSON via `$import` for bulk historical loads | `Patient.ndjson` (10 resources) imported via HealthLake bulk API |
+| **FSI (Firely Server Ingest)** | FHIR Store | Bulk/incremental upload job converting staging NDJSON → Firely resources | Step Functions triggers FSI Docker job after Extract completes |
+| **Seiji** | Deployment | Internal deployment tool for Helm/Terraform rollouts with canary support | Canary deploy Firely helm chart 10% → 100% after health check |
+| **onyx_job_state** | Data Engineering | DynamoDB table storing workflow watermarks, run status, error messages | Watermark `updated_at=2025-07-18T06:00:00Z` for incremental Extract |
+| **metadata_v1** | Data Engineering | Maps business IDs (member_id, claim_id) to FHIR resource IDs for idempotent upserts | `member_id=M123` → `Patient/abc-fhir-id` |
+| **CMS-9115** | CMS & Regulatory | Interoperability and Patient Access Final Rule — mandates Patient Access, Provider Directory, Formulary APIs | Phase 1 delivers SMART Patient Access + public Plan-Net directory |
+| **CMS-0057** | CMS & Regulatory | Interoperability and Prior Authorization Final Rule — Provider Access, P2P, ePA by Jan 2027 | Phase 2 adds `$export`, `$bulk-member-match`, CRD/DTR/PAS |
+| **Patient Access API** | CMS & Regulatory | SMART-authenticated FHIR API giving members access to their claims/clinical/PA data | Member app calls `$everything` on their Patient resource |
+| **Provider Directory API** | CMS & Regulatory | Public FHIR API exposing practitioner/org directory (Plan-Net) — no auth required | `GET /Practitioner?address-state=MA` returns Plan-Net profiles |
+| **Formulary API** | CMS & Regulatory | Public API for drug formulary, tiers, PA requirements | `GET /MedicationKnowledge?code=NDC123` |
+| **Provider Access API** | CMS & Regulatory | Backend Services API for attributed provider access to member data via `$export` | Provider EHR triggers bulk export with attribution Group resources |
+| **P2P (Payer-to-Payer)** | CMS & Regulatory | CMS-0057 workflow for member data exchange between payers with consent | `$bulk-member-match` + opt-in consent + NDJSON export |
+| **ePA (Electronic Prior Authorization)** | CMS & Regulatory | Da Vinci CRD/DTR/PAS workflows for prior auth burden reduction | CRD checks if PA needed; PAS `$submit` for authorization request |
+| **HTI-1** | CMS & Regulatory | Health IT certification rule updating USCDI standards and FHIR requirements | Track USCDI version bumps in IG registry quarterly |
+| **USCDI** | CMS & Regulatory | US Core Data for Interoperability — minimum data classes payers must exchange | USCDI v3 adds health insurance information elements |
+| **FHIR R4** | FHIR Standards | Fast Healthcare Interoperability Resources Release 4 — JSON/XML healthcare data standard | All API resources use `"resourceType": "Patient"` etc. |
+| **US Core** | FHIR Standards | HL7 FHIR IG defining US baseline profiles for Patient, Observation, Condition, etc. | Patient resource declares `meta.profile` US Core Patient URL |
+| **CARIN Blue Button (CARIN BB)** | FHIR Standards | FHIR IG for consumer-directed claims/EOB/COB data | `ExplanationOfBenefit` with CARIN BB profile for Patient Access |
+| **Da Vinci IGs** | FHIR Standards | HL7 implementation guides: PDex, Plan-Net, Formulary, CRD, DTR, PAS | Plan-Net `PractitionerRole` for Provider Directory |
+| **PDex** | FHIR Standards | Da Vinci Payer Data Exchange — member clinical/claims export patterns | PDex `$member-everything` operation for P2P export |
+| **Plan-Net** | FHIR Standards | Da Vinci Provider Directory IG for Practitioner/Organization/PractitionerRole | PVD workflow produces Plan-Net compliant directory resources |
+| **CRD** | FHIR Standards | Da Vinci Coverage Requirements Discovery — checks if PA/docs needed at point of care | `POST /CoverageRequirements/$discovery` before ordering procedure |
+| **DTR** | FHIR Standards | Da Vinci Documentation Templates & Rules — adaptive PA questionnaire forms | CRD response links DTR questionnaire for clinical documentation |
+| **PAS** | FHIR Standards | Da Vinci Prior Authorization Support — `$submit` PA requests/responses as FHIR | `ClaimResponse` resource carries PA decision/outcome |
+| **SMART on FHIR** | Runtime & Security | OAuth2-based app launch framework for healthcare APIs | `.well-known/smart-configuration` discovery document on SLAP |
+| **PKCE** | Runtime & Security | Proof Key for Code Exchange — S256 challenge prevents auth code interception | Mobile app sends `code_challenge` at authorize, `code_verifier` at token |
+| **Backend Services Auth** | Runtime & Security | OAuth2 client_credentials or JWT assertion for system-level API access | Payer bulk `$export` uses `system/*.read` scope |
+| **CapabilityStatement** | FHIR Standards | FHIR metadata resource describing server capabilities (`/metadata`) | FITE `/metadata` lists supported resources and search params |
+| **$everything** | FHIR Operations | FHIR operation returning all resources for a patient compartment | `GET /Patient/123/$everything` for member app full record |
+| **$export** | FHIR Operations | Bulk data export operation — async NDJSON dump with manifest | Provider Access triggers `$export` → poll `_status` → download NDJSON |
+| **$bulk-member-match** | FHIR Operations | CMS-0057 P2P operation matching members across payers | POST member identifiers → receive matched Patient references |
+| **NDJSON** | FHIR Standards | Newline-delimited JSON — one FHIR resource per line for bulk import/export | `Observation.ndjson` with 6,868 lines for HealthLake `$import` |
+| **Transaction Bundle** | FHIR Standards | FHIR bundle type `transaction` with POST/PUT entries for atomic upsert | Per-patient bundle uploaded to Firely via FSI |
+| **Must Support** | FHIR Standards | US Core elements required if data exists — validation failure if missing | Patient `name.family` Must Support — quarantine if null |
+| **StructureDefinition** | FHIR Standards | FHIR profile definition constraining resource elements | US Core Patient SD stored in UC Volume `fhir_igs/` |
+| **Rail A** | Multi-Channel Ingestion | CSV/batch ingestion path — existing Synthea/payer flat-file pipeline (unchanged) | `Patients.csv` → FM → SAM → FHIR via `interop_pipeline.py` |
+| **Rail B** | Multi-Channel Ingestion | Serverless webhook transport — API Gateway → Lambda → Kafka/SQS → S3 Bronze | NASCO claim adjudication webhook lands in `bronze.nasco_events` |
+| **Rail C** | Multi-Channel Ingestion | Native FHIR JSON from EHR exports (PulseEHR) via medallion Autoloader | 129K patients, 8.9M resources → Bronze → Silver → SAM convergence |
+| **Medallion Architecture** | Data Engineering | Bronze (raw) → Silver (validated) → Gold (SAM/business) Delta Lake layers | Autoloader ingests FHIR NDJSON to Bronze; LDP validates Silver |
+| **Autoloader** | Data Engineering | Databricks streaming ingest from cloud files with schema evolution | `cloudFiles.schemaEvolutionMode=addNewColumns` for PulseEHR schema changes |
+| **Delta Lake** | Data Engineering | ACID table format on S3 — time travel, MERGE, change data feed | `RESTORE TABLE clinical_sam.conditions TO VERSION AS OF 842` rollback |
+| **Liquid Clustering** | Data Engineering | Auto-reclustering on write for high-churn SAM tables | Cluster on `(member_id, service_date)` for claims SAM |
+| **Unity Catalog** | Data Engineering | Databricks governance — permissions, masking, lineage, model registry | `prod_interop.sam.clinical.conditions` with PII column masks |
+| **Databricks Asset Bundles (DABs)** | Data Engineering | IaC for Databricks jobs, pipelines, schemas — deploy via `databricks bundle` | `claims_workflow` DAB deploys to dev/stage/prod targets |
+| **LDP (Lakeflow Declarative Pipelines)** | Data Engineering | Declarative Spark pipelines with `@dp.expect_or_drop` data quality | Invalid Observation (missing `code`) dropped to quarantine table |
+| **Quarantine Table** | Data Engineering | Holds records failing validation — not silently dropped, not blocking batch | `fhir_silver.quarantine` with `violation_type` for partner escalation |
+| **PulseEHR** | Multi-Channel Ingestion | Reference EHR export — 129,218 patients, ~8.9M FHIR R4 JSON resources | Rail C ingests Observation (53%), Encounter (13%) distribution |
+| **ng-nasco-event-api** | Multi-Channel Ingestion | Reference serverless pattern for partner webhook ingestion | API Gateway + Lambda + Firehose → S3 landing zone |
+| **MSK (Amazon MSK)** | Kafka & Events | Managed Kafka for Rail B event streaming between webhook and Bronze | Topic `interop.claim.adjudicated.v1` consumed by Autoloader |
+| **SQS DLQ** | Kafka & Events | Dead-letter queue for failed webhook/Lambda processing | Messages after 3 retries → DLQ → Payer Ops Agent alert |
+| **Schema Contract** | Kafka & Events | JSON Schema per event type validated at Lambda before landing | `claim_adjudicated` v1.2 requires `member_id`, `claim_id` |
+| **Kafka Engineer** | Role Proficiency | Designs event transport, topic retention, replay, schema evolution | Producer/consumer scripts for NASCO adjudication events |
+| **Unity AI Gateway** | AI Layer | Databricks governance for all LLM + MCP traffic — caps, PII guardrails, audit | Patient Agent calls route through gateway with spend cap |
+| **RAG** | AI Layer | Retrieval-Augmented Generation — Vector Search indexes ground LLM responses | Formulary policy chunks retrieved before answering "PA required for Humira?" |
+| **Vector Search** | AI Layer | Databricks embedding index for semantic retrieval over SAM/docs | `formulary_policy_idx` synced daily from `formulary_sam` |
+| **MCP (Model Context Protocol)** | AI Layer | Tool servers exposing read-only APIs to AI agents (FHIR, metrics, notify) | `onyx.mcp.fhir_read` tool: `get_observations`, `get_eob` |
+| **ai_events** | AI Layer | SAM mart + event queue for due dates, care gaps, pipeline failures | `PA_DECISION_DUE` CRITICAL event triggers Provider Agent Slack |
+| **Patient Agent** | AI Layer | Member-facing agent — RAG + MCP fhir_read + notify; no diagnosis | "Am I due for screenings?" → RAG gap + MCP confirm → push notification |
+| **Provider Agent** | AI Layer | Attributed provider agent — panel gaps, PA deadlines, ePA docs | PA overdue alert with deep link to provider portal |
+| **Payer Ops Agent** | AI Layer | Internal ops agent — ingest lag, DLQ depth, workflow failures | Bronze lag 4h → Slack alert with Databricks job run URL |
+| **MLflow** | AI Layer | Model lifecycle — logging, registry, serving endpoints | PAS denial model v3 logged with AUC 0.87 to UC registry |
+| **Feature Store** | AI Layer | Offline/online feature tables for ML and real-time CRD lookups | `member_cr_features_online` lookup by `member_id` at CRD request |
+| **OBO (On Behalf Of)** | AI Layer | MCP executes with user's SLAP token scopes — not elevated service account | Patient Agent cannot fetch another member's EOB |
+| **Inference Audit Table** | AI Layer | Logs model/agent requests without PHI — retention for HIPAA | `ml.pas_inference_log` with hashed member_id |
+| **Microsoft Fabric** | Analytics | Enterprise analytics platform — Lakehouse, pipelines, Power BI semantic models | OneLake shortcut to Databricks CMS metrics export |
+| **OneLake Shortcut** | Analytics | Fabric reads ADLS export in place without data duplication | Shortcut to `abfss://exports@datalake/metrics/cms/` |
+| **V-Order** | Analytics | Fabric parquet optimization for faster Power BI DirectLake scans | Enable on `formulary_dim` — dashboard load 4.2s → 1.1s |
+| **Type 2 SCD** | Analytics | Slowly Changing Dimension — track eligibility history with `is_current` flag | Member PPO→HMO switch closes old row, opens new current row |
+| **RLS (Row-Level Security)** | Analytics & SQL | Filters rows by payer/user context at query time | Power BI role `PayerA` filters `payer_id = 'A'` |
+| **DDM (Dynamic Data Masking)** | Analytics & SQL | Masks PHI columns (SSN, DOB) for non-privileged roles | Analyst sees `XXX-XX-6789` for SSN |
+| **BigQuery** | Hybrid Cloud | GCP analytics for de-identified benchmarks — not primary PHI store | CMS monthly rollup scheduled query on aggregated metrics |
+| **Dataplex** | Hybrid Cloud | GCP data governance — policy tags, quality rules, curated zones | `PHI` policy tag masks member_id in sandbox |
+| **Terraform** | Deployment | IaC for AWS infra — S3, EKS, DocumentDB, DynamoDB, API Gateway | `terraform/modules/s3/main.tf` provisions Bronze buckets |
+| **Helm** | Deployment | Kubernetes package manager for Firely, FITE, SLAP on EKS | `helm/firely-server/values.yaml` configures replicas |
+| **EKS** | Deployment | AWS Kubernetes cluster hosting Firely and runtime services | `kubectl rollout status deployment/firely-server -n firely` |
+| **DocumentDB** | Deployment | MongoDB-compatible store for SLAP sessions/metadata | SLAP token store with TTL index |
+| **Canary Deploy** | Deployment | Gradual rollout — small traffic slice before full promotion | 10% FITE pods on new version → promote if error rate OK |
+| **RCM (Revenue Cycle Management)** | Healthcare Domain | Claims adjudication, denial management — downstream of CMS interop | FHIR EOB for Patient Access; X12 835 tables for RCM reconciliation |
+| **VBC (Value-Based Care)** | Healthcare Domain | Quality measures, attribution, gap closure — consumes SAM marts | HEDIS gap logic on `clinical_sam.observations` vitals/labs |
+| **HEDIS** | Healthcare Domain | Healthcare Effectiveness Data and Information Set — quality measure standards | Diabetes A1c measure uses LOINC 4548-4 Observations |
+| **Attribution** | Healthcare Domain | Assigning members to providers/panels for VBC and Provider Access | Group resource links Patient → Practitioner attribution |
+| **EOB (Explanation of Benefits)** | Healthcare Domain | Claim adjudication summary shown to members | CARIN BB `ExplanationOfBenefit` from `claims_sam.eob_records` |
+| **NPI** | Healthcare Domain | National Provider Identifier — 10-digit provider ID | Plan-Net Practitioner.identifier NPI system |
+| **NDC** | Healthcare Domain | National Drug Code — unique drug identifier for formulary | Formulary SAM `ndc` column → MedicationKnowledge |
+| **PA (Prior Authorization)** | Healthcare Domain | Payer approval required before certain procedures/drugs | Da Vinci PAS `$submit` returns ClaimResponse with decision |
+| **PHI** | Security & Compliance | Protected Health Information — HIPAA-regulated identifiable health data | Never in LLM prompts, external LLM, or unmasked analytics |
+| **BAA** | Security & Compliance | Business Associate Agreement — required per data source/partner | BAA indexed per Rail B webhook partner in compliance folder |
+| **HIPAA** | Security & Compliance | Health Insurance Portability and Accountability Act — privacy/security rules | Audit logs retained 6 years; encryption at rest/transit |
+| **Wiz** | Security & Compliance | Cloud security scanner for container/IaC vulnerabilities | Scan Lambda images before prod Rail B deploy |
+| **CMS Metrics Reporter** | Observability | Reports Patient Access API uptime/call volume for CMS compliance | `monitoring/cms_metrics_reporter.py` → monthly filing data |
+| **Workflow Family** | Data Engineering | Databricks job group for a CMS domain: Claims, Clinical, Formulary, PVD, ePA, P2P | Claims family: ingest → FM → SAM → Extract → FSI |
+| **Extract Config YAML** | Data Engineering | Declarative mapping of SAM tables to FHIR resource types | `configs/workflows/claims/extract_config.yaml` |
+| **Incremental Watermark** | Data Engineering | High-water mark (`updated_at` or change version) for delta processing | Only rows changed since watermark enter Extract |
+| **Change Data Feed** | Data Engineering | Delta feature emitting row changes for incremental downstream | `table_changes('clinical_sam.conditions', v1, v2)` |
+| **Synthea** | Data Engineering | Synthetic patient data generator — 10 patients, 9,997 FHIR resources in baseline | `./source_data/Patients.csv` local baseline validation |
+| **GitLab CI** | Deployment | CI/CD pipeline for DAB deploy, pytest, bundle validate | `databricks bundle deploy -t stage` on release branch |
+| **Forward Deployed Engineer** | Role Proficiency | Deploys, troubleshoots, onboards customers at payer sites | Solo Phase 0 checklist + customer incident runbook execution |
+| **FHIR Engineer** | Role Proficiency | IG validation, resource mapping, Firely/FSI operations, CMS API compliance | Zero IG errors on `validate_fhir_output.py --strict` |
+| **Data Engineer** | Role Proficiency | Pipelines, Delta, Autoloader, SAM merges, multi-rail convergence | Three rails land Bronze, merge at SAM, Extract to Firely |
+| **AI Engineer** | Role Proficiency | RAG, agents, MLflow, Unity AI Gateway, MCP governance | Golden eval >85%; gateway blocks PHI in prompts |
+| **Associate Solution Architect** | Role Proficiency | Phase planning, CMS traceability, ownership split, hybrid ADRs | Whiteboard 3-rail ingestion + AI layer for CMS deadline |
+| **Intermediate Associate Programmer** | Role Proficiency | Python transformers, bash automation, SQL, unit tests | Patch `claims_transformer.py` + pytest green independently |
+
+### Glossary Category Index
+
+| Category | Terms Count | Key Terms |
+|----------|-------------|-----------|
+| Platform & Architecture | 6 | Abacus, Onyx, MDP, Developer Portal |
+| Data Engineering | 22 | FM, SAM, Autoloader, Delta, DABs, Medallion, Watermark |
+| FHIR Standards | 18 | US Core, CARIN BB, Da Vinci, Bundle, NDJSON, Must Support |
+| CMS & Regulatory | 10 | CMS-9115, CMS-0057, Patient Access, P2P, ePA, HTI-1 |
+| Runtime & Security | 8 | SLAP, FITE, SMART, PKCE, Backend Services |
+| Multi-Channel Ingestion | 7 | Rail A/B/C, PulseEHR, ng-nasco-event-api |
+| Kafka & Events | 3 | MSK, SQS DLQ, Schema Contract |
+| AI Layer | 12 | RAG, MCP, Unity AI Gateway, ai_events, Agents |
+| Analytics | 6 | Fabric, OneLake, V-Order, SCD, RLS, DDM |
+| Hybrid Cloud | 2 | BigQuery, Dataplex |
+| Deployment | 8 | Terraform, Helm, EKS, Seiji, Canary |
+| Healthcare Domain | 8 | RCM, VBC, HEDIS, EOB, NPI, NDC, PA, Attribution |
+| Security & Compliance | 4 | PHI, HIPAA, BAA, Wiz |
+| Observability | 2 | Onyx Insights, CMS Metrics Reporter |
+| Role Proficiency | 7 | FHIR Engineer, Data Engineer, Kafka Engineer, AI Engineer, etc. |
+
+---
 ## Section A: Opening & Role Fit
 
 ### Q1. Tell me about your experience building end-to-end healthcare data platforms.
@@ -21252,4 +21398,2052 @@ VALUES
 ''')
 print("Q445 AI pipeline events + RAG retrieval OK")
 ```
+---
+
+
+# Addendum — De-ID, MDM, Dual Engine, AI Observability (Q446–Q485)
+
+## Section V: De-Identification & Safe Harbor
+
+### Q446. Where does de-identification sit in the interop pipeline?
+
+**Answer:** It is layer 0 — before FM/SAM/analytics. Identified PHI stays on the CMS API path behind SLAP. Fabric, Gold BI, logs, and LLMs consume only the de-identified path.
+
+**Example:** Raw → De-ID Gate → {identified→FM→Firely; de-id→MDM→Databricks║Fabric}.
+
+**How to Check:**
+- `configs/deid/safe_harbor.yaml` present
+- Orchestrator steps start with `deidentify`
+- De-id S3 bucket exists in terraform outputs
+- No name/SSN columns in Fabric Gold
+
+**How to Fix:**
+- Fail closed if DEID_TOKEN_PEPPER missing
+- Never send identified SAM to Fabric
+- Keep CMS Patient Access on identified path
+- Re-run `pytest tests/test_deid.py`
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q446: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q447. What are the HIPAA Safe Harbor 18 identifiers?
+
+**Answer:** Names; geo smaller than state; dates except year; phone; fax; email; SSN; MRN; health plan beneficiary; account; certificate/license; vehicle IDs; device IDs; URLs; IPs; biometrics; full-face photos; any other unique ID. ZIP may keep 3 digits if population rule met; ages 90+ aggregate.
+
+**Example:** `deid_engine.py` suppresses names/SSN, year-only DOB, ZIP3, HMAC tokens for MRN/member_id.
+
+**How to Check:**
+- Count identifiers in safe_harbor.yaml == 18
+- Unit test ZIP 02139 → 021
+- Age 1920 → 90+
+- Token prefix `tok_`
+
+**How to Fix:**
+- Add missing field aliases to the identifier list
+- Do not invent a 19th identifier without legal review
+- Document Expert Determination if Safe Harbor breaks utility
+- Never log the raw value being suppressed
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q447: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q448. Safe Harbor vs Expert Determination?
+
+**Answer:** Safe Harbor is a checklist (164.514(b)(2)). Expert Determination (b)(1) is a qualified statistician opinion that re-id risk is very small. We default Safe Harbor for Fabric/AI; Expert Determination only when clinical fields would be unusable.
+
+**Example:** Analytics Gold uses Safe Harbor; a rare outcomes study used Expert Determination with BAA statistician memo.
+
+**How to Check:**
+- Method flag `_deid_method` on every de-id row
+- Legal memo on file if expert method used
+- BAA covers the statistician
+- Re-id risk review date
+
+**How to Fix:**
+- Do not mix methods in one Gold table
+- Re-run determination after schema change
+- Keep CMS APIs identified regardless of method
+- Escalate to privacy if residual risk unclear
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q448: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q449. How do you tokenize member identifiers?
+
+**Answer:** HMAC-SHA256 of `field|value` with pepper from Secrets Manager / dbutils.secrets. Analytics cannot reverse the token. Empty pepper fails closed.
+
+**Example:** `tok_member_id_<24 hex>` from DEID_TOKEN_PEPPER; DynamoDB token store is not readable from Fabric.
+
+**How to Check:**
+- Secret exists and is KMS-encrypted
+- Same input → same token in unit test
+- Missing pepper raises DeidConfigError
+- air-cd has decrypt on that KMS key only
+
+**How to Fix:**
+- Rotate pepper only with full re-token job + cutover plan
+- Never hardcode pepper in notebooks
+- Grant decrypt least-privilege to air-cd
+- Quarantine rows that failed tokenize
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q449: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q450. Why not de-identify the CMS Patient Access path?
+
+**Answer:** CMS-9115/0057 require members and attributed providers to see their own identified records. De-id first applies to analytics, AI, Fabric, logs — not to SLAP-scoped FHIR reads.
+
+**Example:** Member `$everything` returns real Patient.name; Fabric Gold has no name column.
+
+**How to Check:**
+- FITE Patient.name present in authorized read
+- Fabric DESCRIBE gold shows no name/ssn
+- SLAP scope still binds patient context
+- Audit log has tokenized subject only
+
+**How to Fix:**
+- Do not strip names from Firely load
+- Split paths in deid_engine.split_paths
+- Train analysts on de-id Gold only
+- Privacy review if someone proposes de-id Firely
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q450: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q451. How do you prove logs contain no PHI?
+
+**Answer:** Structured formatter only; observer rejects payloads with name/ssn/member_id/email. AI observability ingest raises ObservabilityPolicyError. Grep CI for forbidden keys.
+
+**Example:** `AIObserver.ingest_signal` refuses `member_id`.
+
+**How to Check:**
+- `pytest tests/test_ai_observability.py` green
+- Log sample review with privacy
+- Formatter is `logging.Formatter("[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s")`
+- No print of record dicts in transformers
+
+**How to Fix:**
+- Remove identifier from the log statement
+- Log stage/status/counts only
+- Add CI grep for member_id in observability/
+- Treat a PHI log as a privacy incident
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q451: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q452. What happens to dates of service under Safe Harbor?
+
+**Answer:** Day and month are stripped; year retained. Ages 90+ become 90+. Service-year is enough for CMS KPI trends without a birth date.
+
+**Example:** `BIRTHDATE=1984-07-19` → `1984`; `1920-03-15` → `90+`.
+
+**How to Check:**
+- Unit test year_only
+- Gold date columns are year or 90+
+- No full ISO date in Fabric shortcut
+- Expert Determination if day-level needed
+
+**How to Fix:**
+- Re-extract with year_only if a full date leaked
+- Do not keep admission day in de-id SAM
+- Document 90+ aggregation to auditors
+- Use identified path for member-facing dates
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q452: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q453. How is ZIP handled?
+
+**Answer:** Keep first 3 digits only when the 20,000-population rule can be met; otherwise suppress. Street/city/county are suppressed. State may be retained.
+
+**Example:** `ZIP=02139` → `021`; `address` dropped.
+
+**How to Check:**
+- safe_harbor zip_rule documented
+- test_zip_generalized_to_3_digits
+- No street column in de-id Silver
+- State retained for directory analytics
+
+**How to Fix:**
+- Suppress ZIP3 for sparse rural cells
+- Do not keep 5-digit ZIP in Gold
+- Review ZIP3 population table annually
+- PVD public directory uses identified rules separately
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q453: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q454. Can Unity AI Gateway see identified SAM?
+
+**Answer:** No. Gateway policy `block_external_phi` plus the de-id gate. Agents and RCA models receive tokens, stage names, and aggregates only.
+
+**Example:** RCA prompt: `stages=[extract] p95_ms=2400` — no member keys.
+
+**How to Check:**
+- ai_models.yaml policy list includes block_external_phi
+- Observer rejects PHI keys
+- Inference audit table has no raw identifiers
+- Spend alert at 80%
+
+**How to Fix:**
+- Drop the identified catalog grant to the gateway SP
+- Re-run observer policy tests
+- Rotate any prompt log that leaked
+- Document OBO scopes still cannot widen data
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q454: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q454_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q454', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q454 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q455. De-id S3 landing and KMS?
+
+**Answer:** Dedicated `*-deid-safe-harbor` bucket, KMS SSE, separate from identified bronze. Observability bucket is de-id only. air-cd gets decrypt on those keys only.
+
+**Example:** terraform outputs `deid_bucket` and `observability_bucket`.
+
+**How to Check:**
+- aws s3api get-bucket-encryption on deid bucket
+- No ACL public
+- IAM policy lists specific key ARNs
+- Identified bronze not readable by Fabric SP
+
+**How to Fix:**
+- Add kms_key_id if default encryption slipped in
+- Block public access account-wide
+- Fix air-cd decrypt to least privilege
+- Do not copy identified prefixes into deid bucket
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```bash
+#!/usr/bin/env bash
+# Q455: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+## Section W: Master Data Management
+
+### Q456. What MDM standards do you apply?
+
+**Answer:** AHIMA Information Governance, ISO 8000 data quality, and HL7 Patient Administration match/merge. Golden keys, survivorship, stewardship, and a tokenized crosswalk — no raw PHI in MDM tables.
+
+**Example:** `configs/mdm/mdm_rules.yaml` entities: member, provider, organization, coverage.
+
+**How to Check:**
+- mdm_rules.yaml loaded by MasterDataManager
+- Steward named per entity
+- Crosswalk columns exclude name/ssn
+- pytest tests/test_mdm.py
+
+**How to Fix:**
+- Add missing entity rather than ad-hoc join keys
+- Do not store source MRN plaintext in crosswalk
+- Assign a steward before go-live
+- Quarantine unmatched members
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q456: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q456 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q457. Deterministic vs probabilistic member match?
+
+**Answer:** Deterministic: tokenized member_id or tokenized MRN + year of birth. Probabilistic: year_of_birth + gender + ZIP3 + last_initial at threshold 0.92. We log confidence, never the raw fields.
+
+**Example:** Two claims rows with same `tok_member_id` collapse to one golden.
+
+**How to Check:**
+- match_audit.method in {deterministic, insert}
+- confidence logged as a number only
+- Threshold 0.92 in yaml
+- No last name stored — last_initial only if de-id allows
+
+**How to Fix:**
+- Tune threshold with privacy + legal
+- Prefer deterministic tokens over fuzzy name
+- Manual exception process for unmatched
+- Do not use full name on de-id path
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q457: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q457 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q458. What are survivorship rules?
+
+**Answer:** Source priority (EHR FHIR > claims > PVD > webhook), recency wins for coverage/address state, most-complete wins for gender. Applied when merging into the golden record.
+
+**Example:** EHR demographics beat claims; latest coverage_status wins.
+
+**How to Check:**
+- test_survivorship_prefers_ehr_then_recency
+- source_priority list in yaml
+- Golden has `_mdm_survivorship: true`
+- Quality report unique_goldens
+
+**How to Fix:**
+- Do not let webhook overwrite EHR name fields (identified path)
+- Re-run survivorship after source onboarding
+- Document exceptions in steward log
+- Keep PVD NPI as provider golden key
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q458: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q458 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q459. How does MDM interact with PVD-before-Claims?
+
+**Answer:** Provider golden (NPI) must exist before Claims EOB references Practitioner. Orchestrator still gates Claims on PVD. MDM crosswalk supplies `provider_golden_id` for those refs.
+
+**Example:** Claims blocked if PVD family not in completed set.
+
+**How to Check:**
+- load_order starts with pvd
+- validate_dependencies raises on missing pvd
+- Orphan Practitioner count = 0
+- mdm quality_gates include pvd_golden_before_claims_refs
+
+**How to Fix:**
+- Run PVD incremental then replay Claims
+- Backfill missing NPI goldens from NPPES
+- Do not disable the orchestrator gate
+- Alert on unmatched provider tokens
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q459: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q459 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q460. What must never be in the MDM crosswalk?
+
+**Answer:** Raw PHI: name, SSN, full DOB, street. Only entity_type, source_system, source_key_token, golden_id, confidence, rule_id.
+
+**Example:** `never_store` list in mdm_rules.yaml.
+
+**How to Check:**
+- Crosswalk schema review
+- quality_report has no name/ssn keys
+- Unity Catalog mask on any residual identifier
+- Steward sign-off
+
+**How to Fix:**
+- Drop the column and rebuild crosswalk
+- Treat as privacy incident if raw MRN landed
+- Add CI schema assert
+- Re-tokenize source keys
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q460: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q460 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q461. Provider MDM key?
+
+**Answer:** NPI is the deterministic golden key (NPPES). Probabilistic fallback is last_initial + specialty + ZIP3 at 0.95. Organization uses NPI or TIN.
+
+**Example:** Plan-Net Practitioner.identifier NPI → `provider_golden_id`.
+
+**How to Check:**
+- NPI uniqueness in pvd_sam
+- NPPES listed first in source_priority
+- TIN only on organization entity
+- Claims EOB practitioner ref = golden NPI
+
+**How to Fix:**
+- Do not invent internal provider IDs when NPI exists
+- Quarantine NPIs that fail Luhn/format
+- Refresh NPPES weekly
+- Keep directory public API on identified Plan-Net rules
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q461: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q461 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q462. Coverage MDM?
+
+**Answer:** Golden key is tokenized_member_id + plan_id + coverage_year. Recency wins status and plan_id. Steward is enrollment.
+
+**Example:** Plan change mid-year closes prior golden row via recency.
+
+**How to Check:**
+- coverage entity in mdm_rules.yaml
+- No overlapping current coverage without steward exception
+- Tokenized member only
+- Year not full enrollment date on de-id path
+
+**How to Fix:**
+- Fix overlapping rows with steward
+- Do not use raw subscriber_id
+- Align with Type 2 SCD in Fabric Gold
+- Keep identified coverage for member-facing FHIR Coverage
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q462: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q462 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q463. MDM stewardship model?
+
+**Answer:** Named steward per entity (member, provider, enrollment). Stewards approve threshold changes, exceptions, and source-priority edits. ISO 8000 quality gates are automated; exceptions are human.
+
+**Example:** member_data_steward approves dropping probabilistic threshold to 0.90.
+
+**How to Check:**
+- stewardship field populated
+- Exception ticket template exists
+- Threshold change has privacy + steward ack
+- Quarterly golden duplicate review
+
+**How to Fix:**
+- Do not let engineers silently change thresholds
+- Record rule_id on every match
+- Escalate unmatched rate > SLA
+- Train stewards on de-id constraints
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q463: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q463 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q464. How do Rails A/B/C share MDM?
+
+**Answer:** All rails resolve to the same golden IDs before SAM. Rail C FHIR JSON skips CSV FM but still tokenizes and matches members. Webhook rail B lands Bronze then MDM before FM.
+
+**Example:** PulseEHR Patient.id → token → member_golden_id shared with Claims CSV.
+
+**How to Check:**
+- Same crosswalk table for all rails
+- Rail C still has mdm_resolve task
+- Unmatched PulseEHR patients quarantined
+- No rail-specific golden namespace
+
+**How to Fix:**
+- Register new source in MDP ingest + MDM source_priority
+- Backfill tokens after a new rail
+- Do not create a second member golden table
+- Keep convergence at SAM after MDM
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q464: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q464 Delta pipeline checkpoint OK")
+```
+
+---
+
+### Q465. MDM quality gates?
+
+**Answer:** No duplicate golden keys, match confidence logged without PHI, unidentified records quarantined, PVD golden before Claims refs.
+
+**Example:** `quality_report()` returns counts only.
+
+**How to Check:**
+- pytest quality_report_has_no_phi_fields
+- Quarantine table row count monitored
+- Duplicate golden_keys == 0 in prod
+- Orchestrator gate enabled
+
+**How to Fix:**
+- Merge duplicate goldens with steward
+- Replay Claims after PVD backfill
+- Page on quarantine spike
+- Do not drop unidentified silently
+
+**Script:** *(builds proficiency: Data Engineer | Associate Solution Architect)*
+
+```python
+# Q465: Databricks/Delta proficiency — run in notebook or local Spark
+from pyspark.sql import functions as F
+
+# Bronze → Silver pattern (Rail C FHIR NDJSON)
+bronze = spark.read.format("cloudFiles") \
+    .option("cloudFiles.format", "json") \
+    .option("cloudFiles.schemaLocation", "s3://interop/bronze/_schemas/fhir/") \
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns") \
+    .load("s3://interop/landing/pulseehr/fhir/")
+
+silver = bronze.filter(F.col("resourceType").isNotNull()) \
+    .withColumn("profile_match", F.expr("validate_uscore(resource)")) \
+    .filter(F.col("profile_match") == True)
+
+silver.write.format("delta").mode("append").saveAsTable("prod_interop.silver.fhir_resources")
+
+# Check + optimize
+display(spark.sql("SELECT resourceType, COUNT(*) c FROM prod_interop.silver.fhir_resources GROUP BY 1 ORDER BY c DESC"))
+spark.sql("OPTIMIZE prod_interop.sam.clinical.conditions")
+spark.sql("DESCRIBE HISTORY prod_interop.sam.clinical.conditions").show(5, truncate=False)
+print("Q465 Delta pipeline checkpoint OK")
+```
+
+---
+
+## Section X: Fabric vs Databricks Bake-off
+
+### Q466. Why run Fabric parallel to Databricks?
+
+**Answer:** Same de-id SAM contract on both engines so we can compare cost (DBU vs CU) and speed without moving the CMS critical path. Databricks stays primary through Jan 2027; Fabric is the bake-off + Gold/BI path.
+
+**Example:** `./scripts/run_engine_benchmark.sh` prints winner_speed and winner_cost.
+
+**How to Check:**
+- workspace.yaml engines: [databricks, fabric]
+- same_input_contract: deid_sam
+- Identified bronze not in Fabric shortcut
+- pytest tests/test_fabric_benchmark.py
+
+**How to Fix:**
+- Do not big-bang migrate Claims to Fabric pre-deadline
+- Fix contract drift before comparing times
+- Fund Fabric as a parallel workstream
+- Record results in observability.engine_benchmark
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q466: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q466 Fabric CMS metrics + SCD hash staging complete")
+```
+
+---
+
+### Q467. How do you compare DBU vs CU cost?
+
+**Answer:** Normalize to USD: Databricks DBU-hours × list DBU rate; Fabric CU-hours × CU rate. Then cost per million rows on the same de-id input. List rates are estimates — replace with contract rates.
+
+**Example:** `FabricBenchmark.estimate_databricks(420, dbus=8)` vs `estimate_fabric(510, capacity_cu=64)`.
+
+**How to Check:**
+- Both runs used identical row counts
+- cost_per_million_rows populated
+- Contract rates updated in fabric_benchmark.py
+- No PHI in benchmark output
+
+**How to Fix:**
+- Re-run after cluster/capacity change
+- Exclude idle CU from the Fabric number
+- Do not compare identified vs de-id jobs
+- Publish winner with family + date
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q467: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q467 Fabric CMS metrics + SCD hash staging complete")
+```
+
+---
+
+### Q468. What is the shared input contract?
+
+**Answer:** `deid_sam` — Safe Harbor rows with golden IDs, no names/SSN/full dates. Both engines read that contract so elapsed time is apples-to-apples.
+
+**Example:** Fabric notebook filters `_deid_method == safe_harbor` and `member_golden_id IS NOT NULL`.
+
+**How to Check:**
+- fabric/notebooks/deid_sam_transform.py
+- Databricks job uses same columns
+- DESCRIBE both tables match
+- Row counts reconcile nightly
+
+**How to Fix:**
+- Stop the bake-off if schemas diverge
+- Add missing `_deid_version`
+- One primary writer per table
+- Document freshness SLA per engine
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q468: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q468 Fabric CMS metrics + SCD hash staging complete")
+```
+
+---
+
+### Q469. When does Fabric win vs Databricks?
+
+**Answer:** Fabric often wins Gold/BI (DirectLake, Power BI) on cost for dashboard refresh. Databricks usually wins heavy Spark SAM transforms and the CMS path. Recommendation is written per family.
+
+**Example:** Claims family: Databricks faster; Fabric cheaper for Gold KPI rollup.
+
+**How to Check:**
+- winner_speed and winner_cost in compare()
+- recommendation mentions CMS critical path
+- Exec slide uses bake-off table not anecdotes
+- Idle capacity called out
+
+**How to Fix:**
+- Do not move Firely load to Fabric
+- Keep rollback to Databricks 30 days
+- Re-benchmark quarterly
+- Protect Jan 2027 date over Fabric acceleration
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q469: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q469 Fabric CMS metrics + SCD hash staging complete")
+```
+
+---
+
+### Q470. Fabric PHI controls?
+
+**Answer:** Managed VNet, BAA, de-id-only OneLake shortcuts, workspace RBAC, no identified bronze grant. Gold CMS metrics workspace is PHI-free by construction.
+
+**Example:** shortcut_from s3 gold deid prefix only.
+
+**How to Check:**
+- baa_required: true in workspace.yaml
+- isolation: managed_vnet
+- Purview labels on Silver
+- Guest access audit empty
+
+**How to Fix:**
+- Remove identified shortcut
+- Block public sharing links
+- Enable audit logs
+- Train Fabric admins on HIPAA
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```bash
+#!/usr/bin/env bash
+# Q470: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q471. How do Fabric pipelines map to Databricks jobs?
+
+**Answer:** Copy Bronze → Notebook Silver → Notebook Gold → write_benchmark mirrors preprocess/transform/extract/benchmark_engines. Orchestration names differ; the SAM contract does not.
+
+**Example:** claims_deid_parallel activities in workspace.yaml.
+
+**How to Check:**
+- Pipeline JSON export lists four activities
+- Notebook git-backed
+- Secrets in Key Vault not notebooks
+- Failure alerts to the same on-call as Databricks
+
+**How to Fix:**
+- Parameterize per workflow family
+- Do not embed tokens in notebook cells
+- Keep schedule aligned for fair bake-off
+- Page on pipeline failure like a Databricks job
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q471: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q471 Fabric CMS metrics + SCD hash staging complete")
+```
+
+---
+
+### Q472. OneLake vs S3 in this architecture?
+
+**Answer:** S3 remains the system of record for identified + de-id Bronze. OneLake shortcuts the de-id Gold/analytics prefix — no second copy of PHI, and no identified prefix shortcut.
+
+**Example:** shortcut_from: s3://onyx-dev-gold-analytics/deid/
+
+**How to Check:**
+- Shortcut target is deid prefix
+- Identified bronze bucket policy denies Fabric SP
+- No full-table clone of Patient.name
+- Bridge VPC used if Fabric is outside air-gap
+
+**How to Fix:**
+- Delete a shortcut that pointed at identified bronze
+- Use env vars for bridge endpoints
+- Never direct internet from air-gapped Databricks
+- Pilot de-id Gold first
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q472: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q472 Fabric CMS metrics + SCD hash staging complete")
+```
+
+---
+
+### Q473. Who owns the bake-off metrics?
+
+**Answer:** Abacus owns engine runtime numbers; shared observability stores them; execs see winner_cost/speed without row-level data. Onyx does not change SLAP/FITE based on Fabric results.
+
+**Example:** observability.engine_benchmark table, counts only.
+
+**How to Check:**
+- MDP fabric_engine.parallel_to = databricks
+- Insights dashboard tile for bake-off
+- No member grain in the tile
+- Quarterly review on calendar
+
+**How to Fix:**
+- Publish even when Databricks loses cost
+- Do not hide idle CU
+- Keep CMS path decision in an ADR
+- Revisit post-Jan 2027
+
+**Script:** *(builds proficiency: Data Engineer | Intermediate Associate Programmer)*
+
+```python
+# Q473: Microsoft Fabric Lakehouse proficiency
+# Run in Fabric notebook — CMS metrics mirror from Databricks export
+from pyspark.sql import functions as F
+
+# OneLake shortcut to ADLS export (no duplicate copy)
+cms = spark.read.format("parquet").load("abfss://exports@datalake/metrics/cms/")
+cms.groupBy("payer_id", "api_family").agg(
+    F.avg("uptime_pct").alias("avg_uptime"),
+    F.sum("api_calls").alias("total_calls")
+).orderBy("payer_id").show()
+
+# Type 2 SCD hash compare for eligibility
+from pyspark.sql.functions import sha2, concat_ws, lit
+staging = spark.table("eligibility_staging")
+staging = staging.withColumn(
+    "row_hash",
+    sha2(concat_ws("|", "member_id", "plan_id", "effective_date", "benefit_tier"), 256)
+)
+staging.write.mode("overwrite").saveAsTable("eligibility_staging_hashed")
+print("Q473 Fabric CMS metrics + SCD hash staging complete")
+```
+
+---
+
+## Section Y: AI Observability
+
+### Q474. What is the AI observability sub-solution?
+
+**Answer:** A platform-wide observer: OpenTelemetry traces, job/API/auth/deploy metrics, structured de-id logs, plus latest LLMs (Claude Sonnet, GPT) for RCA and anomaly explanation through Unity AI Gateway. Not a clinical agent.
+
+**Example:** `observability/ai_observer.py` + `configs/observability/ai_models.yaml`.
+
+**How to Check:**
+- Service ai_observability in services.json
+- Models listed: rca, anomaly, log_cluster, summarizer
+- pytest tests/test_ai_observability.py
+- Gateway policies deny FHIR write
+
+**How to Fix:**
+- Do not point RCA at identified SAM
+- Keep models off the clinical decision path
+- Cap spend at 80% alert
+- Store RCA hypotheses without identifiers
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q474: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q474_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q474', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q474 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q475. Which models are used and why?
+
+**Answer:** Claude Sonnet for RCA and shift handoff (long context, structured hypothesis). GPT for anomaly narrative. text-embedding-3-large for clustering de-id error signatures. All via the gateway — no direct public internet from air-gap.
+
+**Example:** ai_models.yaml rca.name = claude-sonnet-4-6.
+
+**How to Check:**
+- Model names pinned in yaml
+- Bridge endpoint for egress
+- Inference log has model + tokens, no PHI
+- Embedding index is error signatures not notes
+
+**How to Fix:**
+- Pin versions; do not float latest in prod
+- Route through Unity AI Gateway
+- Drop a model that requires raw logs
+- Re-eval after a model upgrade
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q475: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q475_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q475', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q475 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q476. How does RCA stay PHI-free?
+
+**Answer:** explain_incident asserts every trace/metric key is de-id. Hypothesis is stage names, p95, error_rate. recommended_action never reprints a member token in free text if avoidable.
+
+**Example:** `phi_in_prompt: false` on every RCA record.
+
+**How to Check:**
+- Observer raises on member_id
+- RCA table columns reviewed
+- Prompt template has no `{patient}` placeholder
+- Privacy spot-check monthly
+
+**How to Fix:**
+- Strip the field and re-run
+- Treat leaked prompt as an incident
+- Add key to PHI_KEYS denylist
+- Retrain on-call not to paste logs into ChatGPT
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q476: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q477. What signals are collected?
+
+**Answer:** OTel traces; Databricks job + Fabric pipeline duration; FITE latency; SLAP auth success/fail counts; Seiji deploy status. Logs are structured and de-id only.
+
+**Example:** signals.metrics list in ai_models.yaml.
+
+**How to Check:**
+- Trace has stage/status/workflow only
+- Auth metrics are counts not user ids
+- Seiji deploy id, not manifest secrets
+- CMS metrics reporter still separate for filings
+
+**How to Fix:**
+- Remove user email from auth logs
+- Hash deploy actor if required for audit
+- Keep CMS filing metrics on the identified API path aggregates
+- Do not scrape Firely resource bodies
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q477: FHIR validation + API read proficiency
+set -euo pipefail
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop
+python scripts/validate_fhir_output.py ./fhir_output --strict 2>&1 | tee /tmp/q477_fhir_validation.log
+
+# Capability + resource read (requires local stack)
+curl -sf http://localhost:8080/metadata | python3 -m json.tool | head -40
+curl -sf "http://localhost:8080/Patient/example" -H "Authorization: Bearer ${TOKEN:-demo}" | python3 -m json.tool | head -30
+
+# Count resources by type in generated output
+python3 << 'PY'
+import json, pathlib, collections
+c = collections.Counter()
+for p in pathlib.Path("./fhir_output").rglob("*.json"):
+    try:
+        d = json.loads(p.read_text())
+        if d.get("resourceType"): c[d["resourceType"]] += 1
+        elif d.get("entry"):
+            for e in d["entry"]:
+                rt = e.get("resource", {}).get("resourceType")
+                if rt: c[rt] += 1
+    except Exception: pass
+for rt, n in sorted(c.items()): print(f"{rt}: {n}")
+print(f"TOTAL types: {len(c)}")
+PY
+```
+
+---
+
+### Q478. How do you detect anomalies?
+
+**Answer:** Compare current metric to baseline; flag WARN/CRIT on large relative deviation. LLM explains the already-flagged point — it does not scan PHI tables.
+
+**Example:** `detect_anomaly('job_seconds', 900, baseline=120)` → CRIT.
+
+**How to Check:**
+- test_anomaly_on_large_deviation
+- Baseline from last 14 successful runs
+- Page on CRIT to Abacus on-call
+- Explanation stored without identifiers
+
+**How to Fix:**
+- Recalibrate baseline after expected load change
+- Do not page on first run (no baseline)
+- Suppress during announced maintenance
+- Keep human ack on CRIT before Seiji rollback
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q478: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q478_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q478', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q478 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q479. Shift-handoff summary?
+
+**Answer:** Summarizer model produces event_count + signal_types only. On-call reads counts and stage names, then uses runbooks — not a dump of failing member rows.
+
+**Example:** `shift_summary()` note: counts and stage names only.
+
+**How to Check:**
+- handoff_table in yaml
+- No resource ids in summary
+- Posted to ops channel, not email with attachments of PHI
+- Retention aligned with HIPAA audit policy
+
+**How to Fix:**
+- Regenerate if a token leaked into the prompt
+- Keep 988/clinical content out of this path
+- Link to Databricks job URL not to SAM preview
+- Rotate channel guests
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q479: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q479_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q479', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q479 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q480. How does AI observability differ from Onyx Insights?
+
+**Answer:** Insights is the CMS/API metrics product (uptime, filings). AI observability is the cross-stack SRE brain (RCA, clustering, handoff) on de-id telemetry. Both exist; Insights does not send PHI to LLMs either.
+
+**Example:** Insights :9001; ai_observability :9011.
+
+**How to Check:**
+- Both registered in services.json
+- Insights CMS reporter still used for filings
+- Observer not wired to Firely read
+- Ownership: Insights=Onyx, observer=shared
+
+**How to Fix:**
+- Do not replace CMS filings with LLM prose
+- Keep dual dashboards
+- Align severity with existing on-call
+- Document the split in the ownership matrix
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q480: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q480_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q480', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q480 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q481. Unity AI Gateway policies for observability?
+
+**Answer:** block_external_phi, deny_fhir_write, deny_raw_log_forwarding, spend_alert_80pct. Observability service principal cannot SELECT identified catalogs.
+
+**Example:** policy list in ai_models.yaml.
+
+**How to Check:**
+- Gateway deny on fhir write
+- SP grants = de-id observability tables only
+- Spend alert configured
+- OBO not used for RCA (no user PHI context)
+
+**How to Fix:**
+- Revoke extra catalog grants
+- Block unapproved model endpoints
+- Lower spend cap if bake-off + RCA spike
+- Audit inference_logs weekly
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q481: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q481_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q481', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q481 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q482. How do you test the four new layers together?
+
+**Answer:** pytest: test_deid, test_mdm, test_fabric_benchmark, test_ai_observability. Then orchestrator execution plan must list deidentify → mdm_resolve before preprocess, and benchmark_engines + observe before terminate.
+
+**Example:** `python -m pytest tests/test_deid.py tests/test_mdm.py tests/test_fabric_benchmark.py tests/test_ai_observability.py -v`.
+
+**How to Check:**
+- All four modules green
+- get_pipeline_steps includes deidentify and observe
+- services.json has deid_gate, mdm, fabric_engine, ai_observability
+- Cheat sheet Q446+ present
+
+**How to Fix:**
+- Fix the failing unit first
+- Do not skip deidentify in a family job
+- Re-export Databricks job JSON after orchestrator change
+- Regenerate cheat sheet scripts after Q edits
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q482: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q482_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q482', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q482 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q483. Interview story: de-id + Fabric + RCA in one incident?
+
+**Answer:** Claims job slow. Observer flags job_seconds CRIT on de-id metrics. RCA says extract stage. Bake-off shows Fabric Gold still cheap. We replay from watermark on Databricks (CMS path), do not copy identified Bronze to Fabric, and hand off a count-only summary.
+
+**Example:** Hypothesis: stages=[extract]; recommended_action: replay watermark; no PHI in Slack.
+
+**How to Check:**
+- Incident ticket has no member list
+- Watermark advanced after replay
+- Fabric shortcut unchanged
+- RCA row phi_in_prompt=false
+
+**How to Fix:**
+- If someone pasted a Patient bundle into ChatGPT — incident
+- Keep Seiji rollback separate from data replay
+- Update runbook with the four-layer path
+- Add the scenario to next teach-back
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```bash
+#!/usr/bin/env bash
+# Q483: SMART on FHIR / SLAP token flow
+set -euo pipefail
+SLAP="${SLAP_URL:-http://localhost:9000}"
+CLIENT_ID="${CLIENT_ID:-demo-app}"
+REDIRECT="http://localhost:3000/callback"
+CODE_VERIFIER="$(openssl rand -base64 32 | tr -d '=+/ ' | cut -c1-43)"
+CODE_CHALLENGE="$(printf '%s' "$CODE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')"
+
+echo "=== SMART authorize (PKCE S256) ==="
+AUTH_URL="$SLAP/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT&scope=patient/Patient.read&code_challenge=$CODE_CHALLENGE&code_challenge_method=S256"
+echo "$AUTH_URL"
+
+# After user login, exchange code:
+# curl -X POST "$SLAP/oauth/token" -d "grant_type=authorization_code&code=CODE&redirect_uri=$REDIRECT&client_id=$CLIENT_ID&code_verifier=$CODE_VERIFIER"
+
+curl -sf "$SLAP/.well-known/smart-configuration" | python3 -m json.tool || echo "Start SLAP: cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python slap_server.py"
+```
+
+---
+
+### Q484. How do these layers change role proficiency?
+
+**Answer:** Data Engineer owns de-id/MDM/bake-off. AI Engineer owns observer models + gateway. FHIR Engineer still owns identified CMS resources. Solution Architect traces CMS vs analytics path. Programmer patches engines and tests.
+
+**Example:** Phase 0 now includes Safe Harbor config + repo clone; Phase 1 wires deidentify/mdm_resolve tasks.
+
+**How to Check:**
+- Role matrix in implementation_details.md
+- Scripts on Q446+ tagged to roles
+- pytest green as programmer exit
+- Architect can whiteboard split paths
+
+**How to Fix:**
+- Do not assign Fabric identified-data work
+- Cross-train on-call on observer denylist
+- Keep FHIR validation on identified output
+- Update teach-back schedule with de-id + MDM
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q484: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q484_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q484', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q484 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+### Q485. What is the exec one-liner for the four additions?
+
+**Answer:** We de-identify first for anything that is not a CMS API, manage goldens to industry MDM rules, run Fabric beside Databricks to prove cost and speed, and watch the whole stack with AI that is not allowed to see PHI.
+
+**Example:** Used on the physician-org ROI slide next to the Fabric dashboard.
+
+**How to Check:**
+- One-pager in README architecture block
+- Bake-off numbers current
+- BAA + Safe Harbor method cited
+- No PHI on the slide
+
+**How to Fix:**
+- Refresh bake-off before the exec meeting
+- Keep Jan 2027 CMS path as the headline risk
+- Do not promise Fabric replaces Databricks this year
+- Offer a live de-id Gold demo, not identified SAM
+
+**Script:** *(builds proficiency: AI Engineer | Forward Deployed Engineer)*
+
+```python
+# Q485: AI Engineer — RAG + agent event detection
+import mlflow
+from databricks.vector_search.client import VectorSearchClient
+
+# Log a governed inference run
+with mlflow.start_run(run_name="q485_pas_scoring"):
+    mlflow.log_param("ig_version", "davinci-pas-2.0.1")
+    mlflow.log_param("model_stage", "Production")
+    mlflow.log_metric("auc", 0.87)
+
+# RAG retrieval for formulary policy Q&A
+vsc = VectorSearchClient()
+idx = vsc.get_index(endpoint_name="interop_vs", index_name="prod_interop.ai.formulary_policy_idx")
+results = idx.similarity_search(
+    query_text="Is prior auth required for Humira?",
+    columns=["ndc", "policy_text", "pa_required"],
+    num_results=5
+)
+for row in results.get("result", dict()).get("data_array", []):
+    print(row)
+
+# ai_events queue insert (Payer Ops Agent input)
+spark.sql('''
+INSERT INTO prod_interop.sam.ai_events.event_queue
+  (event_id, actor_type, severity, event_type, summary, source_table, created_at)
+VALUES
+  ('evt-q485', 'PAYER_OPS', 'WARN', 'INGESTION_LAG',
+   'Bronze lag 4h for pulse-ehr', 'prod_interop.bronze.fhir_ndjson', current_timestamp())
+''')
+print("Q485 AI pipeline events + RAG retrieval OK")
+```
+
+---
+
+
+## Glossary
+
+> All key terms from the Abacus/Onyx CMS interoperability solution — organized by category with description and practical example.
+
+| Term | Category | Description | Example |
+|------|----------|-------------|---------|
+| **Abacus** | Platform & Architecture | Data plane owned by Abacus Insights — ingestion, FM/SAM marts, extract/transform, FHIR bundle generation | Databricks Claims workflow writes `claims_sam.eob_records` before Firely load |
+| **Onyx** | Platform & Architecture | API/runtime plane — SLAP auth, FITE gateway, Developer Portal, Onyx Insights, MDP | Consumer apps call FITE :8080 after SLAP token, never Firely directly |
+| **FM (Foundational Mart)** | Data Engineering | Canonical normalized layer — NOT FHIR-shaped; validates, dedupes, stable keys for incremental updates | `claims_fm.claim_line` holds typed columns from raw CSV before SAM mapping |
+| **SAM (Subject Area Mart)** | Data Engineering | IG-aligned marts bridging FM to FHIR; each SAM maps to a CMS domain/workflow family | `clinical_sam.observations` → US Core Observation resources |
+| **Extract Task** | Data Engineering | Reads SAM Delta tables, writes NDJSON/bundles to S3 staging for transform/FSI | Extract pulls changed rows via `table_changes` since last watermark |
+| **FHIR Generation** | FHIR Engineering | Converts SAM rows to FHIR R4 JSON per US Core / CARIN BB / Da Vinci profiles | `claims_transformer.py` maps EOB SAM row → `ExplanationOfBenefit` resource |
+| **Bundle Packaging** | FHIR Engineering | Wraps resources in transaction bundles (Firely) or NDJSON files (HealthLake `$import`) | `bundle_Alberto639_Berge125.json` with 793 entries for bulk upsert |
+| **interop_pipeline.py** | Data Engineering | Local reference pipeline: CSV → FM → SAM → FHIR (5 layers) | `python interop_pipeline.py --input ./source_data --output ./fhir_output` → 9,997 resources |
+| **SLAP** | Runtime & Security | SMART Launch Authentication Proxy — OAuth2 tokens, PKCE, scopes, consent (:9000) | Patient app exchanges auth code + PKCE verifier at `/auth/token` |
+| **FITE** | Runtime & Security | FHIR Integration & Transformation Engine — API gateway proxying to Firely (:8080) | `GET /Patient/{id}/$everything` after SLAP Bearer token validation |
+| **MDP** | Platform & Architecture | Metadata & Discovery Platform — service registry, IG packages, workflow configs (:9002) | `configs/mdp/ig_registry.json` pins US Core 6.1.0 |
+| **Onyx Insights** | Observability | Monitoring, CMS metrics, alerts, audit trail (:9001) | CMS Patient Access uptime reporter feeds compliance dashboard |
+| **Developer Portal** | Runtime & Security | App registration, SMART client configs, API documentation for third-party developers | Register `patient-app-001` with `patient/*.read` scopes |
+| **Firely Server** | FHIR Store | Production FHIR R4 store on EKS; serves resources after FSI bulk/incremental load | `kubectl get pods -n firely` — Patient Access queries hit Firely via FITE |
+| **HealthLake** | FHIR Store | AWS managed FHIR store; accepts NDJSON via `$import` for bulk historical loads | `Patient.ndjson` (10 resources) imported via HealthLake bulk API |
+| **FSI (Firely Server Ingest)** | FHIR Store | Bulk/incremental upload job converting staging NDJSON → Firely resources | Step Functions triggers FSI Docker job after Extract completes |
+| **Seiji** | Deployment | Internal deployment tool for Helm/Terraform rollouts with canary support | Canary deploy Firely helm chart 10% → 100% after health check |
+| **onyx_job_state** | Data Engineering | DynamoDB table storing workflow watermarks, run status, error messages | Watermark `updated_at=2025-07-18T06:00:00Z` for incremental Extract |
+| **metadata_v1** | Data Engineering | Maps business IDs (member_id, claim_id) to FHIR resource IDs for idempotent upserts | `member_id=M123` → `Patient/abc-fhir-id` |
+| **CMS-9115** | CMS & Regulatory | Interoperability and Patient Access Final Rule — mandates Patient Access, Provider Directory, Formulary APIs | Phase 1 delivers SMART Patient Access + public Plan-Net directory |
+| **CMS-0057** | CMS & Regulatory | Interoperability and Prior Authorization Final Rule — Provider Access, P2P, ePA by Jan 2027 | Phase 2 adds `$export`, `$bulk-member-match`, CRD/DTR/PAS |
+| **Patient Access API** | CMS & Regulatory | SMART-authenticated FHIR API giving members access to their claims/clinical/PA data | Member app calls `$everything` on their Patient resource |
+| **Provider Directory API** | CMS & Regulatory | Public FHIR API exposing practitioner/org directory (Plan-Net) — no auth required | `GET /Practitioner?address-state=MA` returns Plan-Net profiles |
+| **Formulary API** | CMS & Regulatory | Public API for drug formulary, tiers, PA requirements | `GET /MedicationKnowledge?code=NDC123` |
+| **Provider Access API** | CMS & Regulatory | Backend Services API for attributed provider access to member data via `$export` | Provider EHR triggers bulk export with attribution Group resources |
+| **P2P (Payer-to-Payer)** | CMS & Regulatory | CMS-0057 workflow for member data exchange between payers with consent | `$bulk-member-match` + opt-in consent + NDJSON export |
+| **ePA (Electronic Prior Authorization)** | CMS & Regulatory | Da Vinci CRD/DTR/PAS workflows for prior auth burden reduction | CRD checks if PA needed; PAS `$submit` for authorization request |
+| **HTI-1** | CMS & Regulatory | Health IT certification rule updating USCDI standards and FHIR requirements | Track USCDI version bumps in IG registry quarterly |
+| **USCDI** | CMS & Regulatory | US Core Data for Interoperability — minimum data classes payers must exchange | USCDI v3 adds health insurance information elements |
+| **FHIR R4** | FHIR Standards | Fast Healthcare Interoperability Resources Release 4 — JSON/XML healthcare data standard | All API resources use `"resourceType": "Patient"` etc. |
+| **US Core** | FHIR Standards | HL7 FHIR IG defining US baseline profiles for Patient, Observation, Condition, etc. | Patient resource declares `meta.profile` US Core Patient URL |
+| **CARIN Blue Button (CARIN BB)** | FHIR Standards | FHIR IG for consumer-directed claims/EOB/COB data | `ExplanationOfBenefit` with CARIN BB profile for Patient Access |
+| **Da Vinci IGs** | FHIR Standards | HL7 implementation guides: PDex, Plan-Net, Formulary, CRD, DTR, PAS | Plan-Net `PractitionerRole` for Provider Directory |
+| **PDex** | FHIR Standards | Da Vinci Payer Data Exchange — member clinical/claims export patterns | PDex `$member-everything` operation for P2P export |
+| **Plan-Net** | FHIR Standards | Da Vinci Provider Directory IG for Practitioner/Organization/PractitionerRole | PVD workflow produces Plan-Net compliant directory resources |
+| **CRD** | FHIR Standards | Da Vinci Coverage Requirements Discovery — checks if PA/docs needed at point of care | `POST /CoverageRequirements/$discovery` before ordering procedure |
+| **DTR** | FHIR Standards | Da Vinci Documentation Templates & Rules — adaptive PA questionnaire forms | CRD response links DTR questionnaire for clinical documentation |
+| **PAS** | FHIR Standards | Da Vinci Prior Authorization Support — `$submit` PA requests/responses as FHIR | `ClaimResponse` resource carries PA decision/outcome |
+| **SMART on FHIR** | Runtime & Security | OAuth2-based app launch framework for healthcare APIs | `.well-known/smart-configuration` discovery document on SLAP |
+| **PKCE** | Runtime & Security | Proof Key for Code Exchange — S256 challenge prevents auth code interception | Mobile app sends `code_challenge` at authorize, `code_verifier` at token |
+| **Backend Services Auth** | Runtime & Security | OAuth2 client_credentials or JWT assertion for system-level API access | Payer bulk `$export` uses `system/*.read` scope |
+| **CapabilityStatement** | FHIR Standards | FHIR metadata resource describing server capabilities (`/metadata`) | FITE `/metadata` lists supported resources and search params |
+| **$everything** | FHIR Operations | FHIR operation returning all resources for a patient compartment | `GET /Patient/123/$everything` for member app full record |
+| **$export** | FHIR Operations | Bulk data export operation — async NDJSON dump with manifest | Provider Access triggers `$export` → poll `_status` → download NDJSON |
+| **$bulk-member-match** | FHIR Operations | CMS-0057 P2P operation matching members across payers | POST member identifiers → receive matched Patient references |
+| **NDJSON** | FHIR Standards | Newline-delimited JSON — one FHIR resource per line for bulk import/export | `Observation.ndjson` with 6,868 lines for HealthLake `$import` |
+| **Transaction Bundle** | FHIR Standards | FHIR bundle type `transaction` with POST/PUT entries for atomic upsert | Per-patient bundle uploaded to Firely via FSI |
+| **Must Support** | FHIR Standards | US Core elements required if data exists — validation failure if missing | Patient `name.family` Must Support — quarantine if null |
+| **StructureDefinition** | FHIR Standards | FHIR profile definition constraining resource elements | US Core Patient SD stored in UC Volume `fhir_igs/` |
+| **Rail A** | Multi-Channel Ingestion | CSV/batch ingestion path — existing Synthea/payer flat-file pipeline (unchanged) | `Patients.csv` → FM → SAM → FHIR via `interop_pipeline.py` |
+| **Rail B** | Multi-Channel Ingestion | Serverless webhook transport — API Gateway → Lambda → Kafka/SQS → S3 Bronze | NASCO claim adjudication webhook lands in `bronze.nasco_events` |
+| **Rail C** | Multi-Channel Ingestion | Native FHIR JSON from EHR exports (PulseEHR) via medallion Autoloader | 129K patients, 8.9M resources → Bronze → Silver → SAM convergence |
+| **Medallion Architecture** | Data Engineering | Bronze (raw) → Silver (validated) → Gold (SAM/business) Delta Lake layers | Autoloader ingests FHIR NDJSON to Bronze; LDP validates Silver |
+| **Autoloader** | Data Engineering | Databricks streaming ingest from cloud files with schema evolution | `cloudFiles.schemaEvolutionMode=addNewColumns` for PulseEHR schema changes |
+| **Delta Lake** | Data Engineering | ACID table format on S3 — time travel, MERGE, change data feed | `RESTORE TABLE clinical_sam.conditions TO VERSION AS OF 842` rollback |
+| **Liquid Clustering** | Data Engineering | Auto-reclustering on write for high-churn SAM tables | Cluster on `(member_id, service_date)` for claims SAM |
+| **Unity Catalog** | Data Engineering | Databricks governance — permissions, masking, lineage, model registry | `prod_interop.sam.clinical.conditions` with PII column masks |
+| **Databricks Asset Bundles (DABs)** | Data Engineering | IaC for Databricks jobs, pipelines, schemas — deploy via `databricks bundle` | `claims_workflow` DAB deploys to dev/stage/prod targets |
+| **LDP (Lakeflow Declarative Pipelines)** | Data Engineering | Declarative Spark pipelines with `@dp.expect_or_drop` data quality | Invalid Observation (missing `code`) dropped to quarantine table |
+| **Quarantine Table** | Data Engineering | Holds records failing validation — not silently dropped, not blocking batch | `fhir_silver.quarantine` with `violation_type` for partner escalation |
+| **PulseEHR** | Multi-Channel Ingestion | Reference EHR export — 129,218 patients, ~8.9M FHIR R4 JSON resources | Rail C ingests Observation (53%), Encounter (13%) distribution |
+| **ng-nasco-event-api** | Multi-Channel Ingestion | Reference serverless pattern for partner webhook ingestion | API Gateway + Lambda + Firehose → S3 landing zone |
+| **MSK (Amazon MSK)** | Kafka & Events | Managed Kafka for Rail B event streaming between webhook and Bronze | Topic `interop.claim.adjudicated.v1` consumed by Autoloader |
+| **SQS DLQ** | Kafka & Events | Dead-letter queue for failed webhook/Lambda processing | Messages after 3 retries → DLQ → Payer Ops Agent alert |
+| **Schema Contract** | Kafka & Events | JSON Schema per event type validated at Lambda before landing | `claim_adjudicated` v1.2 requires `member_id`, `claim_id` |
+| **Kafka Engineer** | Role Proficiency | Designs event transport, topic retention, replay, schema evolution | Producer/consumer scripts for NASCO adjudication events |
+| **Unity AI Gateway** | AI Layer | Databricks governance for all LLM + MCP traffic — caps, PII guardrails, audit | Patient Agent calls route through gateway with spend cap |
+| **RAG** | AI Layer | Retrieval-Augmented Generation — Vector Search indexes ground LLM responses | Formulary policy chunks retrieved before answering "PA required for Humira?" |
+| **Vector Search** | AI Layer | Databricks embedding index for semantic retrieval over SAM/docs | `formulary_policy_idx` synced daily from `formulary_sam` |
+| **MCP (Model Context Protocol)** | AI Layer | Tool servers exposing read-only APIs to AI agents (FHIR, metrics, notify) | `onyx.mcp.fhir_read` tool: `get_observations`, `get_eob` |
+| **ai_events** | AI Layer | SAM mart + event queue for due dates, care gaps, pipeline failures | `PA_DECISION_DUE` CRITICAL event triggers Provider Agent Slack |
+| **Patient Agent** | AI Layer | Member-facing agent — RAG + MCP fhir_read + notify; no diagnosis | "Am I due for screenings?" → RAG gap + MCP confirm → push notification |
+| **Provider Agent** | AI Layer | Attributed provider agent — panel gaps, PA deadlines, ePA docs | PA overdue alert with deep link to provider portal |
+| **Payer Ops Agent** | AI Layer | Internal ops agent — ingest lag, DLQ depth, workflow failures | Bronze lag 4h → Slack alert with Databricks job run URL |
+| **MLflow** | AI Layer | Model lifecycle — logging, registry, serving endpoints | PAS denial model v3 logged with AUC 0.87 to UC registry |
+| **Feature Store** | AI Layer | Offline/online feature tables for ML and real-time CRD lookups | `member_cr_features_online` lookup by `member_id` at CRD request |
+| **OBO (On Behalf Of)** | AI Layer | MCP executes with user's SLAP token scopes — not elevated service account | Patient Agent cannot fetch another member's EOB |
+| **Inference Audit Table** | AI Layer | Logs model/agent requests without PHI — retention for HIPAA | `ml.pas_inference_log` with hashed member_id |
+| **Microsoft Fabric** | Analytics | Enterprise analytics platform — Lakehouse, pipelines, Power BI semantic models | OneLake shortcut to Databricks CMS metrics export |
+| **OneLake Shortcut** | Analytics | Fabric reads ADLS export in place without data duplication | Shortcut to `abfss://exports@datalake/metrics/cms/` |
+| **V-Order** | Analytics | Fabric parquet optimization for faster Power BI DirectLake scans | Enable on `formulary_dim` — dashboard load 4.2s → 1.1s |
+| **Type 2 SCD** | Analytics | Slowly Changing Dimension — track eligibility history with `is_current` flag | Member PPO→HMO switch closes old row, opens new current row |
+| **RLS (Row-Level Security)** | Analytics & SQL | Filters rows by payer/user context at query time | Power BI role `PayerA` filters `payer_id = 'A'` |
+| **DDM (Dynamic Data Masking)** | Analytics & SQL | Masks PHI columns (SSN, DOB) for non-privileged roles | Analyst sees `XXX-XX-6789` for SSN |
+| **BigQuery** | Hybrid Cloud | GCP analytics for de-identified benchmarks — not primary PHI store | CMS monthly rollup scheduled query on aggregated metrics |
+| **Dataplex** | Hybrid Cloud | GCP data governance — policy tags, quality rules, curated zones | `PHI` policy tag masks member_id in sandbox |
+| **Terraform** | Deployment | IaC for AWS infra — S3, EKS, DocumentDB, DynamoDB, API Gateway | `terraform/modules/s3/main.tf` provisions Bronze buckets |
+| **Helm** | Deployment | Kubernetes package manager for Firely, FITE, SLAP on EKS | `helm/firely-server/values.yaml` configures replicas |
+| **EKS** | Deployment | AWS Kubernetes cluster hosting Firely and runtime services | `kubectl rollout status deployment/firely-server -n firely` |
+| **DocumentDB** | Deployment | MongoDB-compatible store for SLAP sessions/metadata | SLAP token store with TTL index |
+| **Canary Deploy** | Deployment | Gradual rollout — small traffic slice before full promotion | 10% FITE pods on new version → promote if error rate OK |
+| **RCM (Revenue Cycle Management)** | Healthcare Domain | Claims adjudication, denial management — downstream of CMS interop | FHIR EOB for Patient Access; X12 835 tables for RCM reconciliation |
+| **VBC (Value-Based Care)** | Healthcare Domain | Quality measures, attribution, gap closure — consumes SAM marts | HEDIS gap logic on `clinical_sam.observations` vitals/labs |
+| **HEDIS** | Healthcare Domain | Healthcare Effectiveness Data and Information Set — quality measure standards | Diabetes A1c measure uses LOINC 4548-4 Observations |
+| **Attribution** | Healthcare Domain | Assigning members to providers/panels for VBC and Provider Access | Group resource links Patient → Practitioner attribution |
+| **EOB (Explanation of Benefits)** | Healthcare Domain | Claim adjudication summary shown to members | CARIN BB `ExplanationOfBenefit` from `claims_sam.eob_records` |
+| **NPI** | Healthcare Domain | National Provider Identifier — 10-digit provider ID | Plan-Net Practitioner.identifier NPI system |
+| **NDC** | Healthcare Domain | National Drug Code — unique drug identifier for formulary | Formulary SAM `ndc` column → MedicationKnowledge |
+| **PA (Prior Authorization)** | Healthcare Domain | Payer approval required before certain procedures/drugs | Da Vinci PAS `$submit` returns ClaimResponse with decision |
+| **PHI** | Security & Compliance | Protected Health Information — HIPAA-regulated identifiable health data | Never in LLM prompts, external LLM, or unmasked analytics |
+| **BAA** | Security & Compliance | Business Associate Agreement — required per data source/partner | BAA indexed per Rail B webhook partner in compliance folder |
+| **HIPAA** | Security & Compliance | Health Insurance Portability and Accountability Act — privacy/security rules | Audit logs retained 6 years; encryption at rest/transit |
+| **Wiz** | Security & Compliance | Cloud security scanner for container/IaC vulnerabilities | Scan Lambda images before prod Rail B deploy |
+| **CMS Metrics Reporter** | Observability | Reports Patient Access API uptime/call volume for CMS compliance | `monitoring/cms_metrics_reporter.py` → monthly filing data |
+| **Workflow Family** | Data Engineering | Databricks job group for a CMS domain: Claims, Clinical, Formulary, PVD, ePA, P2P | Claims family: ingest → FM → SAM → Extract → FSI |
+| **Extract Config YAML** | Data Engineering | Declarative mapping of SAM tables to FHIR resource types | `configs/workflows/claims/extract_config.yaml` |
+| **Incremental Watermark** | Data Engineering | High-water mark (`updated_at` or change version) for delta processing | Only rows changed since watermark enter Extract |
+| **Change Data Feed** | Data Engineering | Delta feature emitting row changes for incremental downstream | `table_changes('clinical_sam.conditions', v1, v2)` |
+| **Synthea** | Data Engineering | Synthetic patient data generator — 10 patients, 9,997 FHIR resources in baseline | `./source_data/Patients.csv` local baseline validation |
+| **GitLab CI** | Deployment | CI/CD pipeline for DAB deploy, pytest, bundle validate | `databricks bundle deploy -t stage` on release branch |
+| **Forward Deployed Engineer** | Role Proficiency | Deploys, troubleshoots, onboards customers at payer sites | Solo Phase 0 checklist + customer incident runbook execution |
+| **FHIR Engineer** | Role Proficiency | IG validation, resource mapping, Firely/FSI operations, CMS API compliance | Zero IG errors on `validate_fhir_output.py --strict` |
+| **Data Engineer** | Role Proficiency | Pipelines, Delta, Autoloader, SAM merges, multi-rail convergence | Three rails land Bronze, merge at SAM, Extract to Firely |
+| **AI Engineer** | Role Proficiency | RAG, agents, MLflow, Unity AI Gateway, MCP governance | Golden eval >85%; gateway blocks PHI in prompts |
+| **Associate Solution Architect** | Role Proficiency | Phase planning, CMS traceability, ownership split, hybrid ADRs | Whiteboard 3-rail ingestion + AI layer for CMS deadline |
+| **Intermediate Associate Programmer** | Role Proficiency | Python transformers, bash automation, SQL, unit tests | Patch `claims_transformer.py` + pytest green independently |
+| **Safe Harbor** | Security & Compliance | HIPAA 45 CFR 164.514(b)(2) — remove/generalize 18 identifiers | ZIP → 3 digits; DOB → year; names/SSN suppressed |
+| **Expert Determination** | Security & Compliance | HIPAA 45 CFR 164.514(b)(1) — statistician certifies very small re-id risk | Used when Safe Harbor would break clinical utility |
+| **De-ID Gate** | Security & Compliance | First pipeline layer; splits identified CMS path from de-id analytics path | `pipeline/deid_engine.py` + `configs/deid/safe_harbor.yaml` |
+| **Tokenization** | Security & Compliance | HMAC surrogate for MRN/member_id; irreversible from analytics side | `tok_member_id_<hmac24>` stored in de-id Gold |
+| **Golden Record** | MDM | Survivorship-resolved master entity after deterministic/probabilistic match | EHR beats claims on demographics; recency wins coverage status |
+| **Survivorship** | MDM | Attribute-level win rules (source priority, recency, completeness) | `source_priority: [ehr_fhir, claims, pvd]` |
+| **ISO 8000** | MDM | Data quality / master data standard used with AHIMA IG | Crosswalk never stores raw PHI |
+| **AHIMA IG** | MDM | AHIMA Information Governance principles for healthcare MDM | Steward per entity: member, provider, coverage |
+| **Fabric Capacity Unit (CU)** | Analytics | Microsoft Fabric compute billing unit vs Databricks DBU | `run_engine_benchmark.sh` compares CU-hour vs DBU cost |
+| **Dual-Engine Bake-off** | Analytics | Same de-id SAM job on Databricks and Fabric for cost/speed | Winner_speed vs winner_cost recorded in `observability.engine_benchmark` |
+| **AI Observability** | Observability | LLM RCA + anomaly explanation on de-id traces/metrics only | Claude/GPT via Unity AI Gateway; `block_external_phi` |
+
+### Glossary Category Index
+
+| Category | Terms Count | Key Terms |
+|----------|-------------|-----------|
+| Platform & Architecture | 6 | Abacus, Onyx, MDP, Developer Portal |
+| Data Engineering | 22 | FM, SAM, Autoloader, Delta, DABs, Medallion, Watermark |
+| FHIR Standards | 18 | US Core, CARIN BB, Da Vinci, Bundle, NDJSON, Must Support |
+| CMS & Regulatory | 10 | CMS-9115, CMS-0057, Patient Access, P2P, ePA, HTI-1 |
+| Runtime & Security | 8 | SLAP, FITE, SMART, PKCE, Backend Services |
+| Multi-Channel Ingestion | 7 | Rail A/B/C, PulseEHR, ng-nasco-event-api |
+| Kafka & Events | 3 | MSK, SQS DLQ, Schema Contract |
+| AI Layer | 12 | RAG, MCP, Unity AI Gateway, ai_events, Agents |
+| Analytics | 6 | Fabric, OneLake, V-Order, SCD, RLS, DDM |
+| Hybrid Cloud | 2 | BigQuery, Dataplex |
+| Deployment | 8 | Terraform, Helm, EKS, Seiji, Canary |
+| Healthcare Domain | 8 | RCM, VBC, HEDIS, EOB, NPI, NDC, PA, Attribution |
+| Security & Compliance | 4 | PHI, HIPAA, BAA, Wiz |
+| Observability | 2 | Onyx Insights, CMS Metrics Reporter |
+| Role Proficiency | 7 | FHIR Engineer, Data Engineer, Kafka Engineer, AI Engineer, etc. |
+
 ---
