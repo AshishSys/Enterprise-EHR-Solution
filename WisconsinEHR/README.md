@@ -11,7 +11,7 @@ Cloud-native statewide Electronic Health Record platform for Wisconsin enabling 
 
 ## Documentation
 
-See [docs/WISCONSIN_EHR_SOLUTION_BLUEPRINT.md](docs/WISCONSIN_EHR_SOLUTION_BLUEPRINT.md) for the full solution design covering pre-sales, architecture, data models, implementation, UAT, go-live, and Cerner migration.
+See [docs/WISCONSIN_EHR_SOLUTION_BLUEPRINT.md](docs/WISCONSIN_EHR_SOLUTION_BLUEPRINT.md) for the full solution design — including **Section 2: Cursor AI Development Platform** — covering pre-sales, architecture, data models, implementation, UAT, go-live, and Cerner migration.
 
 ## Seed Data
 
