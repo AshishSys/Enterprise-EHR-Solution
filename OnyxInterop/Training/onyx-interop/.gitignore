@@ -1,0 +1,23 @@
+# Secrets and local access config
+configs/access/access.env
+.env
+*.pem
+*.key
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Cloned production repos (re-clone via scripts/clone_production_repos.sh)
+repos/
+
+# Local data
+data/
+
+# Seiji local state
+.seiji/
+
+# Local symlink to parent Training tree (do not commit)
+reference

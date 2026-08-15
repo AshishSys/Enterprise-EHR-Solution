@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Local Seiji stub for Phase 0 dev — production Seiji is GitLab-integrated.
+# Provides basic commands for access checklist and repo-shims validation.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SEIJI_HOME="${SEIJI_HOME:-$PROJECT_ROOT/.seiji}"
+mkdir -p "$SEIJI_HOME"
+
+cmd="${1:-}"
+shift || true
+
+case "$cmd" in
+  --version|version)
+    echo "seiji local-stub 0.1.0 (Phase 0 dev — install production Seiji for deploys)"
+    ;;
+  shims)
+    sub="${1:-status}"
+    case "$sub" in
+      status)
+        if [ -f "$PROJECT_ROOT/configs/repo-shims/.shim-index" ]; then
+          echo "repo-shims: OK"
+          cat "$PROJECT_ROOT/configs/repo-shims/.shim-index"
+        else
+          echo "repo-shims: not initialized — run ./scripts/setup_repo_shims.sh"
+          exit 1
+        fi
+        ;;
+      cache)
+        action="${2:-clear}"
+        if [ "$action" = "clear" ]; then
+          rm -rf "$PROJECT_ROOT/configs/repo-shims/.cache"/*
+          echo "repo-shims cache cleared"
+        fi
+        ;;
+      sync)
+        bash "$PROJECT_ROOT/scripts/setup_repo_shims.sh"
+        ;;
+      *)
+        echo "Usage: seiji shims {status|cache clear|sync --repo NAME}"
+        exit 1
+        ;;
+    esac
+    ;;
+  deploy)
+    echo "[DRY-RUN] seiji deploy $*"
+    echo "Install production Seiji and configure AWS/EKS access for real deploys."
+    ;;
+  *)
+    echo "Seiji local stub — supported: --version, shims, deploy (dry-run)"
+    echo "See seiji_deploy_rollback_runbook.md for production usage."
+    exit 1
+    ;;
+esac

@@ -1,0 +1,33 @@
+# Helm chart repository shims — resolves private chart dependencies for Seiji deploys.
+# Kitchen Sous Chef pattern: local file:// shims point at cloned onyx-helmsman charts;
+# production uses S3-backed onyx-charts index synced by repo-shims.
+
+repositories:
+  onyx-charts:
+    description: Primary Onyx Helm chart museum
+    url: "${HELM_CHARTS_BUCKET}"
+    type: s3
+    fallback_local: "../repos/onyx-helmsman/charts"
+
+  kitchen-sous-chef:
+    description: Shared base charts (Kitchen Sous Chef repo)
+    url: "file://${REPO_SHIMS_DIR}/../repos/kitchen-sous-chef/charts"
+    type: local
+    fallback_local: "../repos/kitchen-sous-chef/charts"
+
+  firely-charts:
+    description: Firely server Helm wrappers
+    url: "file://${REPO_SHIMS_DIR}/../repos/firely-fsi-image/helm"
+    type: local
+    fallback_local: "../repos/firely-fsi-image/helm"
+
+charts:
+  firely-server:
+    repo: firely-charts
+    version: "1.0.0"
+  slap:
+    repo: onyx-charts
+    version: "1.12.0"
+  fite:
+    repo: onyx-charts
+    version: "3.2.0"

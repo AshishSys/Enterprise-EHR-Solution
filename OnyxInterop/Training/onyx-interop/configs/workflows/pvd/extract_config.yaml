@@ -1,0 +1,46 @@
+workflow_family: pvd
+description: Provider Directory transformation (Da Vinci Plan-Net IG)
+fm_tables:
+  - pvd_fm.providers
+  - pvd_fm.organizations
+  - pvd_fm.locations
+sam_tables:
+  - pvd_sam.provider_directory
+fhir_resources:
+  - Practitioner
+  - PractitionerRole
+  - Organization
+  - Location
+  - HealthcareService
+  - Endpoint
+profiles:
+  - http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/plannet-Practitioner
+  - http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/plannet-PractitionerRole
+  - http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/plannet-Organization
+  - http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/plannet-Location
+extract:
+  source:
+    tables:
+      - name: pvd_sam.provider_directory
+        columns:
+          npi: NPI
+          provider_name: PROVIDER_NAME
+          specialty: SPECIALTY
+          organization_name: ORG_NAME
+          address: ADDRESS
+          phone: PHONE
+          network_status: NETWORK_STATUS
+  output:
+    format: csv
+    encoding: utf-8-sig
+    path: s3://{bucket}/extracts/{run_date}/pvd/
+  bundle:
+    max_resources: 150
+    type: transaction
+load:
+  incremental:
+    method: firely_rest_post
+  historical:
+    method: fsi_bulk_import
+    format: ndjson
+update_cadence_days: 30

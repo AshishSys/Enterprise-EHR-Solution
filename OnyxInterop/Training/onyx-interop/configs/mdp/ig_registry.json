@@ -1,0 +1,58 @@
+{
+  "implementation_guides": [
+    {
+      "name": "US Core",
+      "version": "6.1.0",
+      "url": "http://hl7.org/fhir/us/core/ImplementationGuide/hl7.fhir.us.core",
+      "apis": ["patient_access", "provider_access", "payer_to_payer"]
+    },
+    {
+      "name": "CARIN Blue Button",
+      "version": "2.0.0",
+      "url": "http://hl7.org/fhir/us/carin-bb/ImplementationGuide/hl7.fhir.us.carin-bb",
+      "apis": ["patient_access", "provider_access", "payer_to_payer"]
+    },
+    {
+      "name": "Da Vinci Plan-Net",
+      "version": "1.2.0",
+      "url": "http://hl7.org/fhir/us/davinci-pdex-plan-net/ImplementationGuide/hl7.fhir.us.davinci-pdex-plan-net",
+      "apis": ["provider_directory"]
+    },
+    {
+      "name": "Da Vinci Formulary",
+      "version": "2.0.1",
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/ImplementationGuide/hl7.fhir.us.davinci-drug-formulary",
+      "apis": ["formulary"]
+    },
+    {
+      "name": "Da Vinci PDex",
+      "version": "2.1.0",
+      "url": "http://hl7.org/fhir/us/davinci-pdex/ImplementationGuide/hl7.fhir.us.davinci-pdex",
+      "apis": ["payer_to_payer", "provider_access"]
+    },
+    {
+      "name": "Da Vinci CRD",
+      "version": "2.0.1",
+      "url": "http://hl7.org/fhir/us/davinci-crd/ImplementationGuide/hl7.fhir.us.davinci-crd",
+      "apis": ["prior_authorization"]
+    },
+    {
+      "name": "Da Vinci DTR",
+      "version": "2.0.0",
+      "url": "http://hl7.org/fhir/us/davinci-dtr/ImplementationGuide/hl7.fhir.us.davinci-dtr",
+      "apis": ["prior_authorization"]
+    },
+    {
+      "name": "Da Vinci PAS",
+      "version": "2.0.1",
+      "url": "http://hl7.org/fhir/us/davinci-pas/ImplementationGuide/hl7.fhir.us.davinci-pas",
+      "apis": ["prior_authorization"]
+    },
+    {
+      "name": "SMART App Launch",
+      "version": "2.0.0",
+      "url": "http://hl7.org/fhir/smart-app-launch/ImplementationGuide/hl7.fhir.uv.smart-app-launch",
+      "apis": ["all_authenticated"]
+    }
+  ]
+}

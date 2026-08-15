@@ -1,0 +1,5 @@
+apiVersion: v2
+name: firely-server
+description: Firely FHIR Server 5.2 for Onyx Interop
+version: 1.0.0
+appVersion: "5.2.0"

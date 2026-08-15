@@ -1,0 +1,81 @@
+{
+  "environment": "dev",
+  "services": {
+    "slap": {
+      "url": "http://localhost:9000",
+      "health": "/.well-known/smart-configuration",
+      "owner": "onyx"
+    },
+    "fite": {
+      "url": "http://localhost:8080/fhir",
+      "health": "/fhir/metadata",
+      "owner": "onyx"
+    },
+    "firely": {
+      "url": "http://localhost:4080/fhir",
+      "health": "/metadata",
+      "owner": "shared",
+      "internal_only": true
+    },
+    "healthlake": {
+      "url": "https://healthlake.us-east-1.amazonaws.com/datastore/fhir/R4",
+      "owner": "shared",
+      "internal_only": true
+    },
+    "mdp": {
+      "url": "http://localhost:9002",
+      "health": "/health",
+      "owner": "abacus"
+    },
+    "onyx_insights": {
+      "url": "http://localhost:9001",
+      "health": "/health",
+      "owner": "onyx"
+    },
+    "p2p": {
+      "url": "http://localhost:9004",
+      "health": "/fhir/metadata",
+      "owner": "onyx"
+    },
+    "epa": {
+      "url": "http://localhost:9005",
+      "health": "/cds-services",
+      "owner": "onyx"
+    },
+    "developer_portal": {
+      "url": "http://localhost:9010",
+      "health": "/health",
+      "owner": "onyx"
+    },
+    "deid_gate": {
+      "url": "local://pipeline/deid_engine",
+      "health": "configs/deid/safe_harbor.yaml",
+      "owner": "abacus"
+    },
+    "mdm": {
+      "url": "local://pipeline/mdm_engine",
+      "health": "configs/mdm/mdm_rules.yaml",
+      "owner": "abacus"
+    },
+    "fabric_engine": {
+      "url": "https://app.fabric.microsoft.com",
+      "health": "configs/fabric/workspace.yaml",
+      "owner": "abacus",
+      "parallel_to": "databricks"
+    },
+    "ai_observability": {
+      "url": "http://localhost:9011",
+      "health": "/health",
+      "owner": "shared"
+    }
+  },
+  "workflow_families": [
+    "claims",
+    "clinical",
+    "formulary",
+    "pvd",
+    "cms0057",
+    "epa"
+  ],
+  "load_order": ["pvd", "clinical", "claims", "formulary", "cms0057", "epa"]
+}

@@ -1,0 +1,51 @@
+workflow_family: cms0057
+description: CMS-0057 Payer-to-Payer data exchange (Da Vinci PDex)
+depends_on:
+  - clinical
+  - claims
+fm_tables:
+  - cms0057_fm.coverage
+  - cms0057_fm.p2p_claims
+  - cms0057_fm.consent
+sam_tables:
+  - cms0057_sam.payer_exchange
+  - cms0057_sam.member_consent
+fhir_resources:
+  - Patient
+  - Coverage
+  - ExplanationOfBenefit
+  - Group
+profiles:
+  - http://hl7.org/fhir/us/davinci-pdex/StructureDefinition/pdex-patient
+  - http://hl7.org/fhir/us/davinci-pdex/StructureDefinition/pdex-coverage
+  - http://hl7.org/fhir/us/davinci-pdex/StructureDefinition/pdex-parameters-multi-member-match-bundle-in
+operations:
+  - $member-match
+  - $bulk-member-match
+  - $export
+consent_model: opt_in
+data_window_years: 5
+load_phases:
+  - phase: 1
+    resources: [Patient]
+  - phase: 2
+    resources: [Coverage, ExplanationOfBenefit]
+extract:
+  source:
+    tables:
+      - name: cms0057_sam.payer_exchange
+        columns:
+          member_id: MEMBER_ID
+          coverage_id: COVERAGE_ID
+          consent_status: CONSENT_STATUS
+          consent_date: CONSENT_DATE
+  output:
+    format: csv
+    encoding: utf-8-sig
+    path: s3://{bucket}/extracts/{run_date}/cms0057/
+load:
+  incremental:
+    method: firely_rest_post
+  historical:
+    method: fsi_bulk_import
+    format: ndjson

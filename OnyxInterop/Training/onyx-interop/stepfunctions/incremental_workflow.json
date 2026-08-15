@@ -1,0 +1,37 @@
+{
+  "Comment": "Onyx Interop Incremental Load Workflow (Step 8A)",
+  "StartAt": "CheckMongoHealth",
+  "States": {
+    "CheckMongoHealth": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT:function:onyx-mongodb-health-check",
+      "Next": "ExtractDelta",
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "LoadFailed"}]
+    },
+    "ExtractDelta": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT:function:onyx-extract-delta",
+      "Next": "TransformBundles"
+    },
+    "TransformBundles": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT:function:onyx-transform-bundles",
+      "Next": "UploadToFirely"
+    },
+    "UploadToFirely": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT:function:onyx-firely-upload",
+      "Next": "UpdateWatermark"
+    },
+    "UpdateWatermark": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT:function:onyx-update-job-state",
+      "End": true
+    },
+    "LoadFailed": {
+      "Type": "Fail",
+      "Error": "IncrementalLoadFailed",
+      "Cause": "MongoDB health check or upload failed"
+    }
+  }
+}

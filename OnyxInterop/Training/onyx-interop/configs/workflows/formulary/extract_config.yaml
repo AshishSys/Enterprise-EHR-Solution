@@ -1,0 +1,36 @@
+workflow_family: formulary
+description: Drug formulary transformation (Da Vinci Formulary IG)
+fm_tables:
+  - formulary_fm.drug_list
+  - formulary_fm.tier_config
+sam_tables:
+  - formulary_sam.formulary_items
+fhir_resources:
+  - MedicationKnowledge
+  - InsurancePlan
+profiles:
+  - http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-FormularyItem
+  - http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-InsurancePlan
+extract:
+  source:
+    tables:
+      - name: formulary_sam.formulary_items
+        columns:
+          ndc: NDC
+          drug_name: DRUG_NAME
+          tier: TIER
+          prior_auth_required: PA_REQUIRED
+          quantity_limit: QTY_LIMIT
+  output:
+    format: csv
+    encoding: utf-8-sig
+    path: s3://{bucket}/extracts/{run_date}/formulary/
+  bundle:
+    max_resources: 200
+    type: transaction
+load:
+  incremental:
+    method: firely_rest_post
+  historical:
+    method: fsi_bulk_import
+    format: ndjson

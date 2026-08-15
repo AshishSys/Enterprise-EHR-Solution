@@ -1,0 +1,39 @@
+workflow_family: claims
+description: Claims and EOB transformation for Patient Access API (CARIN BB)
+depends_on:
+  - pvd
+fm_tables:
+  - claims_fm.medical_claims
+  - claims_fm.pharmacy_claims
+sam_tables:
+  - claims_sam.eob_records
+fhir_resources:
+  - ExplanationOfBenefit
+  - Coverage
+profiles:
+  - http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit
+  - http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Coverage
+extract:
+  source:
+    tables:
+      - name: claims_sam.eob_records
+        columns:
+          claim_id: CLAIM_ID
+          member_id: MEMBER_ID
+          service_date: SERVICE_DATE
+          paid_amount: PAID_AMOUNT
+          status: STATUS
+  output:
+    format: csv
+    encoding: utf-8-sig
+    path: s3://{bucket}/extracts/{run_date}/claims/
+  bundle:
+    max_resources: 50
+    type: transaction
+load:
+  incremental:
+    method: firely_rest_post
+    endpoint: /fhir
+  historical:
+    method: fsi_bulk_import
+    format: ndjson

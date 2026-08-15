@@ -1,0 +1,66 @@
+# Healthcare MDM — AHIMA IG + ISO 8000 + HL7 Patient Administration
+# Golden-record rules applied after de-id classification, before FM/SAM.
+
+standard: "AHIMA Information Governance + ISO 8000-2 + HL7 Patient Administration"
+version: "1.0.0"
+steward: abacus
+
+entities:
+  member:
+    golden_key: member_golden_id
+    match:
+      deterministic:
+        - [tokenized_member_id]
+        - [tokenized_mrn, year_of_birth]
+      probabilistic:
+        - fields: [year_of_birth, gender, zip3, last_initial]
+          threshold: 0.92
+    survivorship:
+      source_priority: [ehr_fhir, claims, pvd, partner_webhook]
+      recency_wins: [address_state, coverage_status]
+      most_complete_wins: [gender]
+    stewardship: member_data_steward
+
+  provider:
+    golden_key: provider_golden_id
+    match:
+      deterministic:
+        - [npi]
+        - [npi, organization_npi]
+      probabilistic:
+        - fields: [last_initial, specialty, zip3]
+          threshold: 0.95
+    survivorship:
+      source_priority: [nppes, pvd, claims]
+      recency_wins: [location_state]
+    stewardship: provider_directory_steward
+
+  organization:
+    golden_key: org_golden_id
+    match:
+      deterministic:
+        - [npi]
+        - [tin]
+    survivorship:
+      source_priority: [nppes, pvd]
+    stewardship: provider_directory_steward
+
+  coverage:
+    golden_key: coverage_golden_id
+    match:
+      deterministic:
+        - [tokenized_member_id, plan_id, coverage_year]
+    survivorship:
+      recency_wins: [status, plan_id]
+    stewardship: enrollment_steward
+
+crosswalk:
+  table: mdm.entity_crosswalk
+  columns: [entity_type, source_system, source_key_token, golden_id, confidence, rule_id]
+  never_store: [raw_phi, name, ssn, full_dob, street]
+
+quality_gates:
+  - no_duplicate_golden_keys
+  - match_confidence_logged_without_phi
+  - unidentified_records_quarantined
+  - pvd_golden_before_claims_refs

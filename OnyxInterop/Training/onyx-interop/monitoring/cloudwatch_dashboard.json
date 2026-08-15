@@ -1,0 +1,43 @@
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "properties": {
+        "title": "Patient Access API Requests",
+        "metrics": [
+          ["OnyxInterop/CMS", "api_requests_total", "Environment", "production"],
+          [".", "api_requests_success", ".", "."],
+          [".", "api_requests_error", ".", "."]
+        ],
+        "period": 300,
+        "stat": "Sum",
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "metric",
+      "properties": {
+        "title": "API Latency (P95)",
+        "metrics": [
+          ["OnyxInterop/CMS", "p95_response_time_ms", "Environment", "production"]
+        ],
+        "period": 300,
+        "stat": "Average",
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "metric",
+      "properties": {
+        "title": "Auth Success vs Failure",
+        "metrics": [
+          ["OnyxInterop/CMS", "auth_success_total", "Environment", "production"],
+          [".", "auth_failure_total", ".", "."]
+        ],
+        "period": 300,
+        "stat": "Sum",
+        "region": "us-east-1"
+      }
+    }
+  ]
+}

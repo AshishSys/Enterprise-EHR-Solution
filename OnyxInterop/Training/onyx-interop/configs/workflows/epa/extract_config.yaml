@@ -1,0 +1,50 @@
+workflow_family: epa
+description: Electronic Prior Authorization (Da Vinci CRD/DTR/PAS)
+depends_on:
+  - clinical
+  - claims
+fm_tables:
+  - epa_fm.prior_auth_requests
+  - epa_fm.prior_auth_decisions
+sam_tables:
+  - epa_sam.pa_requests
+  - epa_sam.pa_decisions
+fhir_resources:
+  - Claim
+  - ClaimResponse
+  - DocumentReference
+  - Questionnaire
+  - QuestionnaireResponse
+  - CoverageEligibilityRequest
+  - CoverageEligibilityResponse
+profiles:
+  - http://hl7.org/fhir/us/davinci-pas/StructureDefinition/profile-claim
+  - http://hl7.org/fhir/us/davinci-pas/StructureDefinition/profile-claimresponse
+  - http://hl7.org/fhir/us/davinci-crd/StructureDefinition/profile-coverageeligibilityrequest
+operations:
+  - cds-services/order-sign
+  - pas/$submit
+decision_timeframes:
+  urgent_hours: 72
+  standard_days: 7
+extract:
+  source:
+    tables:
+      - name: epa_sam.pa_requests
+        columns:
+          auth_id: AUTH_ID
+          member_id: MEMBER_ID
+          service_code: SERVICE_CODE
+          status: STATUS
+          request_date: REQUEST_DATE
+          decision_date: DECISION_DATE
+  output:
+    format: csv
+    encoding: utf-8-sig
+    path: s3://{bucket}/extracts/{run_date}/epa/
+load:
+  incremental:
+    method: firely_rest_post
+  historical:
+    method: fsi_bulk_import
+    format: ndjson

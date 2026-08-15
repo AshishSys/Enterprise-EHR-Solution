@@ -1,0 +1,39 @@
+replicaCount: 2
+
+image:
+  repository: firely/firely-server
+  tag: "5.2.0"
+  pullPolicy: IfNotPresent
+
+firely:
+  fhirVersion: "R4"
+  mongoConnectionString: ""  # Set via Seiji/SSM
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 70
+
+service:
+  type: ClusterIP
+  port: 4080
+
+ingress:
+  enabled: false
+
+documentdb:
+  tls: true
+  port: 27017
+
+fsi:
+  maxParallelJobs: 4
+  threadsPerPod: 8

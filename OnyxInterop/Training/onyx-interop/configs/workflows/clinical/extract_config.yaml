@@ -1,0 +1,57 @@
+workflow_family: clinical
+description: Clinical data transformation for Patient Access API (US Core)
+fm_tables:
+  - clinical_fm.patients
+  - clinical_fm.encounters
+  - clinical_fm.conditions
+  - clinical_fm.observations
+  - clinical_fm.medications
+  - clinical_fm.procedures
+  - clinical_fm.allergies
+sam_tables:
+  - clinical_sam.patients
+  - clinical_sam.encounters
+  - clinical_sam.conditions
+  - clinical_sam.observations
+  - clinical_sam.medications
+  - clinical_sam.procedures
+  - clinical_sam.allergies
+fhir_resources:
+  - Patient
+  - Encounter
+  - Condition
+  - Observation
+  - MedicationRequest
+  - Procedure
+  - AllergyIntolerance
+profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance
+extract:
+  source:
+    tables:
+      - name: clinical_sam.patients
+        columns:
+          patient_id: PATIENT_ID
+          first_name: FIRST
+          last_name: LAST
+          birth_date: BIRTHDATE
+          gender: GENDER
+  output:
+    format: csv
+    encoding: utf-8-sig
+    path: s3://{bucket}/extracts/{run_date}/clinical/
+  bundle:
+    max_resources: 100
+    type: transaction
+load:
+  incremental:
+    method: firely_rest_post
+  historical:
+    method: fsi_bulk_import
+    format: ndjson

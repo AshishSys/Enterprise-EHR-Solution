@@ -1,0 +1,31 @@
+# Microsoft Fabric workspace — parallel engine to Databricks for cost/speed bake-off.
+# Same SAM contract; Fabric never receives identified PHI (de-id layer first).
+
+workspace:
+  name: onyx-interop-dev
+  capacity: F64
+  isolation: managed_vnet
+  baa_required: true
+
+onelake:
+  bronze: onyx/deid/bronze
+  silver: onyx/deid/silver
+  gold: onyx/deid/gold
+  shortcut_from: s3://onyx-dev-gold-analytics/deid/
+
+pipelines:
+  - name: claims_deid_parallel
+    family: claims
+    activities: [copy_bronze, notebook_silver, notebook_gold, write_benchmark]
+  - name: clinical_deid_parallel
+    family: clinical
+    activities: [copy_bronze, notebook_silver, notebook_gold, write_benchmark]
+  - name: pvd_deid_parallel
+    family: pvd
+    activities: [copy_bronze, notebook_silver, notebook_gold, write_benchmark]
+
+benchmark:
+  metrics: [elapsed_seconds, rows_processed, cost_usd, cost_per_million_rows, p95_stage_seconds]
+  engines: [databricks, fabric]
+  output_table: observability.engine_benchmark
+  same_input_contract: deid_sam

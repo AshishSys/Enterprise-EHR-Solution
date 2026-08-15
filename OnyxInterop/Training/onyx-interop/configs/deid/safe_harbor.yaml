@@ -1,0 +1,90 @@
+# HIPAA Privacy Rule — Safe Harbor (45 CFR 164.514(b)(2))
+# 18 identifiers that must be removed or generalized before analytics/AI/Fabric.
+# Identified PHI remains in the CMS API path (SLAP-scoped) only.
+
+method: safe_harbor
+regulation: "45 CFR 164.514(b)(2)"
+expert_determination: "45 CFR 164.514(b)(1)"
+version: "1.0.0"
+
+identifiers:
+  - id: 1
+    name: names
+    fields: [name, first, last, FIRST, LAST, given, family, full_name, patient_name]
+    action: suppress
+  - id: 2
+    name: geographic_sub_state
+    fields: [address, street, city, county, precinct, zip, ZIP, postal_code]
+    action: generalize_geo
+    retain: [state]
+    zip_rule: keep_first_3_if_population_gt_20000
+  - id: 3
+    name: dates_except_year
+    fields: [birthDate, BIRTHDATE, dob, date_of_birth, admission_date, discharge_date, death_date, service_date]
+    action: year_only
+    ages_over_89: aggregate_to_90_plus
+  - id: 4
+    name: telephone
+    fields: [phone, telephone, mobile, home_phone]
+    action: suppress
+  - id: 5
+    name: fax
+    fields: [fax]
+    action: suppress
+  - id: 6
+    name: email
+    fields: [email, email_address]
+    action: suppress
+  - id: 7
+    name: ssn
+    fields: [ssn, SSN, social_security]
+    action: suppress
+  - id: 8
+    name: medical_record_number
+    fields: [mrn, medical_record_number, Id]
+    action: tokenize
+  - id: 9
+    name: health_plan_beneficiary
+    fields: [member_id, subscriber_id, beneficiary_id, umb]
+    action: tokenize
+  - id: 10
+    name: account_number
+    fields: [account_number, account_id]
+    action: tokenize
+  - id: 11
+    name: certificate_license
+    fields: [license_number, certificate_number]
+    action: suppress
+  - id: 12
+    name: vehicle_identifiers
+    fields: [vin, license_plate]
+    action: suppress
+  - id: 13
+    name: device_identifiers
+    fields: [device_id, serial_number]
+    action: tokenize
+  - id: 14
+    name: urls
+    fields: [url, website]
+    action: suppress
+  - id: 15
+    name: ip_addresses
+    fields: [ip, ip_address]
+    action: suppress
+  - id: 16
+    name: biometric
+    fields: [fingerprint, voiceprint, retina]
+    action: suppress
+  - id: 17
+    name: full_face_photos
+    fields: [photo, image, face]
+    action: suppress
+  - id: 18
+    name: other_unique_ids
+    fields: [npi_personal, claim_id]
+    action: tokenize
+
+outputs:
+  identified_path: cms_api   # SLAP/FITE only; never logs, never Fabric, never LLM
+  deidentified_path: analytics_ai_fabric
+  token_store: dynamodb_deid_tokens  # irreversible from analytics side

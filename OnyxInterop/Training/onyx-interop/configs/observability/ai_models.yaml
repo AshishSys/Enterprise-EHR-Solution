@@ -1,0 +1,35 @@
+# AI Observability — models used for platform health, never for clinical decisions.
+# All prompts receive de-identified telemetry only (Safe Harbor tokens).
+
+gateway: unity_ai_gateway
+policy:
+  - block_external_phi
+  - deny_fhir_write
+  - deny_raw_log_forwarding
+  - spend_alert_80pct
+
+models:
+  rca:
+    name: claude-sonnet-4-6
+    purpose: incident root-cause from de-id traces/metrics
+    max_tokens: 2048
+  anomaly:
+    name: gpt-5.4
+    purpose: time-series anomaly explanation
+    max_tokens: 1024
+  log_cluster:
+    name: text-embedding-3-large
+    purpose: cluster de-id error signatures
+  summarizer:
+    name: claude-sonnet-4-6
+    purpose: shift-handoff summary without identifiers
+
+signals:
+  traces: otel
+  metrics: [databricks_job, fabric_pipeline, fite_latency, slap_auth, seiji_deploy]
+  logs: structured_deid_only
+
+outputs:
+  rca_table: observability.ai_rca
+  anomaly_table: observability.ai_anomalies
+  handoff_table: observability.ai_shift_summary
