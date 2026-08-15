@@ -14,6 +14,7 @@
 | [Cheat Sheet Q&A + Scripts](../Interview/Healthcare_Interop_Interview_Cheat_Sheet.md) | Interview depth + runnable proof |
 | [implementation_details.md](../implementation_details.md) | What each component does and why |
 | [docs/DEVOPS_CICD.md](onyx-interop/docs/DEVOPS_CICD.md) | GitLab CI stages, secrets, go-live gates |
+| [docs/AI_GOVERNANCE_ALIGNMENT.md](onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) | PDF governance + CCA concerns mapped to solution |
 | [Plan v3.1](.cursor/plans/healthcare_interop_solution_6dadfbad.plan.md) | Production phases when you are ready |
 | [7-Module Plan](../interop_onyx_project_plan.md) | Teach-back topics and artifacts |
 | [teach_back_schedule.md](../teach_back_schedule.md) | Present-to-learn format |
@@ -193,17 +194,26 @@ Write or say aloud:
 
 ---
 
-## Step 8 — Weeks 11–12: AI Layer (After Data Path Is Solid)
+## Step 8 — Weeks 11–12: AI Layer + Governance Metrics (After Data Path Is Solid)
 
-**Goal:** RAG and agents on governed data — not chatbots on raw PHI.  
-**Cheat Sheet:** Section O (Q206–250), Section R (Q331–360)
+**Goal:** RAG and agents on governed data — with **metrics defined before UAT**, not after.  
+**Cheat Sheet:** Section O (Q206–250), Section R (Q331–360), **Section AA (Q516–535)**  
+**Artifacts:** [AI_GOVERNANCE_ALIGNMENT.md](onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md), `configs/ai/governance_metrics.yaml`
 
-**Prerequisite gate:** Steps 1–6 exit criteria met. AI without FHIR/SAM understanding produces dangerous demos.
+**Prerequisite gate:** Steps 1–6 exit criteria met. AI without FHIR/SAM understanding produces dangerous demos. **Data before AI** (CCA session): SAM marts must exist before agent work.
 
 | Week | Learn | Build | Proof |
 |------|-------|-------|-------|
-| W11 | Unity AI Gateway policies | Enable dev gateway + one policy | PHI mask blocks test prompt |
-| W12 | RAG + MCP + ai_events | Index formulary slice; one agent notification | Golden eval ≥ 85% on 20 questions |
+| W11 | Unity AI Gateway policies + MLflow tracing concept | Enable dev gateway + one policy | PHI mask blocks test prompt |
+| W12 | Governance Phase 1: hallucination rate batch | Run `governance_metrics.py`; expand golden eval to ≥50 Q | Hallucination report JSON; golden eval ≥ 85% |
+
+**Governance phases (PDF-aligned):**
+
+1. **Phase 1:** Tracing + hallucination detection (daily batch)  
+2. **Phase 2:** Bias + trustworthiness  
+3. **Phase 3:** Real-time dashboards (future)
+
+**Deprioritized for governance backlog:** standalone PHI screening, duplicate RBAC, version snapshots — already covered by Gateway, UC, GitLab.
 
 ---
 
@@ -230,7 +240,7 @@ Write or say aloud:
 | **FHIR Engineer** | 1 → 2 → 5 → 6 | E, G, H | IG validation zero errors; `$export` |
 | **Data Engineer** | 1 → 3 → 4 → 6 | D, P, Q | Three rails converge at SAM |
 | **Kafka Engineer** | 1 → 4 (Rail B track) | P, Q296+ | Producer/consumer + DLQ replay |
-| **AI Engineer** | 1 → 4 (SAM) → 8 | O, R | RAG + gateway + agent eval |
+| **AI Engineer** | 1 → 4 (SAM) → 8 (AA) | O, R, AA | RAG + gateway + governance batch green |
 | **Forward Deployed** | 1 → 3 → 7 | I, M | Solo deploy + incident restore |
 | **Programmer** | 1 → 4 → 5 | D, F, U | pytest green; patch transformer solo |
 | **Solution Architect** | 1 → 2 → 3 → 6 | C, H, K, L | CMS traceability whiteboard |

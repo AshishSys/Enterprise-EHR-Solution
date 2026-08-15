@@ -51,6 +51,8 @@ Each module culminates in a **30-minute teach-back session** where an engineer p
 | Data Engineering / ETL | M3 (Databricks), M2 (Architecture) |
 | Backend / API Development | M1 (FHIR/CMS), M4 (Firely/HealthLake) |
 | DevOps / SRE | M5 (Seiji), **M8 (GitLab CI/DAB)**, M6 (Security/Performance) |
+| AI Engineering / Governance | M9 (MLflow metrics), M6 (Security) |
+| Product / CCA-adjacent | M9 (CCA decision log), M2 (Architecture) |
 | Full-stack / Generalist | M2 (Architecture), M7 (Production Issues) |
 
 ---

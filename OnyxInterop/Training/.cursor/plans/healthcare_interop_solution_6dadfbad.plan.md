@@ -53,6 +53,9 @@ todos:
   - id: phase4-ai-governance
     content: "Phase 4: Production AI governance — spend caps, PII guardrails, OBO MCP access, inference audit tables"
     status: pending
+  - id: phase4-ai-governance-metrics
+    content: "Phase 4E: MLflow tracing → Delta; daily batch hallucination/bias/trust metrics; controlled query set ≥50; governance report"
+    status: pending
   - id: phase0-ingestion-rail
     content: "Phase 0: Deploy serverless ingestion rail (API Gateway, Lambda, SQS, Firehose, S3 landing zones) per ng-nasco-event-api pattern"
     status: pending
@@ -115,12 +118,14 @@ Each of the **515 interview Q&A entries** in [Healthcare_Interop_Interview_Cheat
 
 **Learning is bigger than delivery.** Use [LEARN_FROM_STEP_1.md](Training/LEARN_FROM_STEP_1.md) as the master guide:
 
-| Step | When | Focus |
-|------|------|-------|
-| **Step 1** | Day 1 | Glossary + local baseline — mandatory before anything else |
-| **Steps 2–3** | Weeks 1–2 | CMS/FHIR vocabulary + architecture ownership |
-| **Steps 4–6** | Weeks 3–8 | Data engineering, Kafka, runtime APIs, CMS-0057 |
-| **Steps 7–9** | Weeks 9–16 | Deploy, DevOps/CI/CD, AI, Fabric/SQL, capstone |
+
+| Step          | When       | Focus                                                      |
+| ------------- | ---------- | ---------------------------------------------------------- |
+| **Step 1**    | Day 1      | Glossary + local baseline — mandatory before anything else |
+| **Steps 2–3** | Weeks 1–2  | CMS/FHIR vocabulary + architecture ownership               |
+| **Steps 4–6** | Weeks 3–8  | Data engineering, Kafka, runtime APIs, CMS-0057            |
+| **Steps 7–9** | Weeks 9–16 | Deploy, DevOps/CI/CD, AI, Fabric/SQL, capstone             |
+
 
 Production phases (Phase 0–4 below) start **only after** the matching learning step exit criteria are met.
 
@@ -796,6 +801,54 @@ Patient App → SLAP (auth) → Unity AI Gateway → Patient Agent
 - [ ] Agent response quality eval notebook (weekly sample review)
 - [ ] Opt-out: members can disable AI notifications in patient app settings
 
+### 4E — AI Governance Evaluation Framework (PDF-aligned)
+
+> Source: *AI Governance — review and prioritization of MVP features* + *CCA Dev Milestones — AI Engineering*.  
+> Full mapping: [docs/AI_GOVERNANCE_ALIGNMENT.md](onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md)
+
+**Operating principle:** Start simple → prove core metrics → scale sophistication.
+
+| Phase | Deliverable | Cadence |
+| ----- | ----------- | ------- |
+| **4E-1** | MLflow tracing → Delta `onyx_ai.governance.interaction_traces` | Per interaction |
+| **4E-1** | Hallucination rate (alpha): semantic similarity + LLM-as-judge + behavioral signals | Daily batch |
+| **4E-1** | Controlled query set (50–200 questions) on Synthea/golden eval | Weekly refresh |
+| **4E-2** | Bias + trustworthiness metrics | Daily batch |
+| **4E-3** | Real-time embedded metrics, drift, lineage (future) | — |
+
+**Deprioritized (do not build duplicate controls):**
+
+- Standalone PHI screening (Gateway + HIPAA perimeter)
+- Governance-only de-ID eval path (use de-id summaries + golden set)
+- Custom RBAC (Unity Catalog + SLAP)
+- Version snapshots (GitLab CI + DAB)
+
+**Ontology anti-hallucination:** FHIR IG registry (MDP), MCP read-only allowlist, RAG cites SAM schema — reduces invalid tool/query rates (same principle as ontology in Genie).
+
+**Local reference:**
+
+```bash
+cd Training/onyx-interop
+python3 pipeline/ai/governance_metrics.py
+```
+
+### 4F — CCA adjacency & leadership decisions (not CMS interop scope)
+
+Complex Claim Audit MVP concerns that **share this platform** but require separate product decisions:
+
+| CCA concern | Platform reuse | Leadership decision still required |
+| ----------- | -------------- | ---------------------------------- |
+| MR summarization + DRG evidence | RAG + clinical SAM + governance metrics | Audit content (Luisa), UI owner |
+| Rules engine / profiling / scoring | `ai_events`, SAM patterns | Build vs Coverself vs partner |
+| UI / application architecture | Developer Portal pattern | Replit vs Product Eng vs Deepa |
+| SecOps + pen test for customer UI | DevOps + security checklist | External deploy readiness |
+| Implementation early involvement | Forward Deployed + Mahesh team | Phase 3 deploy tabletop |
+| Demo vs POC vs production-client | Phased readiness levels | John/Nav binding expectation |
+
+**Readiness levels:** Demo (local Synthea) → POC (stage subset) → Production-client (SecOps + implementation runbook).
+
+**Gate:** AI agents do not reach Production-client until 4D + **4E-1** hallucination batch is green for 2 consecutive weeks.
+
 ### Phase 4 exit criteria
 
 - Patient receives care-gap due-date notification via agent (UAT)
@@ -803,6 +856,8 @@ Patient App → SLAP (auth) → Unity AI Gateway → Patient Agent
 - Payer ops receives workflow failure alert with RCA suggestion from RAG (UAT)
 - All agent traffic logged in Unity Catalog with cost attribution
 - Zero PHI leakage in 30-day agent audit sample
+- **Daily governance batch: hallucination rate computed and stored in Delta**
+- **Controlled query set eval documented (≥50 questions)**
 
 ---
 
@@ -884,7 +939,10 @@ gantt
 | **8.9M resource FSI OOM (PulseEHR scale)** | Partition FSI by resourceType; parallel K8s jobs; DocumentDB pre-index; 129K patient cohort batched |
 | **Webhook partner OAuth expiry**           | DynamoDB TTL alert; auto-refresh Lambda; `INGESTION_AUTH_FAILED` event                              |
 | **Medallion vs CSV SAM collision**         | `source_system` column on all SAM tables; merge not overwrite                                       |
-
+| **Governance metrics defined too late**    | Phase 4E before agent UAT; daily hallucination batch; early golden eval set                         |
+| **CCA UI ownership gap (adjacent product)** | Document in leadership decision log; do not block CMS path; Replit/Product Eng escalation to Nav      |
+| **Synthetic-only demo overstated as prod** | Label readiness level on every demo; PulseEHR subset for scale realism                              |
+| **Implementation not in AI deploy planning** | Mahesh team in Phase 3 go-live tabletop; Forward Deployed owns runbook handoff                     |
 
 ---
 
@@ -920,6 +978,8 @@ gantt
 | 19  | Medallion ↔ FM/SAM Mapping Reference                     | Abacus          | Phase 1 |
 | 20  | EHR-FHIR-JSON Workflow Handbook (PulseEHR scale)         | Abacus Clinical | Phase 1 |
 | 21  | Ingest Source Registry (MDP config schema)               | Onyx Platform   | Phase 0 |
+| 22  | AI Governance Alignment Guide (PDF mapping)              | Onyx AI         | Phase 4 |
+| 23  | MLflow Governance Metrics Pipeline + controlled query set | Onyx AI         | Phase 4 |
 
 
 ---

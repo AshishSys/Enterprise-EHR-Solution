@@ -1,0 +1,69 @@
+# AI Governance Evaluation Framework (aligned to AI Governance MVP + CCA working session)
+# Principle: "Start simple, prove the construct with core metrics, then scale sophistication."
+
+version: "1.0"
+evaluation_dataset: synthea_baseline  # maps to Purple Labs / controlled query set role
+
+phases:
+  phase_1:
+    name: "Foundational metrics (immediate)"
+    metrics: [hallucination_rate]
+    cadence: daily_batch
+    deliverables:
+      - mlflow_tracing_to_delta
+      - hallucination_detection_alpha
+      - notebook_or_csv_report
+  phase_2:
+    name: "Expanded library"
+    metrics: [bias_score, trustworthiness_score]
+    cadence: daily_batch
+  phase_3:
+    name: "Advanced (future)"
+    metrics: [drift_score, lineage_correlation]
+    cadence: realtime_embedded  # not MVP
+
+core_metrics:
+  hallucination_rate:
+    description: "Share of agent/RAG responses diverging from grounded sources or golden answers"
+    methods:
+      - semantic_similarity  # BERTScore / embedding cosine vs golden
+      - llm_as_judge
+      - behavioral_signals   # invalid FHIR paths, unknown SAM tables, bad SQL
+    threshold_warn: 0.15
+    threshold_block: 0.25
+  bias_score:
+    description: "Disparity signals across demographic slices in de-identified eval set"
+    methods: [statistical_parity_delta, llm_as_judge]
+    phase: 2
+  trustworthiness_score:
+    description: "Composite: citation coverage + policy compliance + SME agreement rate"
+    methods: [citation_recall, gateway_policy_pass, sme_feedback]
+    phase: 2
+
+controlled_query_set:
+  min_questions: 50
+  target_questions: 200
+  sources:
+    - cheat_sheet_golden_eval
+    - cms_compliance_rag_slice
+    - fhir_ig_ontology_queries
+
+deprioritized_for_governance_backlog:
+  # Per AI Governance leadership session — not removed from interop platform
+  phi_screening_standalone: "HIPAA perimeter + Unity AI Gateway PII mask covers this"
+  deid_for_governance_eval: "De-ID remains for analytics; not primary governance eval path"
+  custom_rbac: "Unity Catalog + SLAP scopes"
+  version_snapshot: "GitLab CI + DAB artifact retention"
+
+ontology_anti_hallucination:
+  - fhir_ig_profiles_in_mdp
+  - mcp_tool_allowlist_read_only
+  - structured_sam_schema_in_rag
+
+cca_adjacency:
+  readiness_levels: [demo, poc, production_client_deployable]
+  minimum_data: [claims, medical_records]
+  synthetic_data_note: "Synthea/PulseEHR subset — label demo outputs clearly"
+  ui_ownership_decision_required: true
+  implementation_early_involvement: true
+  early_metrics_required: true

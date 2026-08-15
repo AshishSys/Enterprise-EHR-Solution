@@ -164,6 +164,23 @@
 
 ---
 
+### Module 9: AI Governance & Evaluation (PDF-Aligned)
+**Duration:** 1–2 weeks | **Output:** MLflow batch metrics + alignment guide
+
+| Topic | Key Areas to Cover |
+|-------|--------------------|
+| Governance MVP | Hallucination, bias, trustworthiness — phased daily batch |
+| MLflow | Tracing → Delta → metric pipeline |
+| CCA adjacency | UI ownership, data-before-AI, demo vs prod readiness |
+| Deprioritized | PHI screening duplicate, governance-only de-ID, custom RBAC |
+
+**Artifacts to produce:**
+- ✅ `docs/AI_GOVERNANCE_ALIGNMENT.md`
+- ✅ `pipeline/ai/governance_metrics.py` + `configs/ai/governance_metrics.yaml`
+- ✅ Cheat Sheet Section AA (Q516–535)
+
+---
+
 ## Artifact Tracker
 
 | # | Artifact | Module | Status |

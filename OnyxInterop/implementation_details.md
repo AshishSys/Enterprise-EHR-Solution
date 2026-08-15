@@ -713,6 +713,55 @@ See [docs/DEVOPS_CICD.md](Training/onyx-interop/docs/DEVOPS_CICD.md)
 
 ---
 
+## Component 13: AI Governance & Evaluation (`pipeline/ai/governance_metrics.py`)
+
+### What It Does
+Implements the **metrics-driven AI governance foundation** from the AI Governance MVP session: MLflow-style interaction tracing, **daily batch** computation of hallucination / bias / trustworthiness metrics, and reporting against a controlled query set (Synthea + golden eval questions).
+
+### Why It Exists
+Leadership aligned on: *"Governance = measurement of AI efficacy"* — not a broad backlog of duplicate controls. Phase 4 agents must ship with **repeatable, traceable metrics** before client-facing deployment. CCA working session reinforced: **define metrics early** to reduce hallucinations.
+
+### Architecture Role
+**Onyx AI Engineering (+ Abacus RAG)** — post-interaction batch pipeline; complements Unity AI Gateway (real-time policy) and Component 11 AI Observability (RCA on de-id telemetry).
+
+### Phased metrics
+
+| Phase | Metrics | Cadence |
+|-------|---------|---------|
+| 1 | Hallucination rate (alpha) | Daily batch |
+| 2 | Bias, trustworthiness | Daily batch |
+| 3 | Real-time embedded, drift, lineage | Future |
+
+### Core flow
+
+```
+Agent interaction → Unity AI Gateway trace → MLflow → Delta interaction_traces
+    → Daily job: governance_metrics → Delta metric_results → Notebook/CSV report
+```
+
+### Deprioritized (per governance session — do not duplicate)
+
+- Standalone PHI screening → Gateway PII mask + HIPAA perimeter
+- Governance-only de-ID workflows → Use controlled golden set on de-id summaries
+- Custom RBAC → Unity Catalog + SLAP
+- Version snapshots → GitLab CI + DAB artifacts
+
+### CCA adjacency (separate product, shared platform)
+
+Medical record summarization + DRG evidence is **not CMS interop scope** but reuses this component for eval. UI ownership, rules engine build-vs-buy, and Replit PDLC remain **leadership decisions** — see [AI_GOVERNANCE_ALIGNMENT.md](Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md).
+
+### How to Run (local)
+
+```bash
+cd Training/onyx-interop
+python3 pipeline/ai/governance_metrics.py --traces data/governance/sample_traces.json
+cat data/governance/metrics_report.json
+```
+
+Config: `configs/ai/governance_metrics.yaml`
+
+---
+
 ## Summary
 
 This implementation covers the **complete interoperability stack**:
@@ -729,8 +778,20 @@ This implementation covers the **complete interoperability stack**:
 10. **Fabric ║ Databricks** — parallel de-id processing + cost/speed (`pipeline/fabric_benchmark.py`)
 11. **AI Observability** — RCA/anomaly models on de-id telemetry (`observability/ai_observer.py`)
 12. **DevOps & CI/CD** — GitLab CI, DAB deploy, Seiji gates, local `run_ci_local.sh`
+13. **AI Governance & Evaluation** — MLflow traces, hallucination/bias/trust metrics, daily batch (`governance_metrics.py`)
 
 All components are **runnable locally** with just Python — giving engineers hands-on experience with the exact same architecture they'll work with in production. **Run `./scripts/ci/run_ci_local.sh` before every push.**
+
+---
+
+## PDF Alignment (Governance + CCA Sessions)
+
+| Source document | Key concern | Solution response |
+|-----------------|-------------|-------------------|
+| AI Governance MVP | MLflow + 3 core metrics, daily batch | Component 13, Phase 4E |
+| AI Governance MVP | Deprioritize duplicate PHI/RBAC/version controls | Gateway + UC + GitLab |
+| CCA Dev Milestones | Metrics early, data before AI | Step 8 gate; Phase 1 before Phase 4 |
+| CCA Dev Milestones | UI ownership, Replit, SecOps, implementation | [AI_GOVERNANCE_ALIGNMENT.md](Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) decision log |
 
 ---
 
@@ -738,14 +799,14 @@ All components are **runnable locally** with just Python — giving engineers ha
 
 > **Learning path:** Follow [LEARN_FROM_STEP_1.md](Training/LEARN_FROM_STEP_1.md) — 16-week Learn → Do → Check → Teach curriculum aligned to this implementation. Do not skip Step 1.
 
-Completing this implementation end-to-end — and running the **Script** segment attached to each of the 485 interview Q&A entries — is designed to guarantee working proficiency (not just conceptual familiarity) in seven roles:
+Completing this implementation end-to-end — and running the **Script** segment attached to each of the 535 interview Q&A entries — is designed to guarantee working proficiency (not just conceptual familiarity) in eight roles:
 
 | Role | What You Will Do in This Implementation | Exit Criteria |
 |------|------------------------------------------|---------------|
 | **FHIR Engineer** | Map SAM → US Core/CARIN BB/Da Vinci resources; validate bundles; operate Firely/FSI; implement CMS-0057 APIs | `validate_fhir_output.py` pass; IG validation zero errors; `$everything` and `$export` work |
 | **Data Engineer** | Build Raw→FM→SAM→Extract on Databricks; Autoloader medallion; Delta OPTIMIZE/VACUUM; multi-rail convergence | Six workflow families green; Bronze/Silver/Gold lag < SLA; SAM merge idempotent |
 | **Kafka Engineer** | Design Rail B event transport (API Gateway→Lambda→Kafka/MSK→Bronze); schema contracts; DLQ/replay | Producer/consumer scripts run; lag alerts wired; zero schema violation in prod |
-| **AI Engineer** | RAG indexes, MLflow models, Unity AI Gateway policies, MCP tools, Patient/Provider/Payer agents | Golden eval >85%; gateway blocks PHI; agents fire on `ai_events` |
+| **AI Engineer** | RAG indexes, MLflow traces, governance metrics, Unity AI Gateway, MCP tools, agents | Golden eval >85%; daily hallucination batch green; gateway blocks PHI |
 | **Forward Deployed Engineer** | Terraform/EKS/Helm/Seiji deploys; customer onboarding; incident runbooks; Phase 0 checklists | Deploy dev stack solo; restore from incident in <4h; customer sign-off checklist |
 | **Intermediate Associate Programmer** | Python transformers, bash automation, SQL MERGE/RLS, unit tests, CI pipelines | `pytest tests/` green; PRs pass lint; can patch `*_transformer.py` independently |
 | **Associate Solution Architect** | Phase planning, Abacus/Onyx ownership split, CMS compliance traceability, hybrid cloud ADRs | Can whiteboard 3-rail ingestion + AI layer; map every CMS rule to component |
@@ -771,4 +832,4 @@ Phase 4 ──► AI Engineer, Data Engineer (RAG, agents, governance)
 
 Script source generator (regenerate after Q&A edits): `Training/tmp/add_scripts_to_cheat_sheet.py`
 
-Glossary of all solution keywords: [Healthcare_Interop_Interview_Cheat_Sheet.md — Glossary tab](/Users/ashishsingh/Interview/Healthcare_Interop_Interview_Cheat_Sheet.md#glossary) (115 terms, 15 categories)
+Glossary of all solution keywords: [Healthcare_Interop_Interview_Cheat_Sheet.md — Glossary tab](/Users/ashishsingh/Interview/Healthcare_Interop_Interview_Cheat_Sheet.md#glossary) (120+ terms, 16 categories)

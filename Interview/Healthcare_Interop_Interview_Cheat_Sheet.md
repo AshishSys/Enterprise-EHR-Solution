@@ -1,6 +1,6 @@
 # Healthcare Interop Solution — Interview Answer Cheat Sheet
 
-> Abacus/Onyx CMS interoperability platform | 515 questions + Glossary | First-person, hands-on owner voice  
+> Abacus/Onyx CMS interoperability platform | 535 questions + Glossary | First-person, hands-on owner voice  
 > **Learn first:** [LEARN_FROM_STEP_1.md](/Users/ashishsingh/OnyxInterop/Training/LEARN_FROM_STEP_1.md) — start Day 1 before building production phases.  
 > **Proficiency guarantee:** Complete learning steps + run every **Script** below to reach working proficiency in eight roles (includes **DevOps Engineer**).
 
@@ -69,6 +69,7 @@ Each question includes five segments:
 - [Section X: Fabric vs Databricks Bake-off (Q466–473)](#section-x-fabric-vs-databricks-bake-off)
 - [Section Y: AI Observability (Q474–485)](#section-y-ai-observability)
 - [Section Z: DevOps & CI/CD (Q486–515)](#section-z-devops--cicd-q486515)
+- [Section AA: AI Governance & CCA Alignment (Q516–535)](#section-aa-ai-governance--cca-alignment-q516535)
 
 ## Section A: Opening & Role Fit
 
@@ -23808,6 +23809,450 @@ cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && ./scripts/ci/run_ci_l
 
 ---
 
+## Section AA: AI Governance & CCA Alignment (Q516–535)
+
+> Source: AI Governance MVP (May 2026) + CCA Dev Milestones (June 2026). Maps leadership concerns to Components 13, Phase 4E, and adjacent CCA patterns.
+
+### Q516. What did the AI Governance MVP session prioritize over broad governance scope?
+
+**Answer:** Focused execution: MLflow tracing, hallucination/bias/trustworthiness metrics via daily batch pipelines — not duplicate PHI/RBAC/version controls.
+
+**Example:** Leadership: start simple, prove core metrics, then scale.
+
+**How to Check:**
+- Read docs/AI_GOVERNANCE_ALIGNMENT.md Part 1
+- grep -l hallucination configs/ai/governance_metrics.yaml
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer | Associate Solution Architect)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && cat docs/AI_GOVERNANCE_ALIGNMENT.md | head -40
+```
+
+---
+
+### Q517. What are the three core governance metrics and their phases?
+
+**Answer:** Phase 1: hallucination rate. Phase 2: bias + trustworthiness. Phase 3: real-time/drift (future).
+
+**Example:** Daily batch to Delta; notebook/CSV reports initially.
+
+**How to Check:**
+- cat configs/ai/governance_metrics.yaml | grep -A2 phases
+- Verify phase_1 metrics list includes hallucination_rate
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 -c "import yaml; print(yaml.safe_load(open('configs/ai/governance_metrics.yaml'))['phases']['phase_1']['metrics'])"
+```
+
+---
+
+### Q518. How does MLflow fit the agreed governance architecture?
+
+**Answer:** Captures inputs/outputs/traces per interaction → Delta audit tables → daily batch computes metrics → queryable results.
+
+**Example:** Same pattern as Purple Labs eval but using Synthea/golden query set.
+
+**How to Check:**
+- Read governance_metrics.py module docstring
+- python3 pipeline/ai/governance_metrics.py --help
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer | Data Engineer)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 pipeline/ai/governance_metrics.py
+```
+
+---
+
+### Q519. Why was standalone PHI screening deprioritized for governance?
+
+**Answer:** HIPAA-compliant architecture + Unity AI Gateway PII mask already covers perimeter; duplicate screening adds low value.
+
+**Example:** De-ID remains for analytics path, not primary governance eval.
+
+**How to Check:**
+- grep deprioritized configs/ai/governance_metrics.yaml
+- Confirm block_external_phi in plan Unity AI Gateway policies
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer | Associate Solution Architect)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && grep -A3 deprioritized configs/ai/governance_metrics.yaml
+```
+
+---
+
+### Q520. How does FHIR ontology/IG reduce agent hallucinations?
+
+**Answer:** MDP IG registry + MCP read-only allowlist prevents invalid FHIR paths and unknown tables — same principle as ontology in Genie.
+
+**Example:** Behavioral signal flags invalid tool names in governance batch.
+
+**How to Check:**
+- curl localhost:9002/igs | head
+- MCP tool not in allowlist → behavioral_hallucination_signal true
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer | FHIR Engineer)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 pipeline/ai/governance_metrics.py && grep behavioral data/governance/metrics_report.json
+```
+
+---
+
+### Q521. What is the controlled query set target for governance eval?
+
+**Answer:** Minimum 50, target 200 questions from golden eval + CMS RAG slice + IG ontology queries.
+
+**Example:** Compare expected vs actual; compute hallucination rate.
+
+**How to Check:**
+- grep controlled_query_set configs/ai/governance_metrics.yaml
+- trace_count and hallucination_rate in metrics_report.json
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 pipeline/ai/governance_metrics.py --traces data/governance/sample_traces.json
+```
+
+---
+
+### Q522. What CCA 'aha moment' did the working session identify?
+
+**Answer:** Summarize medical records and surface evidence that supports or changes DRG validation — if one capability must be chosen.
+
+**Example:** Not CMS interop scope; adjacent Phase 5 product on same platform.
+
+**How to Check:**
+- Read AI_GOVERNANCE_ALIGNMENT.md §2.2
+- Confirm interop plan Phase 4 is CMS agents not DRG audit UI
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: Associate Solution Architect | AI Engineer)*
+
+```bash
+grep -n 'CCA' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md | head
+```
+
+---
+
+### Q523. Why must metrics be defined early per CCA session?
+
+**Answer:** Stanislav: metrics reduce hallucinations and give measurable targets before building GenAI features — not only phase-two KPIs.
+
+**Example:** Interop gates agent UAT on 4E-1 hallucination batch green.
+
+**How to Check:**
+- grep 'Metrics defined early' docs/AI_GOVERNANCE_ALIGNMENT.md
+- Step 8 LEARN_FROM_STEP_1 requires governance before agent UAT
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer)*
+
+```bash
+grep -n 'metrics' /Users/ashishsingh/OnyxInterop/Training/LEARN_FROM_STEP_1.md | head -5
+```
+
+---
+
+### Q524. What is the data-before-AI dependency from CCA?
+
+**Answer:** AI work happens after claims + medical records (and SAM marts) exist — cannot fully parallelize on missing tables.
+
+**Example:** Interop Phase 1 SAM before Phase 4 agents.
+
+**How to Check:**
+- Read plan Phase 4 prerequisite in LEARN Step 8
+- Phase 1 exit criteria before Step 8
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer)*
+
+```bash
+grep 'Data before AI' /Users/ashishsingh/OnyxInterop/Training/LEARN_FROM_STEP_1.md
+```
+
+---
+
+### Q525. What risk does synthetic medical data create for demos?
+
+**Answer:** Synthea/PulseEHR subset may not impress auditors or clients if labeled as production-ready — realism gap.
+
+**Example:** Label readiness level: demo vs POC vs production-client.
+
+**How to Check:**
+- grep synthetic docs/AI_GOVERNANCE_ALIGNMENT.md
+- Demos use source_data/Synthea — document in slide footer
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | Associate Solution Architect)*
+
+```bash
+ls /Users/ashishsingh/OnyxInterop/source_data/Patients.csv
+```
+
+---
+
+### Q526. What UI/application architecture gap did CCA surface?
+
+**Answer:** UI appears unowned — AI Engineering can build agents but not full UX/application scaffolding without Replit, Product Eng, or Deepa's team.
+
+**Example:** Developer Portal covers API registration, not CCA auditor UI.
+
+**How to Check:**
+- Read CCA decision log table in alignment doc
+- RACI shows Unity AI Gateway owner ≠ CCA UI owner
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: Associate Solution Architect | AI Engineer)*
+
+```bash
+grep 'UI owner' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md
+```
+
+---
+
+### Q527. What SecOps concern applies to customer-facing AI UI?
+
+**Answer:** External penetration testing and involved security review — Ali noted this could consume much of a 60-day window.
+
+**Example:** Mapped to security_checklist + DevOps Wiz gate before prod.
+
+**How to Check:**
+- grep SecOps docs/AI_GOVERNANCE_ALIGNMENT.md
+- deploy-prod manual job requires CMS go-live checklist
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: DevOps Engineer | Forward Deployed Engineer)*
+
+```bash
+grep -i wiz /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/DEVOPS_CICD.md | head -3
+```
+
+---
+
+### Q528. Why should implementation (Mahesh) teams join planning earlier?
+
+**Answer:** Client-deployable GenAI needs delivery runbooks, client data access, and operational readiness — not demo-only engineering.
+
+**Example:** Phase 3 Forward Deployed tabletop includes implementation handoff.
+
+**How to Check:**
+- grep implementation docs/AI_GOVERNANCE_ALIGNMENT.md
+- teach_back Forward Deployed track includes deploy gates
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: Forward Deployed Engineer)*
+
+```bash
+grep Mahesh /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md
+```
+
+---
+
+### Q529. What build-vs-buy question remains for CCA rules engine?
+
+**Answer:** Coverself has rules engine/UI; Abacus needs CCA-specific audit content — partner vs build undecided.
+
+**Example:** Not interop CMS rules; leadership decision in alignment doc.
+
+**How to Check:**
+- Read §2.4 leadership decision log
+- No Coverself integration in onyx-interop repo — intentional
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: Associate Solution Architect)*
+
+```bash
+grep -i coverself /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md
+```
+
+---
+
+### Q530. What are demo vs POC vs production-client readiness levels?
+
+**Answer:** Demo: local Synthea. POC: stage subset + internal users. Production-client: SecOps sign-off + implementation runbook + pen test.
+
+**Example:** John's production-ready expectation = production-client, not demo.
+
+**How to Check:**
+- grep Readiness levels docs/AI_GOVERNANCE_ALIGNMENT.md
+- CMS go-live checklist only for production-client path
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: Forward Deployed Engineer | DevOps Engineer)*
+
+```bash
+grep -A5 'Readiness levels' /Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md
+```
+
+---
+
+### Q531. How do hallucination detection methods combine?
+
+**Answer:** Statistical similarity (BERTScore/local proxy), LLM-as-judge, SME feedback, behavioral signals (invalid SQL/tools).
+
+**Example:** governance_metrics.py uses SequenceMatcher locally; Databricks uses embeddings in prod.
+
+**How to Check:**
+- Read core_metrics.hallucination_rate.methods in yaml
+- sample trace t002 flags high hallucination
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 pipeline/ai/governance_metrics.py && jq '.hallucination_rate,.rows[1].hallucination_flag' data/governance/metrics_report.json
+```
+
+---
+
+### Q532. What replaces Purple Labs in this interop evaluation baseline?
+
+**Answer:** Synthea 10-patient local baseline + PulseEHR 1K subset for scale; same role as controlled governance dataset.
+
+**Example:** evaluation_dataset: synthea_baseline in yaml.
+
+**How to Check:**
+- grep evaluation_dataset configs/ai/governance_metrics.yaml
+- interop_pipeline produces ~9997 resources
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: Data Engineer | AI Engineer)*
+
+```bash
+python3 /Users/ashishsingh/OnyxInterop/interop_pipeline.py --help
+```
+
+---
+
+### Q533. What Phase 4E gate blocks agent production-client deploy?
+
+**Answer:** 4E-1 hallucination batch green for 2 consecutive weeks + controlled query set ≥50 documented.
+
+**Example:** In addition to 4D gateway policies and spend caps.
+
+**How to Check:**
+- grep '4E-1' /Users/ashishsingh/OnyxInterop/Training/.cursor/plans/healthcare_interop_solution_6dadfbad.plan.md
+- Plan exit criteria lists daily governance batch
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer | DevOps Engineer)*
+
+```bash
+grep hallucination /Users/ashishsingh/OnyxInterop/Training/.cursor/plans/healthcare_interop_solution_6dadfbad.plan.md | tail -5
+```
+
+---
+
+### Q534. How does Component 13 relate to Component 11 AI Observability?
+
+**Answer:** Component 13: governance efficacy metrics (hallucination/bias/trust) on agent traces. Component 11: RCA/anomaly on de-id pipeline telemetry.
+
+**Example:** Both use Unity AI Gateway; neither replaces Onyx Insights CMS filings.
+
+**How to Check:**
+- grep 'Component 13' /Users/ashishsingh/OnyxInterop/implementation_details.md
+- ai_observer rejects PHI keys; governance uses de-id golden set
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 -c "from observability.ai_observer import AIObserver; o=AIObserver(); print('ok')"
+```
+
+---
+
+### Q535. What should Section AA Scripts build for interview proficiency?
+
+**Answer:** Run governance batch, read alignment doc, explain phased metrics, CCA adjacency, and deprioritized backlog items from memory.
+
+**Example:** Maps to AI Engineer + Solution Architect roles.
+
+**How to Check:**
+- Run all AA Scripts once
+- Can whiteboard MLflow → Delta → daily batch flow
+
+**How to Fix:**
+- Re-read [AI_GOVERNANCE_ALIGNMENT.md](file:///Users/ashishsingh/OnyxInterop/Training/onyx-interop/docs/AI_GOVERNANCE_ALIGNMENT.md) section for this topic
+- Re-run governance batch until metric output matches expectation
+
+**Script:** *(builds proficiency: AI Engineer | Associate Solution Architect)*
+
+```bash
+cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && python3 pipeline/ai/governance_metrics.py && wc -l docs/AI_GOVERNANCE_ALIGNMENT.md
+```
+
+---
+
 ## Glossary
 
 > All key terms from the Abacus/Onyx CMS interoperability solution — organized by category with description and practical example.
@@ -23947,11 +24392,18 @@ cd /Users/ashishsingh/OnyxInterop/Training/onyx-interop && ./scripts/ci/run_ci_l
 | **Environment Promotion** | DevOps & CI/CD | dev → stage (manual) → prod (manual + ticket) | GitLab environment history |
 | **Pipeline Artifact** | DevOps & CI/CD | JUnit, fhir_output/, image tag retained for CMS audit | Pipeline ID → prod SHA |
 
+| **Hallucination Rate** | AI Governance | Share of agent responses diverging from grounded/golden sources | `governance_metrics.py` daily batch on MLflow traces |
+| **Trustworthiness Score** | AI Governance | Composite: citations + gateway policy pass + SME agreement | Phase 2 metric in governance framework |
+| **MLflow Governance Trace** | AI Governance | Logged inputs/outputs/tools per agent call → Delta tables | `onyx_ai.governance.interaction_traces` |
+| **Controlled Query Set** | AI Governance | 50–200 golden questions for eval (Purple Labs equivalent) | Synthea baseline + cheat sheet golden eval |
+| **CCA Adjacency** | Product Portfolio | Complex Claim Audit patterns sharing platform, not CMS scope | DRG evidence + MR summarization — Phase 5 optional |
+
 ### Glossary Category Index
 
 | Category | Terms Count | Key Terms |
 |----------|-------------|-----------|
 | DevOps & CI/CD | 6 | GitLab CI, DAB, run_ci_local, CMS Go-Live Gate |
+| AI Governance | 5 | Hallucination Rate, MLflow Trace, Controlled Query Set |
 | Platform & Architecture | 6 | Abacus, Onyx, MDP, Developer Portal |
 | Data Engineering | 22 | FM, SAM, Autoloader, Delta, DABs, Medallion, Watermark |
 | FHIR Standards | 18 | US Core, CARIN BB, Da Vinci, Bundle, NDJSON, Must Support |

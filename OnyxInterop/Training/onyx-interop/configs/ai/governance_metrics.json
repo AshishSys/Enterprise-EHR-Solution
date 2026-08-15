@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "evaluation_dataset": "synthea_baseline",
+  "core_metrics": {
+    "hallucination_rate": {
+      "threshold_warn": 0.15,
+      "threshold_block": 0.25
+    }
+  }
+}

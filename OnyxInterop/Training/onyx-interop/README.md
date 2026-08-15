@@ -32,7 +32,8 @@ chmod +x scripts/ci/run_ci_local.sh
 ./scripts/ci/run_ci_local.sh
 ```
 
-See [docs/DEVOPS_CICD.md](docs/DEVOPS_CICD.md) for GitLab CI stages, secrets, and CMS go-live gates.
+See [docs/DEVOPS_CICD.md](docs/DEVOPS_CICD.md) for GitLab CI stages, secrets, and CMS go-live gates.  
+See [docs/AI_GOVERNANCE_ALIGNMENT.md](docs/AI_GOVERNANCE_ALIGNMENT.md) for AI Governance MVP + CCA session alignment.
 
 ## Architecture
 

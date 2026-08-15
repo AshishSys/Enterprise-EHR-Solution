@@ -1,0 +1,29 @@
+[
+  {
+    "trace_id": "t001",
+    "agent": "patient_care",
+    "expected": "Your A1c screening is due based on your last lab result.",
+    "actual": "Your A1c screening is due based on your last lab result.",
+    "citations": ["clinical_sam.observations"],
+    "tools_called": ["get_observations"],
+    "gateway_policy_pass": true
+  },
+  {
+    "trace_id": "t002",
+    "agent": "payer_ops",
+    "expected": "Claims workflow failed with 847 quarantined EOB records.",
+    "actual": "Everything is fine; no pipeline issues detected.",
+    "citations": [],
+    "tools_called": ["get_pipeline_status"],
+    "gateway_policy_pass": true
+  },
+  {
+    "trace_id": "t003",
+    "agent": "provider_panel",
+    "expected": "Prior authorization decision due in 2 days for member in your panel.",
+    "actual": "PA deadline in 2 days — see attributed member panel.",
+    "citations": ["ai_events.event_queue"],
+    "tools_called": ["get_pa_status", "get_observations"],
+    "gateway_policy_pass": true
+  }
+]
