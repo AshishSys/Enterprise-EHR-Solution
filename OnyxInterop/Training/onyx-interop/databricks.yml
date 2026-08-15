@@ -1,0 +1,100 @@
+# Databricks Asset Bundle — Healthcare Interop workflow families
+# Deploy: databricks bundle validate -t dev && databricks bundle deploy -t stage
+
+bundle:
+  name: onyx-interop
+
+workspace:
+  host: ${var.databricks_host}
+
+variables:
+  databricks_host:
+    description: Databricks workspace URL
+    default: https://dbc-example.cloud.databricks.com
+  catalog:
+    description: Unity Catalog name per environment
+  service_principal:
+    description: SP application ID for job runs
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: ${var.databricks_host}
+    variables:
+      catalog: dev_interop
+    run_as:
+      service_principal_name: ${var.service_principal}
+
+  stage:
+    mode: production
+    workspace:
+      host: ${var.databricks_host}
+    variables:
+      catalog: stage_interop
+    run_as:
+      service_principal_name: ${var.service_principal}
+
+  prod:
+    mode: production
+    workspace:
+      host: ${var.databricks_host}
+    variables:
+      catalog: prod_interop
+    run_as:
+      service_principal_name: ${var.service_principal}
+
+resources:
+  jobs:
+    claims_workflow:
+      name: "[${bundle.target}] Claims FM→SAM→Extract"
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"
+        timezone_id: UTC
+      tasks:
+        - task_key: ingest
+          notebook_task:
+            notebook_path: ../notebooks/claims_ingest
+        - task_key: sam_merge
+          depends_on:
+            - task_key: ingest
+          notebook_task:
+            notebook_path: ../notebooks/claims_sam_merge
+        - task_key: extract
+          depends_on:
+            - task_key: sam_merge
+          notebook_task:
+            notebook_path: ../notebooks/claims_extract
+        - task_key: terminate
+          depends_on:
+            - task_key: extract
+          notebook_task:
+            notebook_path: ../notebooks/job_terminate
+
+    clinical_workflow:
+      name: "[${bundle.target}] Clinical FM→SAM→Extract"
+      tasks:
+        - task_key: ingest
+          notebook_task:
+            notebook_path: ../notebooks/clinical_ingest
+
+    fhir_silver_autoloader:
+      name: "[${bundle.target}] Rail C FHIR Autoloader Bronze→Silver"
+      continuous:
+        pause_status: PAUSED
+      tasks:
+        - task_key: autoloader_stream
+          notebook_task:
+            notebook_path: ../notebooks/fhir_bronze_autoloader
+
+    sam_maintenance:
+      name: "[${bundle.target}] SAM OPTIMIZE/VACUUM"
+      schedule:
+        quartz_cron_expression: "0 0 2 ? * SUN"
+        timezone_id: UTC
+      tasks:
+        - task_key: optimize
+          sql_task:
+            query:
+              query: "OPTIMIZE ${var.catalog}.sam.clinical.conditions"

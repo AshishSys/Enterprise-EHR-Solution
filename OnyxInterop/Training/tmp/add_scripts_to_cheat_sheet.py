@@ -35,6 +35,7 @@ SECTION_ROLES: dict[str, str] = {
     "W": "Data Engineer | Associate Solution Architect",
     "X": "Data Engineer | Intermediate Associate Programmer",
     "Y": "AI Engineer | Forward Deployed Engineer",
+    "Z": "DevOps Engineer | Forward Deployed Engineer",
 }
 
 
@@ -87,7 +88,9 @@ def section_for_q(q_num: int) -> str:
         return "W"
     if q_num <= 473:
         return "X"
-    return "Y"
+    if q_num <= 485:
+        return "Y"
+    return "Z"
 
 
 def pick_script(q_num: int, title: str) -> str:
@@ -110,6 +113,8 @@ def pick_script(q_num: int, title: str) -> str:
         return fhir_script(q_num, t, roles)
     if any(k in t for k in ("slap", "oauth", "smart", "token", "pkce", "auth", "security", "rls", "mask")):
         return auth_script(q_num, t, roles)
+    if any(k in t for k in ("gitlab", "ci/cd", "cicd", "pipeline stage", "deploy gate", "run_ci", "bundle deploy", "go-live")):
+        return deploy_script(q_num, t, roles)
     if any(k in t for k in ("terraform", "helm", "seiji", "deploy", "eks", "canary", "docker")):
         return deploy_script(q_num, t, roles)
     if any(k in t for k in ("fabric", "lakehouse", "power bi", "dataflow gen", "semantic")):
@@ -148,6 +153,7 @@ def pick_script(q_num: int, title: str) -> str:
         "W": databricks_script,
         "X": fabric_script,
         "Y": ai_script,
+        "Z": deploy_script,
     }
     return defaults[sec](q_num, t, roles)
 

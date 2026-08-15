@@ -8,6 +8,9 @@ todos:
   - id: phase0-local-baseline
     content: "Phase 0: Run local interop_pipeline + SLAP/FITE reference stack; validate FHIR output against IGs"
     status: pending
+  - id: phase0-cicd
+    content: "Phase 0: Wire GitLab CI (.gitlab-ci.yml), local run_ci_local.sh, DAB validate; MR gate pytest + FHIR baseline"
+    status: pending
   - id: phase0-infra
     content: "Phase 0: Provision dev AWS base infra (S3, EKS, DocumentDB, DynamoDB, API Gateway) via onyx-infrastructure Terraform"
     status: pending
@@ -40,6 +43,9 @@ todos:
     status: pending
   - id: phase3-hardening
     content: "Phase 3: Security scans, performance tuning, Seiji canary deploys, acceptance testing, and go-live readiness"
+    status: pending
+  - id: phase3-cicd-prod
+    content: "Phase 3: Prod CI/CD gates — Wiz scan, CMS go-live checklist, stage soak 24h, manual prod deploy jobs"
     status: pending
   - id: phase4-ai-agents
     content: "Phase 4: Deploy Patient/Provider/Payer AI agents with MCP tools, RAG, and notification channels via Unity AI Gateway"
@@ -100,9 +106,23 @@ This plan is realigned so that **completing all phases guarantees working profic
 | Forward Deployed Engineer         | 0, 3                 | Solo dev deploy; customer runbooks; incident restore |
 | Intermediate Associate Programmer | 0–3                  | pytest green; independent transformer patches        |
 | Associate Solution Architect      | 0–3                  | CMS traceability matrix; hybrid ADRs; phase gates    |
+| DevOps Engineer                   | 0, 3                 | GitLab CI green; DAB/Seiji gates; run_ci_local.sh    |
 
 
-Each of the **445 interview Q&A entries** in [Healthcare_Interop_Interview_Cheat_Sheet.md](/Users/ashishsingh/Interview/Healthcare_Interop_Interview_Cheat_Sheet.md) now includes a **Script** segment — runnable bash/Python/SQL tied to the question. Run every Script as you complete the corresponding phase.
+Each of the **515 interview Q&A entries** in [Healthcare_Interop_Interview_Cheat_Sheet.md](/Users/ashishsingh/Interview/Healthcare_Interop_Interview_Cheat_Sheet.md) now includes a **Script** segment — runnable bash/Python/SQL tied to the question. Run every Script as you complete the corresponding phase.
+
+### Learn From Step 1 (Primary Objective)
+
+**Learning is bigger than delivery.** Use [LEARN_FROM_STEP_1.md](Training/LEARN_FROM_STEP_1.md) as the master guide:
+
+| Step | When | Focus |
+|------|------|-------|
+| **Step 1** | Day 1 | Glossary + local baseline — mandatory before anything else |
+| **Steps 2–3** | Weeks 1–2 | CMS/FHIR vocabulary + architecture ownership |
+| **Steps 4–6** | Weeks 3–8 | Data engineering, Kafka, runtime APIs, CMS-0057 |
+| **Steps 7–9** | Weeks 9–16 | Deploy, DevOps/CI/CD, AI, Fabric/SQL, capstone |
+
+Production phases (Phase 0–4 below) start **only after** the matching learning step exit criteria are met.
 
 ---
 

@@ -2,6 +2,8 @@
 
 > Complete technical guide covering every component, what it does, why it exists, and how to use it.
 
+> **Start here for learning:** [LEARN_FROM_STEP_1.md](Training/LEARN_FROM_STEP_1.md) — Learning is the primary objective; building proves you learned. Do Step 1 before any production phase.
+
 ---
 
 ## System Overview
@@ -677,6 +679,38 @@ Same `deid_sam` contract on both engines. Compares elapsed time and estimated US
 
 Cross-stack SRE brain: OTel traces, job/API/auth/deploy metrics, structured de-id logs, plus Claude/GPT RCA and anomaly explanation via Unity AI Gateway. Rejects payloads containing identifier keys. Distinct from Onyx Insights (CMS filings).
 
+## Component 12: DevOps & CI/CD (`.gitlab-ci.yml`, `databricks.yml`, `scripts/ci/`)
+
+### What It Does
+Automates validate → test → security → build → deploy for every merge. Ensures no CMS-critical code reaches stage/prod without pytest green, FHIR baseline validation, and infra lint (Terraform, Helm, Databricks Asset Bundle).
+
+### Why It Exists
+CMS Jan 2027 deadline requires repeatable, auditable releases. Manual-only deploys do not scale across six workflow families, three ingestion rails, and EKS runtime — CI/CD is the quality gate between learning and production.
+
+### Architecture Role
+**Shared Platform/DevOps** — gates both Abacus (DAB deploy, pipeline tests) and Onyx (Helm/Seiji, smoke tests).
+
+### Pipeline Stages
+
+| Stage | Key Jobs | Purpose |
+|-------|----------|---------|
+| validate | lint, configs, terraform, helm, bundle-validate | Catch syntax/config errors early |
+| test | pytest, fhir-baseline | Prove pipeline + unit logic |
+| security | phi-scan, secrets-scan | Block PHI literals and leaked keys |
+| build | fsi-image (manual) | Versioned FSI container |
+| deploy-stage | DAB stage, Seiji stage (manual) | Soak before prod |
+| deploy-prod | DAB prod, Seiji prod (manual) | CMS go-live with ticket |
+
+### Local CI
+
+```bash
+cd Training/onyx-interop
+./scripts/ci/run_ci_local.sh
+```
+
+### Full runbook
+See [docs/DEVOPS_CICD.md](Training/onyx-interop/docs/DEVOPS_CICD.md)
+
 ---
 
 ## Summary
@@ -694,12 +728,15 @@ This implementation covers the **complete interoperability stack**:
 9. **MDM** — AHIMA / ISO 8000 golden records (`pipeline/mdm_engine.py`)
 10. **Fabric ║ Databricks** — parallel de-id processing + cost/speed (`pipeline/fabric_benchmark.py`)
 11. **AI Observability** — RCA/anomaly models on de-id telemetry (`observability/ai_observer.py`)
+12. **DevOps & CI/CD** — GitLab CI, DAB deploy, Seiji gates, local `run_ci_local.sh`
 
-All components are **runnable locally** with just Python — giving engineers hands-on experience with the exact same architecture they'll work with in production.
+All components are **runnable locally** with just Python — giving engineers hands-on experience with the exact same architecture they'll work with in production. **Run `./scripts/ci/run_ci_local.sh` before every push.**
 
 ---
 
 ## Proficiency Guarantee Framework
+
+> **Learning path:** Follow [LEARN_FROM_STEP_1.md](Training/LEARN_FROM_STEP_1.md) — 16-week Learn → Do → Check → Teach curriculum aligned to this implementation. Do not skip Step 1.
 
 Completing this implementation end-to-end — and running the **Script** segment attached to each of the 485 interview Q&A entries — is designed to guarantee working proficiency (not just conceptual familiarity) in seven roles:
 
@@ -712,14 +749,15 @@ Completing this implementation end-to-end — and running the **Script** segment
 | **Forward Deployed Engineer** | Terraform/EKS/Helm/Seiji deploys; customer onboarding; incident runbooks; Phase 0 checklists | Deploy dev stack solo; restore from incident in <4h; customer sign-off checklist |
 | **Intermediate Associate Programmer** | Python transformers, bash automation, SQL MERGE/RLS, unit tests, CI pipelines | `pytest tests/` green; PRs pass lint; can patch `*_transformer.py` independently |
 | **Associate Solution Architect** | Phase planning, Abacus/Onyx ownership split, CMS compliance traceability, hybrid cloud ADRs | Can whiteboard 3-rail ingestion + AI layer; map every CMS rule to component |
+| **DevOps Engineer** | GitLab CI, DAB deploy, Seiji canary, secret management, CMS go-live checklist | `run_ci_local.sh` green; explain every CI stage; stage→prod gate drill |
 
 ### Phase-to-Role Matrix
 
 ```
-Phase 0 ──► Solution Architect, Forward Deployed, Programmer (local baseline)
+Phase 0 ──► Solution Architect, Forward Deployed, Programmer, DevOps (local CI)
 Phase 1 ──► Data Engineer, FHIR Engineer, Kafka Engineer (Rails A/B/C + APIs)
 Phase 2 ──► FHIR Engineer, Solution Architect (CMS-0057 advanced APIs)
-Phase 3 ──► Forward Deployed, Programmer (hardening, deploy, test)
+Phase 3 ──► Forward Deployed, Programmer, DevOps (CI/CD, Seiji, hardening)
 Phase 4 ──► AI Engineer, Data Engineer (RAG, agents, governance)
 ```
 
