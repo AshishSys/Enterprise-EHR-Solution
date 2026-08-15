@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "name": "Wisconsin EHR",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "workbench.editor.enablePreview": false,
+    "markdown.preview.breaks": true
+  },
+  "extensions": {
+    "recommendations": [
+      "hashicorp.terraform",
+      "ms-python.python",
+      "redhat.vscode-yaml"
+    ]
+  }
+}
