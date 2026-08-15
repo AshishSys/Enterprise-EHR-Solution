@@ -31,6 +31,10 @@ SECTION_ROLES: dict[str, str] = {
     "S": "Data Engineer | Intermediate Associate Programmer",
     "T": "Associate Solution Architect | Data Engineer",
     "U": "Data Engineer | AI Engineer | Intermediate Associate Programmer",
+    "V": "Data Engineer | Associate Solution Architect",
+    "W": "Data Engineer | Associate Solution Architect",
+    "X": "Data Engineer | Intermediate Associate Programmer",
+    "Y": "AI Engineer | Forward Deployed Engineer",
 }
 
 
@@ -75,7 +79,15 @@ def section_for_q(q_num: int) -> str:
         return "S"
     if q_num <= 415:
         return "T"
-    return "U"
+    if q_num <= 445:
+        return "U"
+    if q_num <= 455:
+        return "V"
+    if q_num <= 465:
+        return "W"
+    if q_num <= 473:
+        return "X"
+    return "Y"
 
 
 def pick_script(q_num: int, title: str) -> str:
@@ -86,6 +98,12 @@ def pick_script(q_num: int, title: str) -> str:
     # --- keyword-first overrides ---
     if any(k in t for k in ("kafka", "sqs", "webhook", "event stream", "firehose", "pub/sub", "nasco")):
         return kafka_script(q_num, t, roles)
+    if any(k in t for k in ("de-id", "deident", "safe harbor", "expert determination", "tokenize", "phi")):
+        return auth_script(q_num, t, roles)
+    if any(k in t for k in ("mdm", "golden", "survivorship", "crosswalk", "ahima", "iso 8000")):
+        return databricks_script(q_num, t, roles)
+    if any(k in t for k in ("observability", "rca", "anomaly", "otel", "handoff")):
+        return ai_script(q_num, t, roles)
     if any(k in t for k in ("rag", "vector", "mlflow", "agent", "mcp", "gateway", "embedding", "model")):
         return ai_script(q_num, t, roles)
     if any(k in t for k in ("fhir", "us core", "carin", "davinci", "da vinci", "bundle", "firely", "healthlake", "profile", "ig")):
@@ -126,6 +144,10 @@ def pick_script(q_num: int, title: str) -> str:
         "S": fabric_script,
         "T": gcp_script,
         "U": sql_script,
+        "V": auth_script,
+        "W": databricks_script,
+        "X": fabric_script,
+        "Y": ai_script,
     }
     return defaults[sec](q_num, t, roles)
 

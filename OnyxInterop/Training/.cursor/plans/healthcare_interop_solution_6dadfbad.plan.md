@@ -4,7 +4,7 @@ overview: Phased production implementation of the Abacus/Onyx CMS interoperabili
 todos:
   - id: phase0-access
     content: "Phase 0: Complete environment access (AWS, Databricks, GitLab, Seiji, Docker) and clone production repos"
-    status: in_progress
+    status: completed
   - id: phase0-local-baseline
     content: "Phase 0: Run local interop_pipeline + SLAP/FITE reference stack; validate FHIR output against IGs"
     status: pending
@@ -90,15 +90,17 @@ Reference EHR export: [PulseEHR FHIR Summary Report](/Users/ashishsingh/PulseEHR
 
 This plan is realigned so that **completing all phases guarantees working proficiency** in seven roles — not slide-deck familiarity:
 
-| Role | Guaranteed By Phases | Measurable Exit |
-|------|---------------------|-----------------|
-| FHIR Engineer | 0–2 | IG-valid bundles; CMS-9115 + 0057 APIs live |
-| Data Engineer | 0–1, 4 | 3 ingestion rails; SAM convergence; ai_events mart |
-| Kafka Engineer | 0–1 (Rail B) | MSK/SQS transport; schema contracts; DLQ/replay |
-| AI Engineer | 1, 4 | RAG + agents + Unity AI Gateway in prod |
-| Forward Deployed Engineer | 0, 3 | Solo dev deploy; customer runbooks; incident restore |
-| Intermediate Associate Programmer | 0–3 | pytest green; independent transformer patches |
-| Associate Solution Architect | 0–3 | CMS traceability matrix; hybrid ADRs; phase gates |
+
+| Role                              | Guaranteed By Phases | Measurable Exit                                      |
+| --------------------------------- | -------------------- | ---------------------------------------------------- |
+| FHIR Engineer                     | 0–2                  | IG-valid bundles; CMS-9115 + 0057 APIs live          |
+| Data Engineer                     | 0–1, 4               | 3 ingestion rails; SAM convergence; ai_events mart   |
+| Kafka Engineer                    | 0–1 (Rail B)         | MSK/SQS transport; schema contracts; DLQ/replay      |
+| AI Engineer                       | 1, 4                 | RAG + agents + Unity AI Gateway in prod              |
+| Forward Deployed Engineer         | 0, 3                 | Solo dev deploy; customer runbooks; incident restore |
+| Intermediate Associate Programmer | 0–3                  | pytest green; independent transformer patches        |
+| Associate Solution Architect      | 0–3                  | CMS traceability matrix; hybrid ADRs; phase gates    |
+
 
 Each of the **445 interview Q&A entries** in [Healthcare_Interop_Interview_Cheat_Sheet.md](/Users/ashishsingh/Interview/Healthcare_Interop_Interview_Cheat_Sheet.md) now includes a **Script** segment — runnable bash/Python/SQL tied to the question. Run every Script as you complete the corresponding phase.
 
