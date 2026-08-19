@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cambia Facets Claims — E2E Architecture</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.6;background:#fff;color:#1f2328;padding:24px}
+  .page{max-width:900px;margin:0 auto}
+  h1{font-size:20px;font-weight:700;margin-bottom:4px}
+  .subtitle{color:#57606a;margin-bottom:20px;font-size:13px}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;border-bottom:2px solid #e5e7eb;padding-bottom:10px}
+  .tab{padding:6px 12px;border:1px solid #e5e7eb;border-radius:5px 5px 0 0;background:#f7f8fa;cursor:pointer;font-size:12px;font-weight:600;color:#57606a}
+  .tab.active{background:#fff;border-bottom-color:#fff;color:#1f2328;border-top:2px solid #3b82d4;margin-bottom:-2px}
+  .panel{display:none}
+  .panel.active{display:block}
+  h2{font-size:14px;font-weight:700;margin:20px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:4px}
+  h3{font-size:13px;font-weight:600;color:#3b82d4;margin:12px 0 6px}
+  .flow{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:12px 0;margin-bottom:20px}
+  .step{display:flex;flex-direction:column;align-items:center;min-width:72px}
+  .bubble{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+  .arrow{width:14px;height:2px;background:#e5e7eb;margin-top:21px;flex-shrink:0}
+  .step-label{font-size:9px;color:#57606a;text-align:center;margin-top:4px;max-width:72px;line-height:1.2}
+  .b1{background:#3b82d4}.b2{background:#2563eb}.b3{background:#1d4ed8}
+  .b4{background:#7c5cd8}.b5{background:#6d28d9}.b6{background:#5b21b6}
+  .b7{background:#1d6f42}.b8{background:#065f46}.b9{background:#b45309}.b10{background:#57606a}
+  table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px}
+  th{background:#f7f8fa;text-align:left;padding:7px 10px;font-weight:600;border-bottom:2px solid #e5e7eb;font-size:11px;color:#57606a;text-transform:uppercase}
+  td{padding:7px 10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+  .tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500;margin:1px}
+  .tag-aws{background:#fef3c7;color:#92400e}
+  .tag-db{background:#dbeafe;color:#1e40af}
+  .tag-fhir{background:#dcfce7;color:#166534}
+  .section{background:#f7f8fa;border:1px solid #e5e7eb;border-radius:6px;padding:14px 16px;margin-bottom:14px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:5px;padding:12px 14px}
+  .card-title{font-size:11px;font-weight:700;color:#57606a;text-transform:uppercase;margin-bottom:6px}
+  code{font-family:"SF Mono",monospace;font-size:11px;background:#f7f8fa;padding:1px 4px;border-radius:3px}
+  footer{margin-top:28px;padding-top:12px;border-top:1px solid #e5e7eb;text-align:center;font-size:11px;color:#8b949e}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Cambia Facets Claims — E2E Architecture</h1>
+  <p class="subtitle">cambia02 tenant · On-Prem Facets → VPN → CDC → Medallion → SAM/FHIR + Snowflake</p>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-tab="overview">Overview</div>
+    <div class="tab" data-tab="cdc">CDC &amp; Source</div>
+    <div class="tab" data-tab="bronze">Bronze &amp; Landing</div>
+    <div class="tab" data-tab="medallion">Silver &amp; Gold</div>
+    <div class="tab" data-tab="downstream">Downstream</div>
+    <div class="tab" data-tab="cheatsheet">Interview Cheatsheet</div>
+    <div class="tab" data-tab="repos">Repos &amp; Catalog</div>
+  </div>
+
+  <div id="overview" class="panel active">
+    <div class="flow">
+      <div class="step"><div class="bubble b1">1</div><div class="step-label">Facets SQL Server</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b2">2</div><div class="step-label">VPN</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b3">3</div><div class="step-label">CDC Extract</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b4">4</div><div class="step-label">SFTP Landing</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b5">5</div><div class="step-label">Bronze SCD2</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b6">6</div><div class="step-label">Silver Timeline</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b7">7</div><div class="step-label">Gold FM</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b8">8</div><div class="step-label">SAM/FHIR</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b9">9</div><div class="step-label">Snowflake</div></div><div class="arrow"></div>
+      <div class="step"><div class="bubble b10">10</div><div class="step-label">Reltio MDM</div></div>
+    </div>
+    <div class="section">
+      <strong>5 Stages:</strong> (1) Source &amp; Network → (2) CDC Extraction → (3) Landing &amp; Bronze → (4) Silver &amp; Gold → (5) Downstream consumption.<br><br>
+      <strong>Triggers:</strong> CloudWatch ~4 hr + nightly <code>Facets_BatchJobComplete_*</code> trigger file on SFTP.<br>
+      <strong>Volumes:</strong> ~99M claims historical; 70k–120k nightly; 500–1k tx/15 min incremental.
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-title">Interop Gold</div>75 groups, Medicare, no dental → SAM/FHIR CMS-9115</div>
+      <div class="card"><div class="card-title">CDP Gold</div>Full 1:1 silver + signature bitmap → customer data platform</div>
+    </div>
+  </div>
+
+  <div id="cdc" class="panel">
+    <h2>Stage 1–2: Source &amp; CDC</h2>
+    <table>
+      <tr><th>Component</th><th>Detail</th></tr>
+      <tr><td>Source</td><td>Cambia on-prem Facets SQL Server 2016, CDC read replica</td></tr>
+      <tr><td>Network</td><td>Palo Alto site-to-site VPN → <code>cambia-facets-networking</code> (697410135799)</td></tr>
+      <tr><td>Orchestration</td><td><span class="tag tag-aws">Step Functions</span> <span class="tag tag-aws">Lambda</span> <span class="tag tag-aws">Batch</span></td></tr>
+      <tr><td>Process types</td><td>Claims Incremental, Historical, PPL Incremental/Historical</td></tr>
+      <tr><td>Lock</td><td>DynamoDB <code>CdcGlobals</code> — one job per domain</td></tr>
+      <tr><td>Output</td><td>~25 encrypted JSON + <code>manifest.json</code></td></tr>
+      <tr><td>Intermediate S3</td><td><code>abacus-facets-intermediate-&lt;env&gt;/claims-incremental/</code></td></tr>
+    </table>
+    <div class="section">facets-core runs <strong>outside HITRUST boundary</strong>. Encryption before NextGen landing.</div>
+  </div>
+
+  <div id="bronze" class="panel">
+    <h2>Stage 3: Landing &amp; Bronze</h2>
+    <table>
+      <tr><th>Step</th><th>Service</th><th>Detail</th></tr>
+      <tr><td>Transfer</td><td>ng-abacus-inbound-infra</td><td>Encrypted files + manifest → SFTP landing → NextGen raw S3</td></tr>
+      <tr><td>Orchestration</td><td>ng-orchestration-service</td><td>Manifest-triggered Databricks workflows</td></tr>
+      <tr><td>Load</td><td><span class="tag tag-db">Databricks</span> + AIR library</td><td>44+ bronze tables, SCD Type 2</td></tr>
+    </table>
+    <h3>Key Bronze Tables</h3>
+    <table>
+      <tr><th>Table</th><th>Grain</th></tr>
+      <tr><td><code>CMC_CLCL_CLAIM</code></td><td>Claim header</td></tr>
+      <tr><td><code>CMC_CDML_CL_LINE</code></td><td>Medical lines (M/H)</td></tr>
+      <tr><td><code>CMC_CDDL_CL_LINE</code></td><td>Dental lines (D)</td></tr>
+      <tr><td><code>CMC_CLST_STATUS</code></td><td>Claim status</td></tr>
+      <tr><td><code>CMC_MEME_MEMBER</code></td><td>Member</td></tr>
+      <tr><td><code>CMC_SBSB_SUBSC</code></td><td>Subscriber</td></tr>
+    </table>
+    <p>420 Facets bronze tables in prod (Jun 2024).</p>
+  </div>
+
+  <div id="medallion" class="panel">
+    <h2>Stage 4: Silver &amp; Gold</h2>
+    <h3>Silver</h3>
+    <table>
+      <tr><th>Table</th><th>Purpose</th></tr>
+      <tr><td><code>silver.unified_timeline_claim</code></td><td>SCD2 unified incremental timeline</td></tr>
+      <tr><td><code>silver.claim_facets</code></td><td>Interop — group + date filtered</td></tr>
+      <tr><td><code>silver.claim_facets_cambia</code></td><td>CDP — no filtering</td></tr>
+      <tr><td><code>silver.claim_item_*_facets</code></td><td>Medical / dental / combined line items</td></tr>
+    </table>
+    <h3>Dual Gold FM</h3>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Interop Path</div>
+        <code>gold.fm_claim</code><br><code>gold.fm_claim_item</code><br>
+        Filtered: 75 groups, Medicare. Dental excluded.
+      </div>
+      <div class="card">
+        <div class="card-title">CDP Path</div>
+        <code>gold.fm_claim_cambia</code><br><code>gold.fm_claim_item_cambia</code><br>
+        Full silver mapping + data signature bitmap.
+      </div>
+    </div>
+  </div>
+
+  <div id="downstream" class="panel">
+    <h2>Stage 5: Downstream</h2>
+    <table>
+      <tr><th>Consumer</th><th>Path</th><th>Repo</th></tr>
+      <tr><td>SAM → FHIR</td><td><span class="tag tag-fhir">CMS-9115</span> Claim, Coverage, Diagnosis, Org, Practitioner, Patient</td><td>ng-pipelines-onyx</td></tr>
+      <tr><td>FHIR Workflow</td><td><code>cambia02-claims-dataingestion-workflow</code></td><td>onyx-infrastructure</td></tr>
+      <tr><td>Snowflake</td><td>bronze → silver → gold chunked history (XFORM-3515)</td><td>ng-pipelines-cambia</td></tr>
+      <tr><td>MDM</td><td>Silver Facets → Reltio tenant</td><td>Migration from 1.0 connector</td></tr>
+    </table>
+  </div>
+
+  <div id="cheatsheet" class="panel">
+    <h2>Interview Cheatsheet — Sections A–AB</h2>
+    <p>553 questions with Answer, Example, How to Check, How to Fix, and Script segments.</p>
+    <table>
+      <tr><th>Section</th><th>Topic</th><th>Questions</th></tr>
+      <tr><td>A</td><td>Opening &amp; Role Fit</td><td>Q1–10</td></tr>
+      <tr><td>B</td><td>Facets Domain &amp; Cambia Context</td><td>Q11–28</td></tr>
+      <tr><td>C</td><td>Architecture &amp; System Design</td><td>Q29–45</td></tr>
+      <tr><td>D</td><td>Data Engineering &amp; Databricks</td><td>Q46–73</td></tr>
+      <tr><td>E</td><td>FHIR &amp; Downstream Interop</td><td>Q74–94</td></tr>
+      <tr><td>F</td><td>Security, Auth &amp; Compliance</td><td>Q95–112</td></tr>
+      <tr><td>G</td><td>CDC Extraction &amp; facets-core</td><td>Q113–124</td></tr>
+      <tr><td>H</td><td>Dual Gold — Interop vs CDP</td><td>Q125–141</td></tr>
+      <tr><td>I–M</td><td>Ops, KPIs, RCM, Leadership, Scenarios</td><td>Q142–195</td></tr>
+      <tr><td>N–P</td><td>Snowflake, Orchestration, SFTP</td><td>Q196–295</td></tr>
+      <tr><td>Q–U</td><td>Databricks, MDM, VPN, SQL CDC, Scale</td><td>Q296–445</td></tr>
+      <tr><td>V–AB</td><td>De-ID, MDM, Compare, Observability, DevOps, Governance, Cutover</td><td>Q446–553</td></tr>
+    </table>
+    <div class="section">
+      <strong>File:</strong> <code>/Users/ashishsingh/Interview/Cambia_Facets_Claims_Interview_Cheat_Sheet.md</code><br>
+      <strong>Learning guide:</strong> <code>Training/LEARN_FROM_STEP_1.md</code>
+    </div>
+  </div>
+
+  <div id="repos" class="panel">
+    <h2>Repositories &amp; Catalog</h2>
+    <table>
+      <tr><th>Repo / Service</th><th>Role</th></tr>
+      <tr><td>facets-core</td><td>Bespoke CDC extraction</td></tr>
+      <tr><td>facets-infrastructure</td><td>AWS CDC infrastructure</td></tr>
+      <tr><td>ng-abacus-inbound-infra</td><td>SFTP / connector landing</td></tr>
+      <tr><td>ng-orchestration-service</td><td>Manifest-triggered orchestration</td></tr>
+      <tr><td>ng-pipelines-cambia</td><td>Bronze/silver/gold pipelines</td></tr>
+      <tr><td>ng-abacus-insights-runtime</td><td>AIR library (shared runtime)</td></tr>
+      <tr><td>ng-pipelines-onyx</td><td>DM 2.0 → FHIR</td></tr>
+    </table>
+    <h3>Catalog Paths</h3>
+    <ul style="padding-left:20px;font-size:13px">
+      <li><code>config/repo-rules/transporters/sftp.yaml</code></li>
+      <li><code>config/repo-rules/transporters/orchestration.yaml</code></li>
+      <li><code>config/repo-rules/xform/pipelines.yaml</code></li>
+    </ul>
+  </div>
+
+  <footer>Cambia Facets Claims · cambia02 · Scope note + Confluence references · Aug 2026</footer>
+</div>
+<script>
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
