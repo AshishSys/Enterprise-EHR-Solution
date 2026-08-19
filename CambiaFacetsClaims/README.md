@@ -1,34 +1,29 @@
 # Cambia Facets Claims — Complete Implementation Guide
 
-> End-to-end Cambia-specific pipeline: On-Prem TriZetto Facets → VPN → CDC → Encrypted Landing → Databricks Medallion → SAM/FHIR + Snowflake
+> **Four proficiency pillars:** E2E Implementation · Facets/TriZetto SME · On-Prem→Cloud Migration · Postman API Role
 
-## Architecture
+## Proficiency Pillars
+
+| Pillar | You prove it by... | Key artifacts |
+|--------|-------------------|---------------|
+| **P1 — E2E Implementation** | Owning CDC → medallion → downstream delivery | phase0 scripts, Databricks job chain, run_ci_local.sh |
+| **P2 — Facets/TriZetto SME** | Speaking CMC tables, CLCL lifecycle, medical/dental grain | CMC_CLCL_CLAIM joins, status codes, volume profiles |
+| **P3 — On-Prem→Cloud Migration** | Phased VPN/CDC/cutover with rollback gates | migration_cutover_checklist.sh, parallel-run parity |
+| **P4 — Postman API Role** | Validating orchestration + FHIR contracts before promotion | Postman collections, newman smoke in CI |
+
+## E2E Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    CAMBIA FACETS CLAIMS (cambia02 tenant)                    │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  ┌──────────── STAGE 1–2: SOURCE & CDC (facets-core) ──────────────────┐   │
-│  │  Facets SQL Server CDC → VPN → Step Functions → Encrypted JSON       │   │
-│  │  + manifest.json → intermediate S3                                  │   │
-│  └──────────────────────────────────────────────────────────────────────┘   │
-│                              ↓                                              │
-│  ┌──────────── STAGE 3: LANDING & BRONZE ───────────────────────────────┐   │
-│  │  SFTP landing → NextGen raw S3 → Databricks bronze (44+ SCD2 tables) │   │
-│  │  ng-orchestration-service + AIR library                              │   │
-│  └──────────────────────────────────────────────────────────────────────┘   │
-│                              ↓                                              │
-│  ┌──────────── STAGE 4: SILVER & GOLD ──────────────────────────────────┐   │
-│  │  unified timeline → silver.claim_facets* → dual gold FM              │   │
-│  │  Interop (filtered) ║ CDP (full 1:1 + signature bitmap)              │   │
-│  └──────────────────────────────────────────────────────────────────────┘   │
-│                              ↓                                              │
-│  ┌──────────── STAGE 5: DOWNSTREAM ─────────────────────────────────────┐   │
-│  │  Onyx SAM/FHIR (CMS-9115) │ Snowflake egress │ Reltio MDM            │   │
-│  └──────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
+On-Prem TriZetto Facets (SQL Server CDC replica)
+        │  [P3: VPN — Palo Alto → cambia-facets-networking]
+        ▼
+facets-core CDC → encrypted JSON + manifest  [P1: Step Functions + Batch]
+        │  [P3: SFTP landing → cambia02 raw S3]
+        ▼
+Bronze SCD2 (44+ CMC_* tables) → Silver timeline → Dual Gold FM  [P1+P2]
+        │  [P4: Postman orchestration + FHIR smoke]
+        ▼
+SAM/FHIR · Snowflake · Reltio MDM
 ```
 
 ## Quick Start
@@ -36,55 +31,63 @@
 ```bash
 cd Training/facets-claims
 
-# 1. Architecture trace (5 stages + repos)
+# P1 — E2E implementation baseline
 ./scripts/phase0_architecture_trace.sh
-
-# 2. Repo map and catalog paths
 ./scripts/phase0_repo_map.sh
-
-# 3. Manifest pattern validation
-./scripts/validate_manifest_pattern.sh
-
-# 4. Local CI gate
 ./scripts/ci/run_ci_local.sh
+
+# P3 — Migration cutover gate
+./scripts/migration_cutover_checklist.sh
+
+# P4 — Postman API smoke (requires Newman + env file)
+./scripts/postman_smoke_check.sh
 ```
 
 ## Key Resources
 
-| Resource | Purpose |
-|----------|---------|
-| [LEARN_FROM_STEP_1.md](Training/LEARN_FROM_STEP_1.md) | Day-by-day learning path — **start here** |
-| [Interview Cheat Sheet](/Users/ashishsingh/Interview/Cambia_Facets_Claims_Interview_Cheat_Sheet.md) | 553 Q&A + Scripts + Glossary |
-| [implementation_details.md](implementation_details.md) | Component deep dive |
-| [facets-claims-e2e-architecture-map.html](facets-claims-e2e-architecture-map.html) | Interactive architecture map |
-| [Architecture Canvas](/Users/ashishsingh/.cursor/projects/Users-ashishsingh-CambiaFacetsClaims/canvases/cambia-facets-claims.canvas.tsx) | Tabbed reference UI |
+| Resource | Pillar | Purpose |
+|----------|--------|---------|
+| [LEARN_FROM_STEP_1.md](Training/LEARN_FROM_STEP_1.md) | All | Day-by-day path aligned to 4 pillars |
+| [Interview Cheat Sheet](/Users/ashishsingh/Interview/Cambia_Facets_Claims_Interview_Cheat_Sheet.md) | All | 553 Q&A with pillar tags |
+| [POSTMAN_API_ROLE.md](docs/POSTMAN_API_ROLE.md) | P4 | Collections, environments, cutover gates |
+| [implementation_details.md](implementation_details.md) | P1+P3 | Component deep dive |
+| [Architecture Map](facets-claims-e2e-architecture-map.html) | All | Tabbed reference (4 pillars) |
+| [Canvas](/Users/ashishsingh/.cursor/projects/Users-ashishsingh-CambiaFacetsClaims/canvases/cambia-facets-claims.canvas.tsx) | All | Interactive tabbed UI |
 
-## Repositories
+## TriZetto Facets SME Quick Reference (P2)
 
-| Repo | Role |
-|------|------|
-| `facets-core` | Bespoke CDC — SQL Server → JSON + manifest |
-| `facets-infrastructure` | AWS CDC infra (Step Functions, Batch, S3, DynamoDB) |
-| `ng-abacus-inbound-infra` | SFTP / connector landing zone |
-| `ng-orchestration-service` | Manifest-triggered workflow orchestration |
-| `ng-pipelines-cambia` | Bronze/silver/gold Databricks pipelines |
-| `ng-abacus-insights-runtime` | AIR library (encryption, SCD2, manifest validation) |
-| `ng-pipelines-onyx` | DM 2.0 → FHIR downstream |
+| Code | Meaning |
+|------|---------|
+| M / H | Medical claim |
+| D | Dental claim |
+| 11 | Pended |
+| 15 | Error |
+| 01 | Pre-final |
+| 02 | Final |
+| 91 | Adjusted |
 
-## Volumes
+| Table | Grain |
+|-------|-------|
+| `CMC_CLCL_CLAIM` | Claim header |
+| `CMC_CDML_CL_LINE` | Medical lines |
+| `CMC_CDDL_CL_LINE` | Dental lines |
+| `CMC_CLST_STATUS` | Status history |
+| `CMC_MEME_MEMBER` | Member |
+| `CMC_SBSB_SUBSC` | Subscriber |
 
-| Metric | Value |
-|--------|-------|
-| Historical claims | ~99M (from 1/1/2017) |
-| Historical claim lines | ~250M |
-| Nightly batch | 70k–120k claims |
-| Incremental window | 500–1,000 tx / 15 min (daytime) |
-| Bronze tables (prod) | 420 Facets tables (Jun 2024) |
-| JSON files per batch | ~25 + manifest |
+## Migration Cutover Gates (P3)
 
-## Dual Gold Paths
+1. VPN tunnel stable ≥ 7 days
+2. Historical backfill row-count parity (sample periods)
+3. Incremental schedule matches on-prem batch timing
+4. Bronze SCD2 + gold signature bitmap match
+5. Postman smoke green on stg → prod promotion
 
-| Path | Tables | Filtering | Consumer |
-|------|--------|-----------|----------|
-| **Interop** | `gold.fm_claim`, `gold.fm_claim_item` | 75 groups, Medicare, no dental | SAM → FHIR (CMS-9115) |
-| **CDP** | `gold.fm_claim_cambia`, `gold.fm_claim_item_cambia` | None — full silver mapping | Customer data platform |
+## Postman Collections (P4)
+
+| Collection | Validates |
+|------------|-----------|
+| `postman/cambia-facets-claims-smoke.json` | Orchestration manifest + job status |
+| `postman/fhir-claims-interop.json` | Interop FHIR Claim reads (75-group filter) |
+| `postman/fhir-claims-cdp.json` | CDP full claim set |
+| `postman/cambia-facets-cutover-gate.json` | Pre-prod promotion gate (all folders) |

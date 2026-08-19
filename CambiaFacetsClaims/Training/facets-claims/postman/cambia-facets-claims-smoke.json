@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "Cambia Facets Claims — Orchestration Smoke",
+    "description": "P4: Validate ng-orchestration-service manifest trigger and job status. Use synthetic batch IDs only.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url_orchestration", "value": "{{base_url_orchestration}}" },
+    { "key": "tenant", "value": "cambia02" }
+  ],
+  "item": [
+    {
+      "name": "Manifest Received",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url_orchestration}}/api/v1/manifest-received",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenant\": \"cambia02\",\n  \"manifest_path\": \"cambia/facets/cambia/claims/extension/incremental/SAMPLE_BATCH/manifest.json\",\n  \"batch_id\": \"SAMPLE_BATCH_ID\"\n}"
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 202 Accepted', () => pm.response.to.have.status(202));"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Job Status Poll",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url_orchestration}}/api/v1/jobs/{{batch_id}}/status"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Job SUCCESS or RUNNING', () => {",
+            "  const s = pm.response.json().status;",
+            "  pm.expect(['SUCCESS','RUNNING','PENDING']).to.include(s);",
+            "});"
+          ]
+        }
+      }]
+    }
+  ]
+}

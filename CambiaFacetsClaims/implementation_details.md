@@ -1,6 +1,18 @@
 # Cambia Facets Claims — Implementation Details
 
-> Scope: Cambia on-prem TriZetto Facets → Abacus NextGen (tenant **cambia02**). Not a generic Transporters service.
+> Scope: Cambia on-prem TriZetto Facets → Abacus NextGen (tenant **cambia02**).  
+> **Aligned to 4 pillars:** P1 E2E Implementation · P2 Facets/TriZetto SME · P3 On-Prem→Cloud Migration · P4 Postman API Role
+
+---
+
+## Pillar Map
+
+| Pillar | This document sections | Exit proof |
+|--------|------------------------|------------|
+| **P1 E2E** | Stages 2–5, dual gold, downstream | Databricks chain + run_ci_local.sh |
+| **P2 SME** | Claim domain reference, CMC tables | CLCL lifecycle + table joins |
+| **P3 Migration** | Stage 1, HITRUST, VPN, SFTP handoff | migration_cutover_checklist.sh |
+| **P4 Postman** | Downstream API validation | newman smoke on orchestration + FHIR |
 
 ---
 
